@@ -1,16 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
 import { Facebook } from '@ionic-native/facebook';
-
-/**
- * Generated class for the ProfilePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { FirebaseListObservable } from 'angularfire2/database-deprecated';
 
 @IonicPage()
 @Component({
@@ -18,25 +13,26 @@ import { Facebook } from '@ionic-native/facebook';
   templateUrl: 'profile.html',
 })
 export class ProfilePage {
-
+  Users: FirebaseListObservable<any[]>;
 
   isLoggedIn: boolean = false;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    public app: App,
     public afAuth: AngularFireAuth,
-    ) {
+    public firebaseProvider: FirebaseProvider,
+  ) {
+    this.Users = this.firebaseProvider.getUser();
   }
-  BtLoggout() { 
+  
+  BtLoggout() {
     this.afAuth.auth.signOut()
-    .then(res =>
-    this.isLoggedIn = false)
-    .catch(e => console.log('Error logout from Facebook', e));
+      .then(res =>
+        this.isLoggedIn = false)
+      .catch(e => console.log('Error logout from Facebook', e));
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ProfilePage');
   }
-
 }

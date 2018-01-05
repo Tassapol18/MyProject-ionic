@@ -15,13 +15,22 @@ import { MapPage } from '../pages/map/map';
 import { ProfilePage } from '../pages/profile/profile';
 import { PostPage } from '../pages/post/post';
 import { NewMapPage } from '../pages/new-map/new-map';
+import { ViewpostPage } from '../pages/viewpost/viewpost';
 
 //FirebaseModule
 import { Facebook } from '@ionic-native/facebook';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-import { FirebaseServiceProvider } from '../providers/firebase-service/firebase-service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { FirebaseListObservable } from 'angularfire2/database-deprecated';
+
+//Providers
+import { FirebaseProvider } from '../providers/firebase/firebase';
+import { PostsProvider } from '../providers/posts/posts';
+import { MapsProvider } from '../providers/maps/maps';
+import { ChatsProvider } from '../providers/chats/chats';
+
+
 
 
 const firebase = {
@@ -43,12 +52,14 @@ const firebase = {
     MapPage,
     ProfilePage,
     PostPage,
-    NewMapPage
+    NewMapPage,
+    ViewpostPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
     AngularFireDatabaseModule,
+    FirebaseListObservable,
     AngularFireModule.initializeApp(firebase),
     AngularFireAuthModule,
     IonicModule.forRoot(MyApp)
@@ -63,14 +74,18 @@ const firebase = {
     MapPage,
     ProfilePage,
     PostPage,
-    NewMapPage
+    NewMapPage,
+    ViewpostPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    FirebaseServiceProvider,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    Facebook
+    Facebook,
+    FirebaseProvider,
+    PostsProvider,
+    MapsProvider,
+    ChatsProvider
   ]
 })
 export class AppModule { }

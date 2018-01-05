@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 
+//Firebase
 import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase';
-
 import { Facebook } from '@ionic-native/facebook';
+import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { FirebaseListObservable } from 'angularfire2/database-deprecated';
 
 @IonicPage()
 @Component({
@@ -14,13 +16,15 @@ import { Facebook } from '@ionic-native/facebook';
 })
 export class WelcomePage {
 
+  Users: FirebaseListObservable<any[]>;
+
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public afAuth: AngularFireAuth,
     private facebook: Facebook,
-    private platform: Platform
-  ) {
-  }
+    private platform: Platform,
+    public firebaseProvider: FirebaseProvider) {
+    }
 
   fb = {
     loggedIn: true,
@@ -28,7 +32,6 @@ export class WelcomePage {
     email: '',
     profilePicture: ''
   };
-
 
 
   loginwithfb() {
@@ -50,24 +53,4 @@ export class WelcomePage {
     }
   }
 
-
-  /*facebook = {
-    loggedIn : false,
-    name : '',
-    email : '',
-    profilePicture: ''
-  }; 
-
-  
-
-  loginwithfb() {
-    this.afauth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider())
-    .then(res => {
-      this.facebook.loggedIn = true;
-      this.facebook.email = res.user.email;
-      this.facebook.name = res.user.displayName,
-      this.facebook.profilePicture = res.user.photoURL
-    })
-    this.navCtrl.setRoot(TabsPage);
-  }*/
 }
