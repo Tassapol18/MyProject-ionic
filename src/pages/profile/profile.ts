@@ -2,10 +2,6 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { AngularFireAuth } from 'angularfire2/auth';
-import * as firebase from 'firebase';
-import { Facebook } from '@ionic-native/facebook';
-import { FirebaseProvider } from '../../providers/firebase/firebase';
-import { FirebaseListObservable } from 'angularfire2/database-deprecated';
 
 @IonicPage()
 @Component({
@@ -13,16 +9,14 @@ import { FirebaseListObservable } from 'angularfire2/database-deprecated';
   templateUrl: 'profile.html',
 })
 export class ProfilePage {
-  Users: FirebaseListObservable<any[]>;
 
   isLoggedIn: boolean = false;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    public afAuth: AngularFireAuth,
-    public firebaseProvider: FirebaseProvider,
+    public afAuth: AngularFireAuth
   ) {
-    this.Users = this.firebaseProvider.getUser();
+    
   }
   
   BtLoggout() {

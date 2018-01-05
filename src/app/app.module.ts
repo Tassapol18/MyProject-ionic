@@ -5,6 +5,7 @@ import { MyApp } from './app.component';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 //Page
 import { HomePage } from '../pages/home/home';
@@ -21,8 +22,7 @@ import { ViewpostPage } from '../pages/viewpost/viewpost';
 import { Facebook } from '@ionic-native/facebook';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
-import { FirebaseListObservable } from 'angularfire2/database-deprecated';
+import { AngularFireDatabaseModule } from 'angularfire2/database-deprecated';
 
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
@@ -58,8 +58,9 @@ const firebase = {
   imports: [
     BrowserModule,
     HttpModule,
+    HttpClientModule,
+    AngularFireModule,
     AngularFireDatabaseModule,
-    FirebaseListObservable,
     AngularFireModule.initializeApp(firebase),
     AngularFireAuthModule,
     IonicModule.forRoot(MyApp)
