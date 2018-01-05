@@ -48,8 +48,9 @@ export class WelcomePage {
         .then(res => {
           this.fb.loggedIn = true;
           this.fb.email = res.user.email;
-          this.fb.name = res.user.displayName,
-          this.fb.profilePicture = res.user.photoURL
+          this.fb.name = res.user.email,
+          this.fb.profilePicture = res.user.email
+          this.firebaseProvider.addUsers(res.user.email,res.user.email,res.user.email);
         });
     }
   }
