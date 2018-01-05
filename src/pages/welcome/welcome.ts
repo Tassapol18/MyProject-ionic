@@ -37,6 +37,7 @@ export class WelcomePage {
   loginwithfb() {
     if (this.platform.is('cordova')) {
       return this.facebook.login(['email', 'public_profile']).then(res => {
+        this.firebaseProvider.addUsers('KO1','KO2','KO3');
         const facebookCredential = firebase.auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
         return firebase.auth().signInWithCredential(facebookCredential);
       })
