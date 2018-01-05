@@ -16,8 +16,4 @@ export class HomePage {
     this.navCtrl.push(PostPage);
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ListMasterPage');
-  }
-
 }

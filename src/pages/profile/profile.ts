@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
-import { WelcomePage } from '../welcome/welcome';
 
+import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase';
+import { Facebook } from '@ionic-native/facebook';
 
 /**
  * Generated class for the ProfilePage page.
@@ -17,11 +19,20 @@ import { WelcomePage } from '../welcome/welcome';
 })
 export class ProfilePage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public app: App) {
-  }
-  BtLoggout() {
-    this.app.getRootNav().setRoot(WelcomePage);
 
+  isLoggedIn: boolean = false;
+
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
+    public app: App,
+    public afAuth: AngularFireAuth,
+    ) {
+  }
+  BtLoggout() { 
+    this.afAuth.auth.signOut()
+    .then(res =>
+    this.isLoggedIn = false)
+    .catch(e => console.log('Error logout from Facebook', e));
   }
 
   ionViewDidLoad() {

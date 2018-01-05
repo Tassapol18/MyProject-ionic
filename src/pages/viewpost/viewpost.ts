@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { NewMapPage } from '../new-map/new-map';
 
 /**
- * Generated class for the MapPage page.
+ * Generated class for the ViewpostPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -11,16 +10,16 @@ import { NewMapPage } from '../new-map/new-map';
 
 @IonicPage()
 @Component({
-  selector: 'page-map',
-  templateUrl: 'map.html',
+  selector: 'page-viewpost',
+  templateUrl: 'viewpost.html',
 })
-export class MapPage {
+export class ViewpostPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
-  goToNewMap(){
-    this.navCtrl.push(NewMapPage);
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad ViewpostPage');
   }
 
 }

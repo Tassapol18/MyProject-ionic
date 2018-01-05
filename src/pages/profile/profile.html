@@ -1,15 +1,21 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title>ข้อมูลส่วนตัว</ion-title>
     <ion-buttons end>
-        <button ion-button class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
+      <button ion-button class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
     </ion-buttons>
   </ion-navbar>
-
 </ion-header>
 
 
 <ion-content padding>
-
+  <div id="content">
+    <div id="profile-info">
+      <img id="profile-image" src="../assets/imgs/logo.png"> <!-- {{users.picture.data.url}} -->
+      <h3 id="profile-name">ทรรศพล โลจรัส </h3> <!-- {{users.name}} -->
+      <h3 id="profile-email">John@countrytrip.com</h3> <!-- ({{users.email}}) -->
+      <button ion-button class="center" color="secondary" (click)="EditProfile()">แก้ไขข้อมูลส่วนตัว</button>
+      <button ion-button class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
+    </div>
+  </div>
 </ion-content>

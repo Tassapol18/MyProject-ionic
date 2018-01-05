@@ -83,6 +83,16 @@ $colors: (
 
 // Fonts
 // --------------------------------------------------
+@font-face {
+  font-family: 'supermarket';
+  src:url('../assets/fonts/supermarket.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+ }
+ $font-family-base: "supermarket";
+ $font-family-ios-base: $font-family-base;
+ $font-family-md-base: $font-family-base;
+ $font-family-wp-base: $font-family-base;
 
 @import "roboto";
 @import "noto-sans";
