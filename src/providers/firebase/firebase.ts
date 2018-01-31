@@ -5,25 +5,30 @@ import { AngularFireDatabase } from "angularfire2/database-deprecated";
 @Injectable()
 export class FirebaseProvider {
 
+
   constructor(public http: HttpClient,
-    public angularfiredb: AngularFireDatabase) {
+    public db: AngularFireDatabase) {
     console.log('Hello FirebaseProvider Provider');
   }
 
-  getUser() {
-    return this.angularfiredb.list('/Users/');
+  getUsers() {
+    return this.db.list('/Users');
   }
 
-  addUsers(name, eamil, profilePicture) {
-    this.angularfiredb.list('/Users/').push(this);
+  addUsers(name,email,photo) {
+    this.db.list('/Users').push({
+      name: name,
+      email: email,
+      photo: photo
+    });
   }
 
   removeUsers(key) {
-    this.angularfiredb.list('/Users/').remove(key);
+    this.db.list('/Users').remove(key);
   }
 
   editUsers(name, eamil, profilePicture, key) {
-    this.angularfiredb.list('/Users/')
+    this.db.list('/Users')
   }
 
 }

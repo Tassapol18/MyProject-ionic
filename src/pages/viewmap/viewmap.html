@@ -1,0 +1,30 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>viewmap</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div>
+    <h3>รูปภาพ</h3>
+    <img src="{{photoPlace}}" width="300px">
+  </div>
+  <h3>ชื่อสถานที่ : {{namePlace}} </h3>
+  <h3>รายละเอียด : {{detailPlace}} </h3>
+  <h3>ที่อยู่ : {{placeAddress}} </h3>
+  <h3>ประเภทของสถานที่ : {{typesPlace}} </h3>
+  <h3>เวลาทำการ : {{timePlace}} </h3>
+  <h3>เบอร์โทรศัพท์ : {{telephonePlace}} </h3>
+  <h3>เว็ปไซต์ : {{websitePlace}} </h3>
+  <h3>สร้างโดย : {{owener}} </h3>
+  <h3>ระยะห่าง {{distance}} กิโลเมตร </h3>
+
+
+
+  <button ion-button (click)="viewdetailMap(data)">Check-in</button>
+
+
+</ion-content>

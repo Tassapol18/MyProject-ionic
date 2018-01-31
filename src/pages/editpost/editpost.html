@@ -1,0 +1,53 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>แก้ไขโพสต์</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding class="add-contact">
+  <ion-list no-line>
+    <ion-item>
+      <ion-label>เรื่อง</ion-label>
+      <ion-input [(ngModel)]="topic" type="text" placeholder="หัวเรื่อง">{{topic}}</ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>รายละเอียด</ion-label>
+      <ion-input [(ngModel)]="detail" type="text" placeholder="รายละเอียด">{{detail}}</ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>ประเภท</ion-label>
+      <ion-select [(ngModel)]="types" name="types" placeholder="{{types}}">
+        <ion-option value="ชุมชน">ชุมชน</ion-option>
+        <ion-option value="ธรรมชาติ">ธรรมชาติ</ion-option>
+        <ion-option value="วัฒนธรรม">วัฒนธรรม</ion-option>
+        <ion-option value="ท่องเที่ยว">ท่องเที่ยว</ion-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-row>
+        <ion-col>
+          <button ion-button color="secondary" type="file" full round large (click)="selectPhoto()">
+            <ion-icon name="md-image"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+
+      <div>
+        <img [src]="myPhotoURL" *ngIf="myPhotoURL" width="300" />
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ion-row center>
+    <ion-col text-center>
+      <button ion-button type="submit" (click)="updatePost()">โพสต์</button>
+    </ion-col>
+  </ion-row>
+
+
+</ion-content>

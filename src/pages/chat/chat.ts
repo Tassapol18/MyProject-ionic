@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the ChatPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 
 @IonicPage()
 @Component({
@@ -14,8 +8,18 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'chat.html',
 })
 export class ChatPage {
+  user: FirebaseListObservable<any[]>;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, 
+    public navParams: NavParams,
+  public db: AngularFireDatabase) {
+
+    this.user = db.list('/Users', {
+      query: {
+        orderByChild: 'uid',
+      }
+    });
+      
   }
 
 

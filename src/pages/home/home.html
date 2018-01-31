@@ -1,5 +1,12 @@
 <ion-header>
   <ion-navbar no-border-bottom>
+    <ion-buttons left>
+      <button ion-button (click)="goToSearch()">
+        <ion-icon name="ios-search">
+          ค้นหา
+        </ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>ข่าวสาร</ion-title>
     <ion-buttons end>
       <button ion-button color="secondary" (click)="goToPost()">
@@ -33,156 +40,61 @@
 
 <ion-content>
   <div [ngSwitch]="News">
-    <ion-list *ngSwitchCase="'All'">
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
-        </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
-      </ion-item>
 
+    <ion-list *ngSwitchCase="'All'">
+      <ion-item *ngFor="let post of (post | async)?.slice().reverse()">
+        <ion-thumbnail item-start>
+          <img src="{{post.profilePicture}}">
+        </ion-thumbnail>
+        <h3>เรื่อง : {{post.topic}}</h3>
+        <h2>ประเภท : {{post.types}}</h2>
+        <h2>รายละเอียด : {{post.detail}}</h2>
+        <button ion-button  item-end color="primary" (click)="viewpost(post)">ดูเพิ่มเติม</button>
+      </ion-item>
     </ion-list>
 
 
     <ion-list *ngSwitchCase="'community'">
-      <ion-item>
+      <ion-item *ngFor="let community of (community | async)?.slice().reverse()">
         <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
+          <img src="{{community.profilePicture}}">
         </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
+        <h2>{{community.topic}}</h2>
+        <p>{{community.detail}}</p>
+        <button ion-button  item-end (click)="viewpostCommunity(community)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'natural'">
-      <ion-item>
+      <ion-item *ngFor="let natural of (natural | async)?.slice().reverse()">
         <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
+          <img src="{{natural.profilePicture}}">
         </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
+        <h2>{{natural.topic}}</h2>
+        <p>{{natural.detail}}</p>
+        <button ion-button  item-end (click)="viewpostNatural(natural)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'culture'">
-      <ion-item>
+      <ion-item *ngFor="let culture of (culture | async)?.slice().reverse()">
         <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
+          <img src="{{culture.profilePicture}}">
         </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
+        <h2>{{culture.topic}}</h2>
+        <p>{{culture.detail}}</p>
+        <button ion-button  item-end (click)="viewpostCulture(culture)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'travel'">
-      <ion-item>
+      <ion-item *ngFor="let travel of (travel | async)?.slice().reverse()">
         <ion-thumbnail item-start>
-          <img src="assets/imgs/logo.png">
+          <img src="{{travel.profilePicture}}">
         </ion-thumbnail>
-        <h2>My Neighbor Totoro</h2>
-        <p>Hayao Miyazaki • 1988</p>
-        <button ion-button clear item-end (click)="viewpost()">View</button>
+        <h2>{{travel.topic}}</h2>
+        <p>{{travel.detail}}</p>
+        <button ion-button  item-end (click)="viewpostTravel(travel)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
 

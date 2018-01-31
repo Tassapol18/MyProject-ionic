@@ -6,16 +6,50 @@
 
 
 <ion-content padding>
-  <div id="content">
-    <div id="profile-info">
-      <!-- {{Users.profilePicture}} -->
-      <img id="profile-image" src="../assets/imgs/logo.png">
-      <!-- {{Users.name}} -->
-      <h3 id="profile-name">ทรรศพล โลจรัส </h3>
-      <!-- ({{Users.email}}) -->
-      <h3 id="profile-email">John@countrytrip.com</h3>
-      <button ion-button class="center" color="secondary" (click)="EditProfile()">แก้ไขข้อมูลส่วนตัว</button>
-      <button ion-button class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
+  <ion-card>
+    <div id="content">
+      <div id="profile-info">
+        <!-- {{Users.profilePicture}} -->
+        <img id="profile-image" src="{{photo}}">
+        <!-- {{Users.name}} -->
+        <h3 id="profile-name">{{name}} </h3>
+        <!-- ({{Users.email}}) -->
+        <h3 id="profile-email">{{email}}</h3>
+        <button ion-button class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
+      </div>
     </div>
-  </div>
+  </ion-card>
+
+
+  <ion-card no-line>
+
+    <h1>โพสต์ของคุณ</h1>
+    <ion-item *ngFor="let post of (post | async)?.slice().reverse()">
+      <!-- <ion-thumbnail item-start>
+        <img src="{{post.profilePicture}}">
+      </ion-thumbnail> -->
+      <h2>{{post.topic}}</h2>
+      <p>{{post.detail}}</p>
+      <button ion-button color="primary" (click)="viewpost(post)">ดูเพิ่มเติม</button>
+      <button ion-button color="secondary" (click)="editPost(post)">แก้ไข</button>
+      <button ion-button color="danger" (click)="deletePost(post)">ลบ</button>
+    </ion-item>
+  </ion-card>
+
+
+  <ion-card no-line>
+    <h1>สถานที่ของคุณ</h1>
+    <ion-item *ngFor="let map of (map | async)?.slice().reverse()">
+      <ion-thumbnail item-start>
+        <img src="{{map.photoPlace}}">
+      </ion-thumbnail>
+      <h2>{{map.namePlace}}</h2>
+      <p>รายละเอียด : {{map.detailPlace}}</p>
+      <p>ประเภท : {{map.typesPlace}}</p>
+      <button ion-button color="primary" (click)="viewMap(map)">ดูเพิ่มเติม</button>
+      <button ion-button color="secondary" (click)="editMap(map)">แก้ไข</button>
+      <button ion-button color="danger" (click)="deleteMap(map)">ลบ</button>
+    </ion-item>
+  </ion-card>
+
 </ion-content>

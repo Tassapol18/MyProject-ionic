@@ -1,0 +1,24 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>สถานที่ใกล้เคียง</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <!-- <p> {{data | json}}</p> -->
+  <ion-list no-lines>
+    <ion-item *ngFor="let data of data">
+      <ion-avatar item-left>
+        <ion-icon name="pin"></ion-icon>
+      </ion-avatar>
+      <h2>{{data.Place.namePlace}}</h2>
+      <h2>ประเภท {{data.Place.typesPlace}}</h2>
+      <p>ระยะห่าง {{data.Place.resultDistance}} กิโลเมตร</p>
+      <button ion-button  item-end (click)="viewdetailMap(data)">ดูเพิ่มเติม</button>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

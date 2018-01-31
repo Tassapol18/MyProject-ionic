@@ -6,6 +6,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { Geolocation } from '@ionic-native/geolocation';
+import { Camera } from '@ionic-native/camera';
 
 //Page
 import { HomePage } from '../pages/home/home';
@@ -17,23 +19,23 @@ import { ProfilePage } from '../pages/profile/profile';
 import { PostPage } from '../pages/post/post';
 import { NewMapPage } from '../pages/new-map/new-map';
 import { ViewpostPage } from '../pages/viewpost/viewpost';
+import { SearchPage } from '../pages/search/search';
+import { ViewmapPage } from '../pages/viewmap/viewmap';
+import { EditpostPage } from '../pages/editpost/editpost';
+import { NearbymapPage } from '../pages/nearbymap/nearbymap';
 
 //FirebaseModule
-import { Facebook } from '@ionic-native/facebook';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireDatabaseModule } from 'angularfire2/database-deprecated';
 
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
-import { PostsProvider } from '../providers/posts/posts';
-import { MapsProvider } from '../providers/maps/maps';
-import { ChatsProvider } from '../providers/chats/chats';
+import { Facebook } from '@ionic-native/facebook';
 
 
 
-
-const firebase = {
+export const firebase = {
   apiKey: "AIzaSyD-6a8U6dQ2zwOaRNIw-rEjWPSiBTcFgcc",
   authDomain: "countrytrip-31ea9.firebaseapp.com",
   databaseURL: "https://countrytrip-31ea9.firebaseio.com",
@@ -53,7 +55,11 @@ const firebase = {
     ProfilePage,
     PostPage,
     NewMapPage,
-    ViewpostPage
+    SearchPage,
+    ViewpostPage,
+    ViewmapPage,
+    EditpostPage,
+    NearbymapPage
   ],
   imports: [
     BrowserModule,
@@ -76,17 +82,20 @@ const firebase = {
     ProfilePage,
     PostPage,
     NewMapPage,
-    ViewpostPage
+    SearchPage,
+    ViewpostPage,
+    ViewmapPage,
+    EditpostPage,
+    NearbymapPage
   ],
   providers: [
     StatusBar,
+    Camera,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    Facebook,
     FirebaseProvider,
-    PostsProvider,
-    MapsProvider,
-    ChatsProvider
+    Geolocation,
+    Facebook
   ]
 })
 export class AppModule { }

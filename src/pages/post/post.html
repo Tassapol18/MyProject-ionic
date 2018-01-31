@@ -4,50 +4,66 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
+  <ion-item>
+    <ion-label>เรื่อง</ion-label>
+    <ion-input [(ngModel)]="topic" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>รายละเอียด</ion-label>
+    <ion-textarea [(ngModel)]="detail"></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>ประเภท</ion-label>
+    <ion-select [(ngModel)]="types" name="types">
+      <ion-option value="แหล่งท่องเที่ยวชุมชน">แหล่งท่องเที่ยวชุมชน</ion-option>
+      <ion-option value="แหล่งธรรมท่องเที่ยวธรรมชาติ">แหล่งธรรมท่องเที่ยวธรรมชาติ</ion-option>
+      <ion-option value="แหล่งท่องเที่ยววัฒนธรรม">แหล่งท่องเที่ยววัฒนธรรม</ion-option>
+      <ion-option value="กิจกรรมท่องเที่ยว">กิจกรรมท่องเที่ยว</ion-option>
+    </ion-select>
+  </ion-item>
+
+
 
   <ion-list>
-   
-      <ion-item>
-        <ion-label>หัวข้อ</ion-label>
-        <ion-input type="text"></ion-input>
-      </ion-item>
-
-
-
-      <ion-item>
-        <ion-label >รายละเอียด</ion-label>
-        <ion-input type="text"></ion-input>
-      </ion-item>
-
-
-
-      <ion-item>
-        <ion-label>ประเภท</ion-label>
-        <ion-select [(ngModel)]="types">
-          <ion-option value="community">ชุมชน</ion-option>
-          <ion-option value="natural">ธรรมชาติ</ion-option>
-          <ion-option value="culture">วัฒนธรรม</ion-option>
-          <ion-option value="culture">ท่องเที่ยว</ion-option>
-        </ion-select>
-      </ion-item>
-
-      <ion-item>
-        <button ion-button color="secondary" (click)="getImage()">รูปภาพ</button>
-      </ion-item>
-      <ion-item>
-        <h4>Image Preview</h4>
-        <img src="{{imageFileName}}" *ngIf="imageFileName" alt="Ionic File" width="300" />
-      </ion-item>
-      
+    <ion-item>
+      <button ion-button type="button" round large color="primary" (click)="addPlace()">สถานที่</button>
+    </ion-item>
+    <ion-item>
+      <ion-label>พิกัด(Lat, Lng) : </ion-label>
+      <ion-input [(ngModel)]="lat" readonly="{{isReadonly}}">Lat</ion-input>
+      <ion-input [(ngModel)]="lng" readonly="{{isReadonly}}">Lng</ion-input>
+    </ion-item>
   </ion-list>
+
+
+
+
+  <ion-item>
+      <ion-row>
+        <ion-col width-50>
+          <button ion-button color="danger" type="button" full round large (click)="takePhoto()">
+            <ion-icon name="md-camera"></ion-icon>
+          </button>
+        </ion-col>
+        <ion-col width-50>
+          <button ion-button color="secondary" type="button" full round large (click)="selectPhoto()">
+            <ion-icon name="md-image"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+
+
+    <div>
+      <img  [src]="myPhotoURL" *ngIf="myPhotoURL" width="300" />
+    </div>
+  </ion-item>
+
   <ion-row center>
     <ion-col text-center>
-      <div padding>
-        <button ion-button  type="submit">โพสต์</button>
-        <button ion-button  type="button" color="danger">ยกเลิก</button>
-      </div>
+      <button ion-button type="submit" round large (click)="newPost(topic, detail, types)">โพสต์</button>
     </ion-col>
   </ion-row>
 
