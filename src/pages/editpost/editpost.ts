@@ -85,7 +85,7 @@ export class EditpostPage {
       this.lng,
       this.photo,
     );
-    var timestamp = firebase.database.ServerValue.TIMESTAMP;
+    //var timestamp = firebase.database.ServerValue.TIMESTAMP;
 
   }
 

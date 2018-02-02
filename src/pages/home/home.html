@@ -34,6 +34,9 @@
       <ion-segment-button value="travel">
         ท่องเที่ยว
       </ion-segment-button>
+      <ion-segment-button value="other">
+        อื่น ๆ
+      </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
@@ -59,8 +62,9 @@
         <ion-thumbnail item-start>
           <img src="{{community.profilePicture}}">
         </ion-thumbnail>
-        <h2>{{community.topic}}</h2>
-        <p>{{community.detail}}</p>
+        <h3>เรื่อง : {{post.topic}}</h3>
+        <h2>ประเภท : {{post.types}}</h2>
+        <h2>รายละเอียด : {{post.detail}}</h2>
         <button ion-button  item-end (click)="viewpostCommunity(community)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
@@ -70,8 +74,8 @@
         <ion-thumbnail item-start>
           <img src="{{natural.profilePicture}}">
         </ion-thumbnail>
-        <h2>{{natural.topic}}</h2>
-        <p>{{natural.detail}}</p>
+        <h3>เรื่อง : {{natural.topic}}</h3>
+        <h2>รายละเอียด : {{natural.detail}}</h2>
         <button ion-button  item-end (click)="viewpostNatural(natural)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
@@ -81,8 +85,8 @@
         <ion-thumbnail item-start>
           <img src="{{culture.profilePicture}}">
         </ion-thumbnail>
-        <h2>{{culture.topic}}</h2>
-        <p>{{culture.detail}}</p>
+        <h3>เรื่อง : {{culture.topic}}</h3>
+        <h2>รายละเอียด : {{culture.detail}}</h2>
         <button ion-button  item-end (click)="viewpostCulture(culture)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
@@ -92,9 +96,20 @@
         <ion-thumbnail item-start>
           <img src="{{travel.profilePicture}}">
         </ion-thumbnail>
-        <h2>{{travel.topic}}</h2>
-        <p>{{travel.detail}}</p>
+        <h3>เรื่อง : {{travel.topic}}</h3>
+        <h2>รายละเอียด : {{travel.detail}}</h2>
         <button ion-button  item-end (click)="viewpostTravel(travel)">ดูเพิ่มเติม</button>
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'other'">
+      <ion-item *ngFor="let other of (other | async)?.slice().reverse()">
+        <ion-thumbnail item-start>
+          <img src="{{other.profilePicture}}">
+        </ion-thumbnail>
+        <h3>เรื่อง : {{other.topic}}</h3>
+        <h2>รายละเอียด : {{other.detail}}</h2>
+        <button ion-button  item-end (click)="viewpostOther(other)">ดูเพิ่มเติม</button>
       </ion-item>
     </ion-list>
 

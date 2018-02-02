@@ -4,7 +4,6 @@ import { Camera, CameraOptions } from '@ionic-native/camera';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
 import firebase from 'firebase';
-import { MapPage } from '../map/map';
 
 
 @IonicPage()

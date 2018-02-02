@@ -104,4 +104,11 @@
     <allow-navigation href="http://10.80.23.34:8100" />
     <allow-navigation href="http://192.168.43.165:8100" />
     <allow-navigation href="http://10.80.29.12:8100" />
+    <plugin name="cordova-plugin-facebook4" spec="^1.7.4">
+        <variable name="APP_ID" value="217185825535567" />
+        <variable name="APP_NAME" value="CountryTrip" />
+    </plugin>
+    <plugin name="cordova-plugin-googleplus" spec="^5.2.1">
+        <variable name="REVERSED_CLIENT_ID" value="myreversedclientid" />
+    </plugin>
 </widget>

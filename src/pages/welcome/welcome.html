@@ -1,16 +1,22 @@
 <ion-content scroll="false">
   <div class="splash-bg"></div>
-  <div class="splash-info">
+  <!-- <div class="splash-info">
     <div class="splash-logo"></div>
-  </div>
+  </div> -->
   <ion-row center>
     <ion-col text-center>
-      <button ion-button class="center" full round large color="primary" (click)="facebookLogin()">เข้าสู่ระบบโดย Facebook</button>
+      <button ion-button class="center" round large color="primary" (click)="facebookLogin()">
+        <ion-icon name="logo-facebook"></ion-icon>
+        เข้าสู่ระบบโดย Facebook
+      </button>
     </ion-col>
   </ion-row>
   <ion-row center>
     <ion-col text-center>
-      <button ion-button class="center" full round large color="danger" (click)="googleLogin()">เข้าสู่ระบบโดย Google</button>
+      <button ion-button class="center" round large color="danger" (click)="googleLogin()">
+        <ion-icon name="logo-google"></ion-icon>
+        เข้าสู่ระบบโดย Google
+      </button>
     </ion-col>
   </ion-row>
 </ion-content>

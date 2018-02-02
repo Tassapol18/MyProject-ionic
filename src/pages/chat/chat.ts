@@ -10,16 +10,16 @@ import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/databa
 export class ChatPage {
   user: FirebaseListObservable<any[]>;
 
-  constructor(public navCtrl: NavController, 
+  constructor(public navCtrl: NavController,
     public navParams: NavParams,
-  public db: AngularFireDatabase) {
+    public db: AngularFireDatabase) {
 
     this.user = db.list('/Users', {
       query: {
         orderByChild: 'uid',
       }
     });
-      
+
   }
 
 

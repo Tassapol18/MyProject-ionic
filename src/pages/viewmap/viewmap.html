@@ -1,30 +1,58 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>viewmap</ion-title>
+    <ion-title>{{namePlace}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <div>
-    <h3>รูปภาพ</h3>
-    <img src="{{photoPlace}}" width="300px">
-  </div>
-  <h3>ชื่อสถานที่ : {{namePlace}} </h3>
-  <h3>รายละเอียด : {{detailPlace}} </h3>
-  <h3>ที่อยู่ : {{placeAddress}} </h3>
-  <h3>ประเภทของสถานที่ : {{typesPlace}} </h3>
-  <h3>เวลาทำการ : {{timePlace}} </h3>
-  <h3>เบอร์โทรศัพท์ : {{telephonePlace}} </h3>
-  <h3>เว็ปไซต์ : {{websitePlace}} </h3>
-  <h3>สร้างโดย : {{owener}} </h3>
-  <h3>ระยะห่าง {{distance}} กิโลเมตร </h3>
+  <ion-card>
+    <ion-card-content>
+      <div>
+        <img src="{{photoPlace}}" width="100px">
+      </div>
+      <p>ชื่อสถานที่ : {{namePlace}} </p>
+      <p>รายละเอียด : {{detailPlace}} </p>
+      <p>ที่อยู่ : {{placeAddress}} </p>
+      <p>ประเภทของสถานที่ : {{typesPlace}} </p>
+      <p>เวลาทำการ : {{timePlace}} </p>
+      <p>เบอร์โทรศัพท์ : {{telephonePlace}} </p>
+      <p>เว็ปไซต์ : {{websitePlace}} </p>
+      <p>สร้างโดย : {{owener}} </p>
+      <p>ระยะห่าง {{distance}} กิโลเมตร </p>
+      <button ion-button (click)="checkIn()">Check-in</button>
+    </ion-card-content>
+  </ion-card>
 
+  <ion-card>
+    <ion-card-header>
+      <h2>รีวิวสถานที่</h2>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>คำอธิบาย</ion-label>
+          <ion-textarea [(ngModel)]="detail"></ion-textarea>
+        </ion-item>
+      </ion-list>
+      <ion-list>
+        <ion-item>
+          <ion-label>ความพึงพอใจ</ion-label>
+          <ion-select [(ngModel)]="score" name="score">
+            <ion-option value="5">5</ion-option>
+            <ion-option value="4">4</ion-option>
+            <ion-option value="3">3</ion-option>
+            <ion-option value="2">2</ion-option>
+            <ion-option value="1">1</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
 
-
-  <button ion-button (click)="viewdetailMap(data)">Check-in</button>
+      <button ion-button (click)="sentReview(detail,score)">รีวิว</button>
+    </ion-card-content>
+  </ion-card>
 
 
 </ion-content>

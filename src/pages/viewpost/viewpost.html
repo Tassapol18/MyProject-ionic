@@ -2,25 +2,37 @@
 
   <ion-navbar>
     <ion-title> {{topic}} </ion-title>
-    <!-- {{topic}} -->
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <h3>เรื่อง : {{topic}} </h3>
-  <h3>ผู้เขียน : {{name}} </h3>
-  <h3>อีเมล์ : {{email}} </h3>
-  <h3>ประเภท : {{types}} </h3>
-  <h3>วันและเวลา : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </h3>
-  <h3>รายละเอียด : {{detail}} </h3>
-  <h3>รูปภาพ
-    <img src="{{photo}}" width="300px">
-  </h3>
+  <ion-card>
+    <ion-card-content>
+      <p>เรื่อง : {{topic}} </p>
+      <p>ผู้เขียน : {{name}} </p>
+      <p>อีเมล์ : {{email}} </p>
+      <p>ประเภท : {{types}} </p>
+      <p>วันและเวลา : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
+      <p>รายละเอียด : {{detail}} </p>
+      <p>รูปภาพ
+        <img src="{{photo}}" width="300px">
+      </p>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <div #map id="map" style="width:100%; height: 400px;"></div>
+  </ion-card>
 
 
-  <div #map id="map" style="width:100%; height: 400px;"></div>
+
+
+  <button ion-button color="danger" (click)="goToPost()">
+    <ion-icon name="add-circle">
+      รายงานโพสต์
+    </ion-icon>
+  </button>
   <!--<div padding>
     <button ion-button color="danger" (click)="delete()">
       <ion-icon name="trash"></ion-icon> ลบข้อมลู </button>

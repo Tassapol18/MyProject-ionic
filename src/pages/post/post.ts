@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams} from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import firebase from 'firebase';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
@@ -18,7 +18,7 @@ export class PostPage {
   myPhotoURL: any;
   lat: any;
   lng: any;
-
+  
   options: CameraOptions = {
     quality: 70,
     destinationType: this.camera.DestinationType.DATA_URL,
@@ -37,8 +37,7 @@ export class PostPage {
     public navParams: NavParams,
     public db: AngularFireDatabase,
     private geolocation: Geolocation,
-    private camera: Camera,
-    private platform: Platform) {
+    private camera: Camera) {
     this.post = db.list('/Posts');
     this.postPhoto = firebase.storage().ref('/Posts');
   }
@@ -70,20 +69,15 @@ export class PostPage {
       });
   }
 
+
   selectPhoto() {
-    if (this.platform.is('cordova')) {
-      console.log('Cordova');
-      
+    console.log('upload');
     this.camera.getPicture(this.optionsSelect)
       .then((myPhoto) => {
         this.myPhotoURL = 'data:image/jpeg;base64,' + myPhoto;
       }, (err) => {
-        console.log(err);
+        console.log('Can not upload',err);
       });
-    }else{
-      console.log('Web');
-      
-    }
   }
 
 
@@ -91,6 +85,12 @@ export class PostPage {
   newPost(topic, detail, types) {
     let user = firebase.auth().currentUser;
     let timestamp = firebase.database.ServerValue.TIMESTAMP;
+    const filename = Math.floor(Date.now() / 1000);
+    const imageRef = this.postPhoto.child('Post_' + filename + '.jpg');
+    imageRef.putString(this.myPhotoURL, firebase.storage.StringFormat.DATA_URL)
+      .then((snapshot) => {
+        //alert(this.myPhotoURL)
+      });
 
     if (topic != null && detail != null && types != null) {
       if (this.lat == null && this.lng == null && this.myPhotoURL == null) {
@@ -99,10 +99,10 @@ export class PostPage {
           email: user.email,
           profilePicture: user.photoURL,
           uid: user.uid,
+          topic: topic,
           detail: detail,
           types: types,
           timestamp: timestamp,
-          photo: this.myPhotoURL
         }).then(newPost => {
           this.navCtrl.pop();
         }, error => {
@@ -110,12 +110,6 @@ export class PostPage {
         });
       } else if (this.lat == null && this.lng == null) {
         //Picture
-        const filename = Math.floor(Date.now() / 1000);
-        const imageRef = this.postPhoto.child('Post_' + filename + '.jpg');
-        imageRef.putString(this.myPhotoURL, firebase.storage.StringFormat.DATA_URL)
-          .then((snapshot) => {
-            //alert(this.myPhotoURL)
-          });
         this.post.push({
           name: user.displayName,
           email: user.email,

@@ -32,6 +32,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database-deprecated';
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
 import { Facebook } from '@ionic-native/facebook';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 
 
@@ -95,7 +96,8 @@ export const firebase = {
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     FirebaseProvider,
     Geolocation,
-    Facebook
+    Facebook,
+    GooglePlus
   ]
 })
 export class AppModule { }

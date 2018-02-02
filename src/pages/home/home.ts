@@ -16,7 +16,8 @@ export class HomePage {
   natural: FirebaseListObservable<any[]>;
   culture: FirebaseListObservable<any[]>;
   travel: FirebaseListObservable<any[]>;
-  
+  other: FirebaseListObservable<any[]>;
+
   News: string = "All";
   isAndroid: boolean = false;
   constructor(public navCtrl: NavController,
@@ -32,28 +33,35 @@ export class HomePage {
     this.community = db.list('/Posts',  {
       query: {
         orderByChild: 'types',
-        equalTo: 'ชุมชน'
+        equalTo: 'แหล่งท่องในเที่ยวชุมชน'
       }
     });
 
     this.natural = db.list('/Posts',  {
       query: {
         orderByChild: 'types',
-        equalTo: 'ธรรมชาติ'
+        equalTo: 'แหล่งท่องเที่ยวเชิงธรรมชาติ'
       }
     });
 
     this.culture = db.list('/Posts',  {
       query: {
         orderByChild: 'types',
-        equalTo: 'วัฒนธรรม'
+        equalTo: 'แหล่งท่องเที่ยวเชิงวัฒนธรรม'
       }
     });
 
     this.travel = db.list('/Posts',  {
       query: {
         orderByChild: 'types',
-        equalTo: 'ท่องเที่ยว'
+        equalTo: 'กิจกรรมท่องเที่ยว'
+      }
+    });
+
+    this.other = db.list('/Posts',  {
+      query: {
+        orderByChild: 'types',
+        equalTo: 'อื่น ๆ'
       }
     });
 
@@ -133,6 +141,19 @@ export class HomePage {
       'lat': travel.lat,
       'lng': travel.lng,
       'photo': travel.photo
+    })
+  }
+
+  viewpostOther(other){
+    this.navCtrl.push(ViewpostPage, {
+      'name': other.name,
+      'email': other.email,
+      'topic': other.topic,
+      'detail': other.detail,
+      'types': other.types,
+      'lat': other.lat,
+      'lng': other.lng,
+      'photo': other.photo
     })
   }
 

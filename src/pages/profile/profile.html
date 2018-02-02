@@ -20,9 +20,21 @@
     </div>
   </ion-card>
 
+  <ion-card>
+    <h1>สถานที่ที่ Check-in</h1>
+    <ion-item *ngFor="let checkin of (checkin | async)?.slice().reverse()">
+      <ion-thumbnail item-start>
+        <img src="{{checkin.photoPlace}}">
+      </ion-thumbnail>
+      <h2>{{checkin.namePlace}}</h2>
+      <p>รายละเอียด : {{checkin.detailPlace}}</p>
+      <p>ประเภท : {{checkin.typesPlace}}</p>
+      <button ion-button color="danger" (click)="deleteCheckin(checkin)">ลบ</button>
+    </ion-item>
+  </ion-card>
 
-  <ion-card no-line>
 
+  <ion-card>
     <h1>โพสต์ของคุณ</h1>
     <ion-item *ngFor="let post of (post | async)?.slice().reverse()">
       <!-- <ion-thumbnail item-start>
@@ -37,7 +49,7 @@
   </ion-card>
 
 
-  <ion-card no-line>
+  <ion-card>
     <h1>สถานที่ของคุณ</h1>
     <ion-item *ngFor="let map of (map | async)?.slice().reverse()">
       <ion-thumbnail item-start>
@@ -51,5 +63,6 @@
       <button ion-button color="danger" (click)="deleteMap(map)">ลบ</button>
     </ion-item>
   </ion-card>
+
 
 </ion-content>

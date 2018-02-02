@@ -13,22 +13,22 @@ import { TabsPage } from '../pages/tabs/tabs';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage: any = WelcomePage;
+  rootPage: any = TabsPage;
 
   constructor(platform: Platform,
     statusBar: StatusBar,
     splashScreen: SplashScreen,
     private afAuth: AngularFireAuth) {
 
-    this.afAuth.authState.subscribe(res => {
-      if (res) {
-        this.rootPage = TabsPage;
-        console.log("Welcome to CountryTrip");
-      } else {
-        this.rootPage = WelcomePage;
-        console.log("Welcome!!");
-      }
-    });
+    // this.afAuth.authState.subscribe(res => {
+    //   if (res) {
+    //     this.rootPage = TabsPage;
+    //     console.log("Welcome to CountryTrip");
+    //   } else {
+    //     this.rootPage = WelcomePage;
+    //     console.log("Welcome!!");
+    //   }
+    // });
 
     platform.ready().then(() => {
       statusBar.styleDefault();

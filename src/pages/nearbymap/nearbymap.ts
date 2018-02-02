@@ -4,8 +4,6 @@ import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/databa
 import { ViewmapPage } from '../viewmap/viewmap';
 import { Geolocation } from '@ionic-native/geolocation';
 
-declare var google;
-
 @IonicPage()
 @Component({
   selector: 'page-nearbymap',
@@ -28,58 +26,65 @@ export class NearbymapPage {
     public navParams: NavParams,
     public db: AngularFireDatabase,
     private geolocation: Geolocation) {
-
-    this.mapData = db.list('/Maps');
-    this.mapData.forEach(res => {
-      for (let i = 0; i < res.length; i++) {
-        let temp = {
-          LatLng: {
-            lat: res[i].lat,
-            lng: res[i].lng
-          },
-          Place: {
-            namePlace: res[i].namePlace,
-            detailPlace: res[i].detailPlace,
-            placeAddress: res[i].placeAddress,
-            typesPlace: res[i].typesPlace,
-            timePlace: res[i].timePlace,
-            telephonePlace: res[i].telephonePlace,
-            websitePlace: res[i].websitePlace,
-            owener: res[i].owener,
-            photoPlace: res[i].photoPlace
+      this.mapData = this.db.list('/Maps');
+      this.mapData.forEach(res => {
+        for (let i = 0; i < res.length; i++) {
+          let temp = {
+            LatLng: {
+              lat: res[i].lat,
+              lng: res[i].lng
+            },
+            Place: {
+              namePlace: res[i].namePlace,
+              detailPlace: res[i].detailPlace,
+              placeAddress: res[i].placeAddress,
+              typesPlace: res[i].typesPlace,
+              timePlace: res[i].timePlace,
+              telephonePlace: res[i].telephonePlace,
+              websitePlace: res[i].websitePlace,
+              owener: res[i].owener,
+              photoPlace: res[i].photoPlace
+            }
           }
+          this.data.push(temp)
         }
-        this.data.push(temp)
-      }
-      console.log("data before (for loop) : NearbyMap : =>", this.data);
-
-    });
-    this.load();
+        console.log("data before (for loop) : NearbyMap : =>", this.data);
+      });
     //console.log("Map Data NearbyMap", this.mapData);
   }
 
+  ionViewWillEnter(){
+    console.log("This is nearby");
+   
+    this.load()
+  }
+
   load() {
-    this.geolocation.getCurrentPosition()
-      .then((res) => {
+    console.log("Load...");
+    
+    this.geolocation.getCurrentPosition().then((res) => {
         console.log("User Current (nearby) : ", res.coords.latitude, res.coords.longitude);
+        this.latCurrent = res.coords.latitude;
+        this.lngCurrent = res.coords.longitude;
+        this.distance(this.latCurrent, this.lngCurrent);
       }).catch((error) => {
         console.log('Error getting location', error);
       });
 
-    let watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
-      this.latCurrent = data.coords.latitude;
-      this.lngCurrent = data.coords.longitude;
-      this.distance(this.latCurrent, this.lngCurrent);
-    });
+    // let watch = this.geolocation.watchPosition();
+    // watch.subscribe((data) => {
+    //   this.latCurrent = data.coords.latitude;
+    //   this.lngCurrent = data.coords.longitude;
+    //   this.distance(this.latCurrent, this.lngCurrent);
+    // });
 
   }
 
   distance(latCurrent, lngCurrent) {
-    console.log("Lat : Lng User : ", latCurrent, lngCurrent);
-    
+    // console.log("Lat : Lng User : ", latCurrent, lngCurrent);
     let n = 1;
-    console.log("----------------- Start -----------------",n);
+    console.log("----------------- Start -----------------");
+    
     for (let i = 0; i < this.data.length; i++) {
       let latPlace = this.data[i].LatLng.lat;
       let lngPlace = this.data[i].LatLng.lng;
@@ -95,15 +100,15 @@ export class NearbymapPage {
       this.resultDistance[i] = (d / 1000).toFixed(2);
       this.data[i].Place.resultDistance = this.resultDistance[i];
 
-      // console.log("Place", n++, " : ", this.data[i].Place.namePlace);
-      // console.log("latPlace", latPlace, "lngPlace", lngPlace);
-      // console.log("dLat : dLng", dLat, dLng);
-      // console.log("a", a);
-      // console.log("Distance", this.resultDistance[i], "Kilometer");
+      console.log("Place", n++, " : ", this.data[i].Place.namePlace);
+      console.log("latPlace", latPlace, "lngPlace", lngPlace);
+      console.log("dLat : dLng", dLat, dLng);
+      console.log("a", a);
+      console.log("Distance", this.resultDistance[i], "Kilometer");
 
     }
 
-    console.log("----------------- Stop -----------------",n);
+    console.log("----------------- Stop -----------------");
 
   }
 

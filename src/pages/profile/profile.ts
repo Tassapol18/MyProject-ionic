@@ -17,6 +17,7 @@ export class ProfilePage {
 
   post: FirebaseListObservable<any[]>;
   map: FirebaseListObservable<any[]>;
+  checkin: FirebaseListObservable<any[]>;
   name: any;
   email: any;
   photo: any;
@@ -28,12 +29,12 @@ export class ProfilePage {
   ) {
 
     var user = firebase.auth().currentUser;
-    
- 
-      this.name = user.displayName;
-      this.email = user.email;
-      this.photo = user.photoURL;
-    
+
+
+    this.name = user.displayName;
+    this.email = user.email;
+    this.photo = user.photoURL;
+
 
     this.post = db.list('/Posts', {
       query: {
@@ -47,11 +48,12 @@ export class ProfilePage {
         equalTo: this.afAuth.auth.currentUser.uid
       }
     });
+    this.checkin = db.list('/Users/' + user.uid + '/checkIn');
 
   }
 
   //Post
-  viewpost(post){
+  viewpost(post) {
     this.navCtrl.push(ViewpostPage, {
       'name': post.name,
       'email': post.email,
@@ -84,7 +86,7 @@ export class ProfilePage {
   }
 
   //Map
-  viewMap(map){
+  viewMap(map) {
     this.navCtrl.push(ViewpostPage, {
       'name': map.name,
       'email': map.email,
@@ -114,6 +116,11 @@ export class ProfilePage {
       'lng': map.lng,
       'photo': map.photo
     })
+  }
+
+  //CheckIn
+  deleteCheckin(checkin: any) {
+    this.checkin.remove(checkin)
   }
 
 

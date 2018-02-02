@@ -20,7 +20,8 @@
 
     <ion-item>
       <ion-label>ประเภท</ion-label>
-      <ion-select [(ngModel)]="types" name="types" placeholder="{{types}}">
+      <ion-select [(ngModel)]="types" name="types">
+          <ion-option value="{{types}}" checked="true">{{types}}</ion-option>
         <ion-option value="ชุมชน">ชุมชน</ion-option>
         <ion-option value="ธรรมชาติ">ธรรมชาติ</ion-option>
         <ion-option value="วัฒนธรรม">วัฒนธรรม</ion-option>
