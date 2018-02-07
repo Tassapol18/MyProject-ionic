@@ -16,13 +16,18 @@
       <p>ประเภท : {{types}} </p>
       <p>วันและเวลา : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
       <p>รายละเอียด : {{detail}} </p>
-      <p>รูปภาพ
-        <img src="{{photo}}" width="300px">
-      </p>
+
     </ion-card-content>
   </ion-card>
-  <ion-card>
-    <div #map id="map" style="width:100%; height: 400px;"></div>
+
+  <ion-card *ngIf="imgShow">
+    <p>รูปภาพ
+      <img src="{{photo}}" width="300px">
+    </p>
+  </ion-card>
+
+  <ion-card *ngIf="mapShow">
+    <div #map id="map"></div>
   </ion-card>
 
 

@@ -11,7 +11,7 @@
   <ion-card>
     <ion-card-content>
       <div>
-        <img src="{{photoPlace}}" width="100px">
+        <img src="{{photoPlace}}" width="300px">
       </div>
       <p>ชื่อสถานที่ : {{namePlace}} </p>
       <p>รายละเอียด : {{detailPlace}} </p>
@@ -20,7 +20,8 @@
       <p>เวลาทำการ : {{timePlace}} </p>
       <p>เบอร์โทรศัพท์ : {{telephonePlace}} </p>
       <p>เว็ปไซต์ : {{websitePlace}} </p>
-      <p>สร้างโดย : {{owener}} </p>
+      <p>สร้างโดย : {{ownerPlace}} </p>
+      <p>วันและเวลาที่สร้าง : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
       <p>ระยะห่าง {{distance}} กิโลเมตร </p>
       <button ion-button (click)="checkIn()">Check-in</button>
     </ion-card-content>

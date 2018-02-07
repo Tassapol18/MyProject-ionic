@@ -6,8 +6,7 @@ import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase';
 import { AngularFireDatabase } from 'angularfire2/database-deprecated';
-import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
-import { GooglePlus } from '@ionic-native/google-plus';
+import { Facebook } from '@ionic-native/facebook';
 
 
 
@@ -26,49 +25,21 @@ export class WelcomePage {
     public afAuth: AngularFireAuth,
     public db: AngularFireDatabase,
     public fb: Facebook,
-    public platform: Platform,
-    private googlePlus: GooglePlus
+    public platform: Platform
   ) {
     // this.afAuth.authState.subscribe((auth) => {
     //   this.authState = auth
     //   if (this.authState) {
-    //     console.log('Hello ' + this.authState.displayName + ' (' + this.authState.email + ')')
+    //     alert('Hello ' + this.authState.displayName + ' (' + this.authState.email + ')')
+    //   }else{
+    //     this.fb.logout();
     //   }
     // });
+    // this.afAuth.authState.subscribe((auth) => {
+    //   this.authState = auth
+    // });
   }
-  // googleLogin() {
 
-  // }
-
-  facebookLogin() {
-    // if (this.platform.is('cordova')) {
-    this.fb.login(['public_profile', 'user_friends', 'email'])
-      .then((res: FacebookLoginResponse) =>
-        console.log('Logged into Facebook!', res, this.updateUserData())
-      ).catch(e =>
-        console.log('Error logging into Facebook', e)
-      );
-    // this.fb.login(['email', 'public_profile']).then(res => {
-    //   const facebookCredential = firebase.auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
-    //   this.afAuth.auth.signInWithCredential(facebookCredential);
-    //   console.log("Facebook login with cordova", res)
-    //   console.log("UpdateToDatabase", this.updateUserData())
-    // })
-    // } else {
-    //   const provider = new firebase.auth.FacebookAuthProvider()
-    //   console.log("Facebook login with not is cordova", provider)
-    //   return this.socialSignIn(provider);
-    //   /*this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(
-    //     res => {
-    //       console.log("Facebook login not cordova", res)
-    //       console.log("UpdateToDatabase")
-    //       this.authState = res.user;
-    //       this.updateUserData()
-    //     }).catch(function (error) {
-    //       console.log(error);
-    //     });*/
-    // }
-  }
 
   // Returns true if user is logged in
   get authenticated(): boolean {
@@ -76,52 +47,58 @@ export class WelcomePage {
   }
 
   // Returns current user data
-  get currentUser(): any {
+  get currentUser() {
     return this.authenticated ? this.authState : null;
   }
 
   // Returns
-  get currentUserObservable(): any {
+  get currentUserObservable() {
     return this.afAuth.authState
   }
 
   // Returns current user UID
-  get currentUserId(): string {
+  get currentUserId() {
     return this.authenticated ? this.authState.uid : '';
   }
 
-  //// Social Auth ////
-  googleLogin() {
-    this.googlePlus.login({})
-      .then(res => console.log('Logged into GooglePlus!', res))
-      .catch(err => console.error(err));
-    // const provider = new firebase.auth.GoogleAuthProvider()
-    // return this.socialSignIn(provider);
-  }
-
-  /*facebookLogin() {
-    const provider = new firebase.auth.FacebookAuthProvider()
-    return this.socialSignIn(provider);
-  }*/
-
-  private socialSignIn(provider) {
-    return this.afAuth.auth.signInWithPopup(provider)
-      .then((credential) => {
-        this.authState = credential.user
-        this.updateUserData()
-      })
-      .catch(error => console.log(error));
+  //FacebookLogin
+  facebookLogin() {
+    return new Promise((resolve, reject) => {
+      this.fb.login(['email']).then((response) => {
+        const facebookCredential = firebase.auth.FacebookAuthProvider
+          .credential(response.authResponse.accessToken);
+        firebase.auth().signInWithCredential(facebookCredential)
+          .then((success) => {
+            alert("Firebase auth success : " + JSON.stringify(success));
+            this.authState = success;
+            this.updateUserData();
+            resolve('sucess');
+          })
+          .catch((err) => {
+            alert("Firebase auth failure : " + JSON.stringify(err));
+            this.fb.logout()
+            reject('fail');
+          });
+        
+      }).catch((err) => {
+        alert("Facebook error : " + err)
+        reject('fail');
+      });
+    })
   }
 
   // UpdateUsertoDatabase
-  updateUserData(): void {
+  updateUserData() {
+    let timestamp = firebase.database.ServerValue.TIMESTAMP;
     let path = `Users/${this.currentUserId}`;
     let data = {
       email: this.authState.email,
       name: this.authState.displayName,
       profilePicture: this.authState.photoURL,
-      uid: this.authState.uid
+      uid: this.authState.uid,
+      timestamp: timestamp
     }
+    alert('UpdateUser' + " : " + data)
 
     this.db.object(path).update(data)
       .catch(error => console.log(error));

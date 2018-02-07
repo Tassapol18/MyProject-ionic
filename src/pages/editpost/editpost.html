@@ -1,52 +1,78 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>แก้ไขโพสต์</ion-title>
+    <ion-title>แก้ไขโพสต์ {{key}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-<ion-content padding class="add-contact">
-  <ion-list no-line>
-    <ion-item>
-      <ion-label>เรื่อง</ion-label>
-      <ion-input [(ngModel)]="topic" type="text" placeholder="หัวเรื่อง">{{topic}}</ion-input>
-    </ion-item>
+<ion-content padding>
+  <ion-item>
+    <ion-label>*เรื่อง</ion-label>
+    <ion-input [(ngModel)]="topic" type="text">{{topic}}</ion-input>
+  </ion-item>
 
-    <ion-item>
-      <ion-label>รายละเอียด</ion-label>
-      <ion-input [(ngModel)]="detail" type="text" placeholder="รายละเอียด">{{detail}}</ion-input>
-    </ion-item>
+  <ion-item>
+    <ion-label>*ประเภท</ion-label>
+    <ion-select [(ngModel)]="types" name="types">
+      <ion-option value="แหล่งท่องในเที่ยวชุมชน">แหล่งท่องเที่ยวชุมชน</ion-option>
+      <ion-option value="แหล่งท่องเที่ยวเชิงธรรมชาติ">แหล่งธรรมท่องเที่ยวธรรมชาติ</ion-option>
+      <ion-option value="แหล่งท่องเที่ยวเชิงวัฒนธรรม">แหล่งท่องเที่ยววัฒนธรรม</ion-option>
+      <ion-option value="กิจกรรมท่องเที่ยว">กิจกรรมท่องเที่ยว</ion-option>
+      <ion-option value="อื่น ๆ">อื่น ๆ</ion-option>
+    </ion-select>
+  </ion-item>
 
-    <ion-item>
-      <ion-label>ประเภท</ion-label>
-      <ion-select [(ngModel)]="types" name="types">
-          <ion-option value="{{types}}" checked="true">{{types}}</ion-option>
-        <ion-option value="ชุมชน">ชุมชน</ion-option>
-        <ion-option value="ธรรมชาติ">ธรรมชาติ</ion-option>
-        <ion-option value="วัฒนธรรม">วัฒนธรรม</ion-option>
-        <ion-option value="ท่องเที่ยว">ท่องเที่ยว</ion-option>
-      </ion-select>
-    </ion-item>
+  <ion-item>
+    <ion-label>*รายละเอียด</ion-label>
+    <ion-textarea [(ngModel)]="detail" type="text">{{detail}}</ion-textarea>
+  </ion-item>
 
-    <ion-item>
-      <ion-row>
-        <ion-col>
-          <button ion-button color="secondary" type="file" full round large (click)="selectPhoto()">
-            <ion-icon name="md-image"></ion-icon>
-          </button>
-        </ion-col>
-      </ion-row>
 
-      <div>
-        <img [src]="myPhotoURL" *ngIf="myPhotoURL" width="300" />
-      </div>
-    </ion-item>
-  </ion-list>
+    <ion-row>
+      <ion-col>
+        <button ion-button type="button" color="primary" full round (click)="addLatLng()">แสดงพิกัด</button>
+      </ion-col>
+      <ion-col>
+        <button ion-button type="button" color="danger" full round (click)="resetLatLng()">คืนค่าพิกัด</button>
+      </ion-col>
+    </ion-row>
+
+
+  <ion-item>
+    <ion-label>พิกัด(Lat) : </ion-label>
+    <ion-input type="text" name="lat" [(ngModel)]="lat" placeholder="ระบุค่าละติจูด"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>พิกัด(Lng) : </ion-label>
+    <ion-input type="text" name="lng" [(ngModel)]="lng" placeholder="ระบุค่าลองติจูด"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-row>
+      <ion-col>
+        <button ion-button color="danger" type="button" full round large (click)="takePhoto()">
+          <ion-icon name="md-camera"></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button color="secondary" type="button" full round large (click)="selectPhoto()">
+          <ion-icon name="md-image"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+
+    <div *ngIf="showPhotoUpload">
+      <img [src]="photo" width="300" />
+    </div>
+    <div *ngIf="showPhotoUpload">
+      <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
+    </div>
+  </ion-item>
 
   <ion-row center>
     <ion-col text-center>
-      <button ion-button type="submit" (click)="updatePost()">โพสต์</button>
+      <button ion-button type="submit" full round large (click)="editPost(topic, detail, types)">แก้ไขโพสต์</button>
     </ion-col>
   </ion-row>
 

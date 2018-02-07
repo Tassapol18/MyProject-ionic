@@ -20,7 +20,7 @@
     </div>
   </ion-card>
 
-  <ion-card>
+  <ion-card *ngIf="showCheckin">
     <h1>สถานที่ที่ Check-in</h1>
     <ion-item *ngFor="let checkin of (checkin | async)?.slice().reverse()">
       <ion-thumbnail item-start>
@@ -34,13 +34,14 @@
   </ion-card>
 
 
-  <ion-card>
+  <ion-card *ngIf="showPostOwn">
     <h1>โพสต์ของคุณ</h1>
     <ion-item *ngFor="let post of (post | async)?.slice().reverse()">
       <!-- <ion-thumbnail item-start>
         <img src="{{post.profilePicture}}">
       </ion-thumbnail> -->
       <h2>{{post.topic}}</h2>
+      <p>{{post.types}}</p>
       <p>{{post.detail}}</p>
       <button ion-button color="primary" (click)="viewpost(post)">ดูเพิ่มเติม</button>
       <button ion-button color="secondary" (click)="editPost(post)">แก้ไข</button>
@@ -49,7 +50,7 @@
   </ion-card>
 
 
-  <ion-card>
+  <ion-card *ngIf="showMapPlaceOwn">
     <h1>สถานที่ของคุณ</h1>
     <ion-item *ngFor="let map of (map | async)?.slice().reverse()">
       <ion-thumbnail item-start>

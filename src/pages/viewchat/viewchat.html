@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>viewchat</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <h1>{{name}}</h1>
+  <h1>{{key}}</h1>
+  <p>รูปภาพ
+      <img src="{{photo}}" width="300px">
+    </p>
+  <!-- <div id="chatMessages"> -->
+  <!-- <div *ngFor="let message of messages" [class]="message.specialMessage ? 'message special' : 'message'">
+      <div [class]="message.username == username ? 'innerMessage messageRight' : 'innerMessage messageLeft'"> -->
+  <!-- <div>
+      <div>
+        <div class="username">{{ name }}</div>
+        <div class="messageContent">message</div>
+        <div class="messageContent">{{ message.message }}</div>
+      </div>
+    </div>
+  </div> -->
+
+</ion-content>
+
+<!-- <ion-footer>
+  <ion-toolbar>
+    <div id="footer">
+      <div class="elem">
+        <ion-input type="text" [(ngModel)]="message"></ion-input>
+      </div>
+      <div class="elem">
+        <button ion-button icon-only (click)="sendMessage()">
+          <ion-icon name="send"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer> -->

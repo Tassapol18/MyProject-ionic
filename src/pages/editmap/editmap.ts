@@ -1,26 +1,34 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { Geolocation } from '@ionic-native/geolocation';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
+import { Geolocation } from '@ionic-native/geolocation';
 import firebase from 'firebase';
-
 
 @IonicPage()
 @Component({
-  selector: 'page-new-map',
-  templateUrl: 'new-map.html',
+  selector: 'page-editmap',
+  templateUrl: 'editmap.html',
 })
-export class NewMapPage {
+export class EditmapPage {
 
-  maps: FirebaseListObservable<any[]>;
-  data: any;
+  map: any;
+  mapPhoto: any;
+
+  key: any;
+  namePlace: any;
+  typesPlace: any;
+  detailPlace: any;
+  placeAddress: any;
+  timePlace: any;
+  telephonePlace: any;
+  websitePlace: any;
   lat: any;
   lng: any;
-  mapPhoto: any;
-  myPhoto: any;
-  myPhotoURL: any;
-  showPhotoUpload: boolean;
+  photoPlace: any;
+  photoPlaceURL: any;
+  showPhotoUpload: boolean = false;
+  data: any;
 
   options: CameraOptions = {
     quality: 80,
@@ -40,13 +48,30 @@ export class NewMapPage {
     correctOrientation: true
   }
 
-
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public db: AngularFireDatabase,
-    private geolocation: Geolocation,
-    private camera: Camera) {
-    this.showPhotoUpload = false;
+    private camera: Camera,
+    private geolocation: Geolocation) {
+
+    this.key = navParams.get('key');
+    this.namePlace = navParams.get('namePlace');
+    this.typesPlace = navParams.get('typesPlace');
+    this.detailPlace = navParams.get('detailPlace');
+    this.placeAddress = navParams.get('placeAddress');
+    this.timePlace = navParams.get('timePlace');
+    this.telephonePlace = navParams.get('telephonePlace');
+    this.websitePlace = navParams.get('websitePlace');
+    this.lat = navParams.get('lat');
+    this.lng = navParams.get('lng');
+    this.photoPlace = navParams.get('photoPlace');
+    this.photoPlaceURL = navParams.get('photoPlaceURL');
+    
+    if(this.photoPlace != null){
+      this.showPhotoUpload = true;
+    }else{
+      this.showPhotoUpload = false;
+    }
   }
 
   getPlace() {
@@ -71,7 +96,7 @@ export class NewMapPage {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.options)
         .then((res) => {
-          this.myPhoto = 'data:image/jpeg;base64,' + res;
+          this.photoPlace = 'data:image/jpeg;base64,' + res;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -84,7 +109,7 @@ export class NewMapPage {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.optionsSelect)
         .then((res) => {
-          this.myPhoto = 'data:image/jpeg;base64,' + res;
+          this.photoPlace = 'data:image/jpeg;base64,' + res;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -96,9 +121,10 @@ export class NewMapPage {
 
   //DeletePhoto
   deletePhotoUpload() {
-    alert('Delete Photo now : ' + this.myPhotoURL)
-    firebase.storage().ref('/Maps/' + this.myPhotoURL).delete();
-    this.myPhoto = null;
+    alert('Delete Photo now : ' + this.photoPlaceURL)
+    firebase.storage().ref('/Maps/' + this.photoPlaceURL).delete();
+    this.photoPlace = null;
+    this.photoPlaceURL = null;
     this.showPhotoUpload = false;
   }
 
@@ -108,9 +134,9 @@ export class NewMapPage {
     this.mapPhoto = firebase.storage().ref('/Maps');
     const filename = Math.floor(Date.now() / 1000);
     return new Promise((resolve, reject) => {
-      this.myPhotoURL = 'Maps_' + filename;
-      const imageRef = this.mapPhoto.child(this.myPhotoURL);
-      imageRef.putString(this.myPhoto, firebase.storage.StringFormat.DATA_URL)
+      this.photoPlaceURL = 'Maps_' + filename;
+      const imageRef = this.mapPhoto.child(this.photoPlaceURL);
+      imageRef.putString(this.photoPlace, firebase.storage.StringFormat.DATA_URL)
         .then(() => {
           alert('Upload Success : ' + imageRef)
           this.showPhotoUpload = true;
@@ -122,11 +148,10 @@ export class NewMapPage {
     })
   }
 
-  newMaps(namePlace, typesPlace, detailPlace, placeAddress, timePlace, telephonePlace, websitePlace) {
+  editMap(namePlace, typesPlace, detailPlace, placeAddress, timePlace, telephonePlace, websitePlace) {
     let user = firebase.auth().currentUser;
-    let timestamp = firebase.database.ServerValue.TIMESTAMP;
 
-    alert('This function newMaps => '
+    alert('This function editMap => '
       + ' //ownerPlace : ' + user.displayName
       + ' //ownerUID : ' + user.uid
       + ' //namePlace : ' + namePlace
@@ -138,8 +163,7 @@ export class NewMapPage {
       + ' //websitePlace : ' + websitePlace
       + ' //lat : ' + this.lat
       + ' //lng : ' + this.lng
-      + ' //imageURL : ' + this.myPhotoURL
-      + ' //timestamp : ' + timestamp);
+      + ' //imageURL : ' + this.photoPlaceURL);
 
     this.data = {
       ownerPlace: user.displayName,
@@ -147,87 +171,40 @@ export class NewMapPage {
       namePlace: namePlace,
       typesPlace: typesPlace,
       detailPlace: detailPlace,
-      placeAddress: (placeAddress) ? placeAddress : null,
-      timePlace: (timePlace) ? timePlace : null,
-      telephonePlace: (telephonePlace) ? telephonePlace : null,
-      websitePlace: (websitePlace) ? websitePlace : null,
+      placeAddress: (placeAddress) ? placeAddress : '-',
+      timePlace: (timePlace) ? timePlace : '-',
+      telephonePlace: (telephonePlace) ? telephonePlace : '-',
+      websitePlace: (websitePlace) ? websitePlace : '-',
       lat: this.lat,
       lng: this.lng,
-      photoPlace: (this.myPhoto) ? this.myPhoto : null,
-      photoPlaceURL: (this.myPhotoURL) ? this.myPhotoURL : null,
-      timestamp: timestamp,
+      photoPlace: (this.photoPlace) ? this.photoPlace : null,
+      photoPlaceURL: (this.photoPlaceURL) ? this.photoPlaceURL : null,
     }
     alert('Use func uploadMap');
-    this.uploadMap();
+    this.updateFromEdit();
   }
 
-  uploadMap() {
-    alert('Func uploadMap')
-    this.maps = this.db.list('/Maps');
+  updateFromEdit() {
+    alert('Func updateFromEdit');
+    this.map = this.db.object('/Maps/' + this.key);
+    alert('data : ' + this.data);
     return new Promise((resolve, reject) => {
-      this.maps.push(this.data).then((res) => {
-        alert('บันทึกข้อมูลสำเร็จ : ' + res);
+      this.map.push(this.data).then((res) => {
+        alert('แก้ไขข้อมูลสำเร็จ : ' + res);
         this.navCtrl.pop();
         resolve('Success');
       }, err => {
-        alert('บันทึกข้อมูลไม่สำเร็จ : ' + err);
+        alert('แก้ไขข้อมูลไม่สำเร็จ : ' + err);
         reject('Unsuccess');
       });
     })
   }
 
 
-}
 
-/*
-if (namePlace != null && detailPlace != null && typesPlace != null) {
-      if (this.myPhoto != null) {
-        const filename = Math.floor(Date.now() / 1000);
-        const imageRef = this.mapPhoto.child('Post_' + filename + '.jpg');
-        imageRef.putString(this.myPhoto, firebase.storage.StringFormat.DATA_URL)
-          .then((snapshot) => {
-            //alert(this.myPhoto)
-          });
-        this.maps.push({
-          owener: user.displayName,
-          owenerUID: user.uid,
-          namePlace: namePlace,
-          detailPlace: detailPlace,
-          typesPlace: typesPlace,
-          placeAddress: placeAddress,
-          timePlace: timePlace,
-          telephonePlace: telephonePlace,
-          websitePlace: websitePlace,
-          timestamp: timestamp,
-          photoPlace: this.myPhoto,
-          lat: this.lat,
-          lng: this.lng
-        }).then(newPost => {
-          this.navCtrl.pop();
-          //this.navCtrl.setRoot(TabsPage);
-        }, error => {
-          console.log(error);
-        });
-      } else {
-        //don't have Picture
-        this.maps.push({
-          owener: user.displayName,
-          owenerUID: user.uid,
-          namePlace: namePlace,
-          detailPlace: detailPlace,
-          typesPlace: typesPlace,
-          placeAddress: placeAddress,
-          timePlace: timePlace,
-          telephonePlace: telephonePlace,
-          websitePlace: websitePlace,
-          photoPlace: '../../assets/imgs/iconMap/noPicture.png',
-          timestamp: timestamp,
-          lat: this.lat,
-          lng: this.lng
-        }).then(newPost => {
-          this.navCtrl.pop();
-        }, error => {
-          console.log(error);
-        });
-      }
- */
+
+
+
+
+
+}

@@ -20,9 +20,10 @@ export class ViewmapPage {
   timePlace: any;
   telephonePlace: any;
   websitePlace: any;
-  owener: any;
+  ownerPlace: any;
   photoPlace: any;
   distance: any;
+  timestamp: any;
 
   constructor(public navCtrl: NavController, 
     public navParams: NavParams,
@@ -37,14 +38,10 @@ export class ViewmapPage {
     this.timePlace = navParams.get('timePlace');
     this.telephonePlace = navParams.get('telephonePlace');
     this.websitePlace = navParams.get('websitePlace');
-    this.owener = navParams.get('owener');
+    this.ownerPlace = navParams.get('ownerPlace');
     this.distance = navParams.get('distance');
-    // if(this.photoPlace == ''){
-    //  this.photoPlace = '../../assets/imgs/iconMap/community.png';
-    // }else{
-    //   this.photoPlace = navParams.get('photoPlace');
-    // }
     this.photoPlace = navParams.get('photoPlace');
+    this.timestamp = navParams.get('timestamp');
   }
 
   checkIn(){
@@ -59,7 +56,7 @@ export class ViewmapPage {
             timePlace:  this.timePlace,
             telephonePlace: this.telephonePlace,
             websitePlace: this.websitePlace,
-            owner: this.owener,
+            ownerPlace: this.ownerPlace,
             timestamp: timestamp,
             photoPlace: this.photoPlace,
           }).then(newPost => {

@@ -24,41 +24,41 @@ export class HomePage {
     public navParams: NavParams,
     public db: AngularFireDatabase) {
 
-    this.post = db.list('/Posts',  {
+    this.post = db.list('/Posts', {
       query: {
         orderByChild: 'timestamp',
       }
     });
 
-    this.community = db.list('/Posts',  {
+    this.community = db.list('/Posts', {
       query: {
         orderByChild: 'types',
         equalTo: 'แหล่งท่องในเที่ยวชุมชน'
       }
     });
 
-    this.natural = db.list('/Posts',  {
+    this.natural = db.list('/Posts', {
       query: {
         orderByChild: 'types',
         equalTo: 'แหล่งท่องเที่ยวเชิงธรรมชาติ'
       }
     });
 
-    this.culture = db.list('/Posts',  {
+    this.culture = db.list('/Posts', {
       query: {
         orderByChild: 'types',
         equalTo: 'แหล่งท่องเที่ยวเชิงวัฒนธรรม'
       }
     });
 
-    this.travel = db.list('/Posts',  {
+    this.travel = db.list('/Posts', {
       query: {
         orderByChild: 'types',
         equalTo: 'กิจกรรมท่องเที่ยว'
       }
     });
 
-    this.other = db.list('/Posts',  {
+    this.other = db.list('/Posts', {
       query: {
         orderByChild: 'types',
         equalTo: 'อื่น ๆ'
@@ -76,9 +76,9 @@ export class HomePage {
     this.navCtrl.push(PostPage);
   }
 
-  
 
-  viewpost(post){
+
+  viewpost(post) {
     this.navCtrl.push(ViewpostPage, {
       'name': post.name,
       'email': post.email,
@@ -92,65 +92,70 @@ export class HomePage {
     })
   }
 
-  viewpostCommunity(community){
+  viewpostCommunity(community) {
     this.navCtrl.push(ViewpostPage, {
       'name': community.name,
       'email': community.email,
       'topic': community.topic,
       'detail': community.detail,
       'types': community.types,
+      'timestamp': community.timestamp,
       'lat': community.lat,
       'lng': community.lng,
       'photo': community.photo
     })
   }
 
-  viewpostNatural(natural){
+  viewpostNatural(natural) {
     this.navCtrl.push(ViewpostPage, {
       'name': natural.name,
       'email': natural.email,
       'topic': natural.topic,
       'detail': natural.detail,
       'types': natural.types,
+      'timestamp': natural.timestamp,
       'lat': natural.lat,
       'lng': natural.lng,
       'photo': natural.photo
     })
   }
 
-  viewpostCulture(culture){
+  viewpostCulture(culture) {
     this.navCtrl.push(ViewpostPage, {
       'name': culture.name,
       'email': culture.email,
       'topic': culture.topic,
       'detail': culture.detail,
       'types': culture.types,
+      'timestamp': culture.timestamp,
       'lat': culture.lat,
       'lng': culture.lng,
       'photo': culture.photo
     })
   }
 
-  viewpostTravel(travel){
+  viewpostTravel(travel) {
     this.navCtrl.push(ViewpostPage, {
       'name': travel.name,
       'email': travel.email,
       'topic': travel.topic,
       'detail': travel.detail,
       'types': travel.types,
+      'timestamp': travel.timestamp,
       'lat': travel.lat,
       'lng': travel.lng,
       'photo': travel.photo
     })
   }
 
-  viewpostOther(other){
+  viewpostOther(other) {
     this.navCtrl.push(ViewpostPage, {
       'name': other.name,
       'email': other.email,
       'topic': other.topic,
       'detail': other.detail,
       'types': other.types,
+      'timestamp': other.timestamp,
       'lat': other.lat,
       'lng': other.lng,
       'photo': other.photo

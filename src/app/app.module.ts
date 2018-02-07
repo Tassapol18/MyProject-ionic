@@ -28,11 +28,15 @@ import { NearbymapPage } from '../pages/nearbymap/nearbymap';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireDatabaseModule } from 'angularfire2/database-deprecated';
+import { AngularFireStorageModule } from 'angularfire2/storage';
 
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
 import { Facebook } from '@ionic-native/facebook';
-import { GooglePlus } from '@ionic-native/google-plus';
+import { GoogleMaps } from '@ionic-native/google-maps';
+import { EditmapPage } from '../pages/editmap/editmap';
+import { ViewchatPage } from '../pages/viewchat/viewchat';
+import { MapownPage } from '../pages/mapown/mapown';
 
 
 
@@ -60,7 +64,10 @@ export const firebase = {
     ViewpostPage,
     ViewmapPage,
     EditpostPage,
-    NearbymapPage
+    NearbymapPage,
+    EditmapPage,
+    ViewchatPage,
+    MapownPage
   ],
   imports: [
     BrowserModule,
@@ -68,6 +75,7 @@ export const firebase = {
     HttpClientModule,
     AngularFireModule,
     AngularFireDatabaseModule,
+    AngularFireStorageModule,
     AngularFireModule.initializeApp(firebase),
     AngularFireAuthModule,
     IonicModule.forRoot(MyApp)
@@ -87,17 +95,20 @@ export const firebase = {
     ViewpostPage,
     ViewmapPage,
     EditpostPage,
-    NearbymapPage
+    NearbymapPage,
+    EditmapPage,
+    ViewchatPage,
+    MapownPage
   ],
   providers: [
     StatusBar,
     Camera,
     SplashScreen,
-    { provide: ErrorHandler, useClass: IonicErrorHandler },
     FirebaseProvider,
     Geolocation,
     Facebook,
-    GooglePlus
+    GoogleMaps,
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
   ]
 })
 export class AppModule { }
