@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
+import { AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
 import firebase from 'firebase';
 
@@ -66,10 +66,10 @@ export class EditmapPage {
     this.lng = navParams.get('lng');
     this.photoPlace = navParams.get('photoPlace');
     this.photoPlaceURL = navParams.get('photoPlaceURL');
-    
-    if(this.photoPlace != null){
+
+    if (this.photoPlace != null) {
       this.showPhotoUpload = true;
-    }else{
+    } else {
       this.showPhotoUpload = false;
     }
   }
@@ -90,13 +90,16 @@ export class EditmapPage {
     // return this.lat, this.lng;
 
   }
+  resetLatLng() {
+    return this.lat = null, this.lng = null;
+  }
 
   //Camera
   takePhoto() {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.options)
-        .then((res) => {
-          this.photoPlace = 'data:image/jpeg;base64,' + res;
+        .then((myPhoto) => {
+          this.photoPlace = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -108,8 +111,8 @@ export class EditmapPage {
   selectPhoto() {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.optionsSelect)
-        .then((res) => {
-          this.photoPlace = 'data:image/jpeg;base64,' + res;
+        .then((myPhoto) => {
+          this.photoPlace = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -117,15 +120,6 @@ export class EditmapPage {
         });
     })
 
-  }
-
-  //DeletePhoto
-  deletePhotoUpload() {
-    alert('Delete Photo now : ' + this.photoPlaceURL)
-    firebase.storage().ref('/Maps/' + this.photoPlaceURL).delete();
-    this.photoPlace = null;
-    this.photoPlaceURL = null;
-    this.showPhotoUpload = false;
   }
 
   //Upload Image
@@ -148,6 +142,15 @@ export class EditmapPage {
     })
   }
 
+  //DeletePhoto
+  deletePhotoUpload() {
+    alert('Delete Photo now : ' + this.photoPlaceURL)
+    firebase.storage().ref('/Maps/' + this.photoPlaceURL).delete();
+    this.photoPlace = null;
+    this.photoPlaceURL = null;
+    this.showPhotoUpload = false;
+  }
+
   editMap(namePlace, typesPlace, detailPlace, placeAddress, timePlace, telephonePlace, websitePlace) {
     let user = firebase.auth().currentUser;
 
@@ -163,33 +166,65 @@ export class EditmapPage {
       + ' //websitePlace : ' + websitePlace
       + ' //lat : ' + this.lat
       + ' //lng : ' + this.lng
-      + ' //imageURL : ' + this.photoPlaceURL);
+      + ' //photoPlaceURL : ' + this.photoPlaceURL);
 
-    this.data = {
-      ownerPlace: user.displayName,
-      ownerUID: user.uid,
-      namePlace: namePlace,
-      typesPlace: typesPlace,
-      detailPlace: detailPlace,
-      placeAddress: (placeAddress) ? placeAddress : '-',
-      timePlace: (timePlace) ? timePlace : '-',
-      telephonePlace: (telephonePlace) ? telephonePlace : '-',
-      websitePlace: (websitePlace) ? websitePlace : '-',
-      lat: this.lat,
-      lng: this.lng,
-      photoPlace: (this.photoPlace) ? this.photoPlace : null,
-      photoPlaceURL: (this.photoPlaceURL) ? this.photoPlaceURL : null,
-    }
-    alert('Use func uploadMap');
-    this.updateFromEdit();
+      if(namePlace && typesPlace && detailPlace != null){
+        this.data = {
+          ownerPlace: user.displayName,
+          ownerUID: user.uid,
+          namePlace: namePlace,
+          typesPlace: typesPlace,
+          detailPlace: detailPlace,
+          placeAddress: (placeAddress) ? placeAddress : '-',
+          timePlace: (timePlace) ? timePlace : '-',
+          telephonePlace: (telephonePlace) ? telephonePlace : '-',
+          websitePlace: (websitePlace) ? websitePlace : '-',
+          lat: this.lat,
+          lng: this.lng,
+          photoPlace: (this.photoPlace) ? this.photoPlace : null,
+          photoPlaceURL: (this.photoPlaceURL) ? this.photoPlaceURL : null,
+        }
+        alert('Use func uploadMap');
+        // alert('This function editMap => '
+        // + ' //ownerPlace : ' + this.data.ownerPlace
+        // + ' //ownerUID : ' + this.data.ownerUID
+        // + ' //namePlace : ' + this.data.namePlace
+        // + ' //typesPlace : ' + this.data.typesPlace
+        // + ' //detailPlace : ' + this.data.detailPlace
+        // + ' //placeAddress : ' + this.data.placeAddress
+        // + ' //timePlace : ' + this.data.timePlace
+        // + ' //telephonePlace : ' + this.data.telephonePlace
+        // + ' //websitePlace : ' + this.data.websitePlace
+        // + ' //lat : ' + this.data.lat
+        // + ' //lng : ' + this.data.lng
+        // + ' //photoPlaceURL : ' + this.data.photoPlaceURL);
+        // alert('photoPlace : ' + this.data.photoPlace)
+        this.updateFromEdit();
+      }else{
+        alert('กรุณากรอกข้อมูล * ให้ครบถ้วน');
+
+      }
+    
   }
 
   updateFromEdit() {
     alert('Func updateFromEdit');
     this.map = this.db.object('/Maps/' + this.key);
-    alert('data : ' + this.data);
+    alert('this.data update => '
+    + ' //ownerPlace : ' + this.data.ownerPlace
+    + ' //ownerUID : ' + this.data.ownerUID
+    + ' //namePlace : ' + this.data.namePlace
+    + ' //typesPlace : ' + this.data.typesPlace
+    + ' //detailPlace : ' + this.data.detailPlace
+    + ' //placeAddress : ' + this.data.placeAddress
+    + ' //timePlace : ' + this.data.timePlace
+    + ' //telephonePlace : ' + this.data.telephonePlace
+    + ' //websitePlace : ' + this.data.websitePlace
+    + ' //lat : ' + this.data.lat
+    + ' //lng : ' + this.data.lng
+    + ' //photoPlaceURL : ' + this.data.photoPlaceURL);
     return new Promise((resolve, reject) => {
-      this.map.push(this.data).then((res) => {
+      this.map.update(this.data).then((res) => {
         alert('แก้ไขข้อมูลสำเร็จ : ' + res);
         this.navCtrl.pop();
         resolve('Success');

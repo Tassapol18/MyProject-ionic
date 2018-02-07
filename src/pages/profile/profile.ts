@@ -6,8 +6,6 @@ import firebase from 'firebase';
 import { EditpostPage } from '../editpost/editpost';
 import { ViewpostPage } from '../viewpost/viewpost';
 import { Facebook } from '@ionic-native/facebook';
-import { ViewmapPage } from '../viewmap/viewmap';
-import { AngularFireStorage } from 'angularfire2/storage';
 import { EditmapPage } from '../editmap/editmap';
 import { MapownPage } from '../mapown/mapown';
 
@@ -36,7 +34,6 @@ export class ProfilePage {
     public afAuth: AngularFireAuth,
     public db: AngularFireDatabase,
     private fb: Facebook,
-    private afStorage: AngularFireStorage,
     private alertCtrl: AlertController
   ) {
 

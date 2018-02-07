@@ -82,6 +82,7 @@ export class WelcomePage {
         
       }).catch((err) => {
         alert("Facebook error : " + err)
+        this.fb.logout()
         reject('fail');
       });
     })

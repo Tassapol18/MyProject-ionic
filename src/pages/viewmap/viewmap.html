@@ -41,7 +41,7 @@
       <ion-list>
         <ion-item>
           <ion-label>ความพึงพอใจ</ion-label>
-          <ion-select [(ngModel)]="score" name="score">
+          <ion-select [(ngModel)]="score">
             <ion-option value="5">5</ion-option>
             <ion-option value="4">4</ion-option>
             <ion-option value="3">3</ion-option>
@@ -50,7 +50,6 @@
           </ion-select>
         </ion-item>
       </ion-list>
-
       <button ion-button (click)="sentReview(detail,score)">รีวิว</button>
     </ion-card-content>
   </ion-card>

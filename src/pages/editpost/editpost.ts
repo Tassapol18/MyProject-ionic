@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
+import { AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
 import firebase from 'firebase';
 
@@ -70,15 +70,11 @@ photo = myPhotoURL(base to database)
     this.photoURL = navParams.get('photoURL');
     this.key = navParams.get('key');
 
-    
-
-    if(this.photo != null){
+    if (this.photo != null) {
       this.showPhotoUpload = true;
-    }else{
+    } else {
       this.showPhotoUpload = false;
     }
-
-
 
   }
 
@@ -92,14 +88,14 @@ photo = myPhotoURL(base to database)
         }).catch((err) => {
           reject('fail' + err)
         });
-        return this.lat, this.lng;
+      return this.lat, this.lng;
     })
     // let watch = this.geolocation.watchPosition();
     // watch.subscribe((data) => { });
     // return this.lat, this.lng;
   }
-  resetLatLng(){
-   return this.lat = null, this.lng = null;
+  resetLatLng() {
+    return this.lat = null, this.lng = null;
   }
 
   //Camera

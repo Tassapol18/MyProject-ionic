@@ -60,7 +60,7 @@ export class MapPage {
       alert("before forEach (for loop) function loadmap : => " + this.data.length);
       this.getDetailMarker();
     });
-    
+
   }
 
   goToNearbyMap() {
@@ -88,7 +88,7 @@ export class MapPage {
             streetViewControl: false
           });
 
-          //alert('set center Map');
+          alert('set center Map : ' + pos.lat + ' ' + pos.lng);
           resolve('load ready');
         }).catch((err) => {
           //alert(err);
@@ -111,9 +111,7 @@ export class MapPage {
           position: posCur,
           map: this.map,
           icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-          title: 'ตำแหน่งปัจจุบันของคุณ'
         });
-
         let info = "<b>นี่คือตำแหน่งปัจจุบันของคุณ</b><br>" +
           "<b>ละติจูดที่ : </b>" + posCur.lat + "<b>ลอนติจูดที่ : </b>" + posCur.lng;
         this.AddInfoWindow(marker, info);
@@ -131,7 +129,7 @@ export class MapPage {
     for (let i = 0; i < this.data.length; i++) {
       alert("Loader Place => " + this.data[i].Place.namePlace);
       let tmp =
-        "<center><img src=" + this.data[i].Place.photoPlaceURL + " width=\"150 px\"></center> <br>" +
+        "<center><img src=" + this.data[i].Place.photoPlace + " width=\"150 px\"></center> <br>" +
         "<b>สถานที่ : </b>" + this.data[i].Place.namePlace + "<br>" +
         "<b>รายละเอียด : </b>" + this.data[i].Place.detailPlace + "<br>" +
         "<b>ที่อยู่ : </b>" + this.data[i].Place.placeAddress + "<br>" +
@@ -145,7 +143,7 @@ export class MapPage {
   }
 
   ShowMarker(posInfo, info) {
-    alert("Function ShowMarker : " + posInfo.lat + ' , ' + posInfo.lng + ' , ' + info); 
+    alert("Function ShowMarker : " + posInfo.lat + ' , ' + posInfo.lng + ' , ' + info);
     let posMarker = {
       lat: posInfo.lat,
       lng: posInfo.lng

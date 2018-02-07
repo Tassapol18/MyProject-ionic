@@ -24,12 +24,13 @@ export class ViewmapPage {
   photoPlace: any;
   distance: any;
   timestamp: any;
+  showAddReview: boolean = false;
 
-  constructor(public navCtrl: NavController, 
+  constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public db: AngularFireDatabase) {
 
-    
+
 
     this.namePlace = navParams.get('namePlace');
     this.detailPlace = navParams.get('detailPlace');
@@ -44,30 +45,31 @@ export class ViewmapPage {
     this.timestamp = navParams.get('timestamp');
   }
 
-  checkIn(){
-    let uid = firebase.auth().currentUser;
-    this.user = this.db.list('/Users/'+uid.uid+'/checkIn');    
-      let timestamp = firebase.database.ServerValue.TIMESTAMP;
+  checkIn() {
+    let userUID = firebase.auth().currentUser;
+    this.user = this.db.list('/Users/' + userUID.uid + '/checkIn');
+    let timestamp = firebase.database.ServerValue.TIMESTAMP;
 
-          this.user.push({
-            namePlace: this.namePlace,
-            detailPlace:  this.detailPlace,
-            typesPlace: this.typesPlace,
-            timePlace:  this.timePlace,
-            telephonePlace: this.telephonePlace,
-            websitePlace: this.websitePlace,
-            ownerPlace: this.ownerPlace,
-            timestamp: timestamp,
-            photoPlace: this.photoPlace,
-          }).then(newPost => {
-            alert("Check In susccess!!");
-          }, error => {
-            console.log(error);
-          });
+    this.user.push({
+      namePlace: this.namePlace,
+      detailPlace: this.detailPlace,
+      typesPlace: this.typesPlace,
+      timePlace: this.timePlace,
+      telephonePlace: this.telephonePlace,
+      websitePlace: this.websitePlace,
+      ownerPlace: this.ownerPlace,
+      timestamp: timestamp,
+      photoPlace: this.photoPlace,
+    }).then(newPost => {
+      alert("Check In susccess!!");
+    }, error => {
+      console.log(error);
+    });
   }
-  sentReview(detail,score){
-    console.log(detail,score);
-    
+
+  sentReview(detail, score) {
+    alert(detail + ' ' + score);
+
   }
 
   ionViewDidLoad() {

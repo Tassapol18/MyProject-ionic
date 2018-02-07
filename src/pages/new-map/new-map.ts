@@ -18,8 +18,8 @@ export class NewMapPage {
   lat: any;
   lng: any;
   mapPhoto: any;
-  myPhoto: any;
-  myPhotoURL: any;
+  photoPlace: any;
+  photoPlaceURL: any;
   showPhotoUpload: boolean;
 
   options: CameraOptions = {
@@ -66,12 +66,21 @@ export class NewMapPage {
 
   }
 
+  resetLatLng() {
+    return this.lat = null, this.lng = null;
+  }
+
+  /*
+  photoPlace: any;
+  photoPlaceURL: any;
+  */
+
   //Camera
   takePhoto() {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.options)
-        .then((res) => {
-          this.myPhoto = 'data:image/jpeg;base64,' + res;
+        .then((myPhoto) => {
+          this.photoPlace = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -83,8 +92,8 @@ export class NewMapPage {
   selectPhoto() {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.optionsSelect)
-        .then((res) => {
-          this.myPhoto = 'data:image/jpeg;base64,' + res;
+        .then((myPhoto) => {
+          this.photoPlace = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -96,9 +105,10 @@ export class NewMapPage {
 
   //DeletePhoto
   deletePhotoUpload() {
-    alert('Delete Photo now : ' + this.myPhotoURL)
-    firebase.storage().ref('/Maps/' + this.myPhotoURL).delete();
-    this.myPhoto = null;
+    alert('Delete Photo now : ' + this.photoPlaceURL)
+    firebase.storage().ref('/Maps/' + this.photoPlaceURL).delete();
+    this.photoPlace = null;
+    this.photoPlaceURL = null;
     this.showPhotoUpload = false;
   }
 
@@ -108,9 +118,9 @@ export class NewMapPage {
     this.mapPhoto = firebase.storage().ref('/Maps');
     const filename = Math.floor(Date.now() / 1000);
     return new Promise((resolve, reject) => {
-      this.myPhotoURL = 'Maps_' + filename;
-      const imageRef = this.mapPhoto.child(this.myPhotoURL);
-      imageRef.putString(this.myPhoto, firebase.storage.StringFormat.DATA_URL)
+      this.photoPlaceURL = 'Maps_' + filename;
+      const imageRef = this.mapPhoto.child(this.photoPlaceURL);
+      imageRef.putString(this.photoPlace, firebase.storage.StringFormat.DATA_URL)
         .then(() => {
           alert('Upload Success : ' + imageRef)
           this.showPhotoUpload = true;
@@ -138,27 +148,32 @@ export class NewMapPage {
       + ' //websitePlace : ' + websitePlace
       + ' //lat : ' + this.lat
       + ' //lng : ' + this.lng
-      + ' //imageURL : ' + this.myPhotoURL
+      + ' //imageURL : ' + this.photoPlaceURL
       + ' //timestamp : ' + timestamp);
 
-    this.data = {
-      ownerPlace: user.displayName,
-      ownerUID: user.uid,
-      namePlace: namePlace,
-      typesPlace: typesPlace,
-      detailPlace: detailPlace,
-      placeAddress: (placeAddress) ? placeAddress : null,
-      timePlace: (timePlace) ? timePlace : null,
-      telephonePlace: (telephonePlace) ? telephonePlace : null,
-      websitePlace: (websitePlace) ? websitePlace : null,
-      lat: this.lat,
-      lng: this.lng,
-      photoPlace: (this.myPhoto) ? this.myPhoto : null,
-      photoPlaceURL: (this.myPhotoURL) ? this.myPhotoURL : null,
-      timestamp: timestamp,
-    }
-    alert('Use func uploadMap');
-    this.uploadMap();
+      if(namePlace && typesPlace && detailPlace != null){
+        this.data = {
+          ownerPlace: user.displayName,
+          ownerUID: user.uid,
+          namePlace: namePlace,
+          typesPlace: typesPlace,
+          detailPlace: detailPlace,
+          placeAddress: (placeAddress) ? placeAddress : '-',
+          timePlace: (timePlace) ? timePlace : '-',
+          telephonePlace: (telephonePlace) ? telephonePlace : '-',
+          websitePlace: (websitePlace) ? websitePlace : '-',
+          lat: this.lat,
+          lng: this.lng,
+          photoPlace: (this.photoPlace) ? this.photoPlace : null,
+          photoPlaceURL: (this.photoPlaceURL) ? this.photoPlaceURL : null,
+          timestamp: timestamp,
+        }
+        alert('Use func uploadMap');
+        this.uploadMap();
+      }else{
+        alert('กรุณากรอกข้อมูล * ให้ครบถ้วน')
+      }
+    
   }
 
   uploadMap() {

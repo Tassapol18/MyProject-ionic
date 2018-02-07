@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { ViewchatPage } from '../viewchat/viewchat';
-import firebase from 'firebase';
 
 @IonicPage()
 @Component({
@@ -11,7 +10,6 @@ import firebase from 'firebase';
 })
 export class ChatPage {
   user: FirebaseListObservable<any[]>;
-  userCur; any;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -23,23 +21,15 @@ export class ChatPage {
       }
     });
 
-    this.userCur = firebase.auth().currentUser;
-
   }
 
 
   goToChat(user) {
     alert('goToChat');
+    alert('key: ' + user.$key);
     this.navCtrl.push(ViewchatPage, {
-      name: user.name,
-      photo: user.profilePicture,
-      key: user.$key
+      'key': user.$key
     });
-    alert('name : ' + user.name +
-      '  //photo : ' + user.profilePicture +
-      '  //key : ' + user.$key +
-      '  //userCur : ' + this.userCur.uid +
-      '  //userCurname : ' + this.userCur.displayName);
     
   }
 
