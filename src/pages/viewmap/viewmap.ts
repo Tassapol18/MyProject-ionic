@@ -24,6 +24,7 @@ export class ViewmapPage {
   photoPlace: any;
   distance: any;
   timestamp: any;
+  key: any;
   showAddReview: boolean = false;
 
   constructor(public navCtrl: NavController,
@@ -43,6 +44,7 @@ export class ViewmapPage {
     this.distance = navParams.get('distance');
     this.photoPlace = navParams.get('photoPlace');
     this.timestamp = navParams.get('timestamp');
+    this.key = navParams.get('key');
   }
 
   checkIn() {
@@ -50,21 +52,26 @@ export class ViewmapPage {
     this.user = this.db.list('/Users/' + userUID.uid + '/checkIn');
     let timestamp = firebase.database.ServerValue.TIMESTAMP;
 
-    this.user.push({
-      namePlace: this.namePlace,
-      detailPlace: this.detailPlace,
-      typesPlace: this.typesPlace,
-      timePlace: this.timePlace,
-      telephonePlace: this.telephonePlace,
-      websitePlace: this.websitePlace,
-      ownerPlace: this.ownerPlace,
-      timestamp: timestamp,
-      photoPlace: this.photoPlace,
-    }).then(newPost => {
-      alert("Check In susccess!!");
-    }, error => {
-      console.log(error);
-    });
+    return new Promise((resolve, reject) => {
+      this.user.push({
+        namePlace: this.namePlace,
+        detailPlace: this.detailPlace,
+        typesPlace: this.typesPlace,
+        timePlace: this.timePlace,
+        telephonePlace: this.telephonePlace,
+        websitePlace: this.websitePlace,
+        ownerPlace: this.ownerPlace,
+        timestamp: timestamp,
+        photoPlace: this.photoPlace,
+      }).then(newPost => {
+        alert("Check In susccess!!");
+        resolve('Success');
+      }, err => {
+        alert(err);
+        reject('Unsuccess')
+      });
+    })
+
   }
 
   sentReview(detail, score) {

@@ -17,7 +17,6 @@ export class MapPage {
   mapData: FirebaseListObservable<any[]>;
   map: any;
   marker: any;
-  data = new Array()
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -27,41 +26,53 @@ export class MapPage {
   }
 
   ionViewWillEnter() {
-    //alert('Load current marker')
-    //this.data = null;
     this.getCurrentUser();
+    this.loadMap().then(data => {
+      this.initMap();
+    })
   }
 
-  ionViewDidLoad() {
-    alert("Open Map");
-    this.loadMap();
-    this.mapData = this.db.list('/Maps');
-    this.mapData.forEach(res => {
-      for (let i = 0; i < res.length; i++) {
-        let temp = {
-          LatLng: {
-            lat: res[i].lat,
-            lng: res[i].lng
-          },
-          Place: {
-            namePlace: res[i].namePlace,
-            typesPlace: res[i].typesPlace,
-            detailPlace: res[i].detailPlace,
-            placeAddress: res[i].placeAddress,
-            timePlace: res[i].timePlace,
-            telephonePlace: res[i].telephonePlace,
-            websitePlace: res[i].websitePlace,
-            ownerPlace: res[i].ownerPlace,
-            photoPlaceURL: res[i].photoPlaceURL
+  initMap(){
+    return new Promise((resolve,reject) => {
+        this.mapData = this.db.list('/Maps');
+        resolve('load success');
+      }).then(() => {
+        
+        this.mapData.forEach(res => {
+          alert('this.mapdata : ' + res.toString())
+          for (let i = 0; i < res.length; i++) {
+            let temp = {
+              LatLng: {
+                lat: res[i].lat,
+                lng: res[i].lng
+              },
+              Place: {
+                namePlace: res[i].namePlace,
+                typesPlace: res[i].typesPlace,
+                detailPlace: res[i].detailPlace,
+                placeAddress: res[i].placeAddress,
+                timePlace: res[i].timePlace,
+                telephonePlace: res[i].telephonePlace,
+                websitePlace: res[i].websitePlace,
+                ownerPlace: res[i].ownerPlace,
+                photoPlaceURL: res[i].photoPlaceURL,
+                photoPlace: res[i].photoPlace
+              }
+            }
+            // this.data.push(temp);
+            this.getDetailMarker(temp);
           }
-        }
-        this.data.push(temp);
-      }
-      alert("before forEach (for loop) function loadmap : => " + this.data.length);
-      this.getDetailMarker();
-    });
-
+          //alert("before forEach (for loop) function loadmap : => " + this.data.length);
+          
+        });
+      }).catch((err) => {
+        alert('fail' + err);
+      })
   }
+
+  // ionViewDidLoad() {
+  //   alert("Open Map");
+  // }
 
   goToNearbyMap() {
     this.navCtrl.push(NearbymapPage);
@@ -71,7 +82,7 @@ export class MapPage {
     this.navCtrl.push(NewMapPage);
   }
 
-  //Lat Long
+  
   loadMap() {
     return new Promise((resolve, reject) => {
       // หาตำแหน่งปัจจุบันโดยใช้ getCurrentPosition เรียกตำแหน่งครั้งแรกครั้งเดียวเมื่อเปิดมาหน้าแผนที่
@@ -124,31 +135,31 @@ export class MapPage {
 
   }
 
-  getDetailMarker() {
-    alert("Count Marker... : " + this.data.length);
-    for (let i = 0; i < this.data.length; i++) {
-      alert("Loader Place => " + this.data[i].Place.namePlace);
-      let tmp =
-        "<center><img src=" + this.data[i].Place.photoPlace + " width=\"150 px\"></center> <br>" +
-        "<b>สถานที่ : </b>" + this.data[i].Place.namePlace + "<br>" +
-        "<b>รายละเอียด : </b>" + this.data[i].Place.detailPlace + "<br>" +
-        "<b>ที่อยู่ : </b>" + this.data[i].Place.placeAddress + "<br>" +
-        "<b>ประเภทของสถานที่ : </b>" + this.data[i].Place.typesPlace + "<br>" +
-        "<b>เวลาทำการ : </b>" + this.data[i].Place.timePlace + "<br>" +
-        "<b>เบอร์โทรศัพท์ : </b>" + this.data[i].Place.telephonePlace + "<br>" +
-        "<b>เว็ปไซต์ : </b>" + this.data[i].Place.websitePlace + "<br>" +
-        "<b>สร้างโดย : </b>" + this.data[i].Place.ownerPlace;
-      this.ShowMarker(this.data[i].LatLng, tmp);
-    }
+  getDetailMarker(data) {
+    //alert("Count Marker... : " + data.length);
+
+    //alert("Loader Place => " + data.Place.namePlace);
+    let tmp =
+      "<center><img src=" + data.Place.photoPlace + " width=\"150 px\"></center> <br>" +
+      "<b>สถานที่ : </b>" + data.Place.namePlace + "<br>" +
+      "<b>รายละเอียด : </b>" + data.Place.detailPlace + "<br>" +
+      "<b>ที่อยู่ : </b>" + data.Place.placeAddress + "<br>" +
+      "<b>ประเภทของสถานที่ : </b>" + data.Place.typesPlace + "<br>" +
+      "<b>เวลาทำการ : </b>" + data.Place.timePlace + "<br>" +
+      "<b>เบอร์โทรศัพท์ : </b>" + data.Place.telephonePlace + "<br>" +
+      "<b>เว็ปไซต์ : </b>" + data.Place.websitePlace + "<br>" +
+      "<b>สร้างโดย : </b>" + data.Place.ownerPlace;
+    this.ShowMarker(data.LatLng, tmp);
+
   }
 
   ShowMarker(posInfo, info) {
-    alert("Function ShowMarker : " + posInfo.lat + ' , ' + posInfo.lng + ' , ' + info);
+    //alert("Function ShowMarker : " + posInfo.lat + ' , ' + posInfo.lng);
     let posMarker = {
       lat: posInfo.lat,
       lng: posInfo.lng
     }
-    alert('Showmarker : ' + posMarker.lat + ' , ' + posMarker.lng)
+    //alert('Showmarker : ' + posMarker.lat + ' , ' + posMarker.lng)
     //let position = new google.maps.LatLng(posInfo.lat, posInfo.lng);
     this.marker = new google.maps.Marker({
       position: posMarker,

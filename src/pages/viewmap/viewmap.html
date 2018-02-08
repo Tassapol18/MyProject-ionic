@@ -9,6 +9,9 @@
 
 <ion-content padding>
   <ion-card>
+    <ion-card-header>
+      <h2>รายละเอียด</h2>
+    </ion-card-header>
     <ion-card-content>
       <div>
         <img src="{{photoPlace}}" width="300px">
@@ -23,6 +26,7 @@
       <p>สร้างโดย : {{ownerPlace}} </p>
       <p>วันและเวลาที่สร้าง : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
       <p>ระยะห่าง {{distance}} กิโลเมตร </p>
+      <p>KeyID : {{key}}</p>
       <button ion-button (click)="checkIn()">Check-in</button>
     </ion-card-content>
   </ion-card>
@@ -34,8 +38,7 @@
     <ion-card-content>
       <ion-list>
         <ion-item>
-          <ion-label>คำอธิบาย</ion-label>
-          <ion-textarea [(ngModel)]="detail"></ion-textarea>
+          <ion-textarea [(ngModel)]="detail" placeholder="คำอธิบาย"></ion-textarea>
         </ion-item>
       </ion-list>
       <ion-list>

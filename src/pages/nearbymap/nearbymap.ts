@@ -39,17 +39,19 @@ export class NearbymapPage {
             telephonePlace: res[i].telephonePlace,
             websitePlace: res[i].websitePlace,
             ownerPlace: res[i].ownerPlace,
+            ownerUID: res[i].ownerUID,
             photoPlace: res[i].photoPlace
-          }
+          },
+          KeyID: res[i].$key
         }
         this.data.push(temp)
       }
-      alert("data before (for loop) : NearbyMap : =>" + this.data.length);
+      //alert("data before (for loop) : NearbyMap : =>" + this.data.length);
     });
   }
 
   ionViewWillEnter() {
-    alert("This is nearby")
+    //alert("This is nearby")
     this.load()
   }
 
@@ -70,7 +72,7 @@ export class NearbymapPage {
   }
 
   distance(latCurrent, lngCurrent) {
-    alert("Lat : Lng User : " + latCurrent + ' , ' + lngCurrent);
+    //alert("Lat : Lng User : " + latCurrent + ' , ' + lngCurrent);
     for (let i = 0; i < this.data.length; i++) {
       let latPlace = this.data[i].LatLng.lat;
       let lngPlace = this.data[i].LatLng.lng;
@@ -86,9 +88,20 @@ export class NearbymapPage {
       this.resultDistance[i] = (d / 1000).toFixed(2);
       this.data[i].Place.resultDistance = this.resultDistance[i];
     }
+
+    this.data.sort((a: any, b: any) => {
+      if (a.Place.resultDistance > b.Place.resultDistance) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
   }
 
+  
   viewdetailMap(data) {
+    alert('key : ' + data.KeyID)
     this.navCtrl.push(ViewmapPage, {
       'namePlace': data.Place.namePlace,
       'typesPlace': data.Place.typesPlace,
@@ -99,17 +112,8 @@ export class NearbymapPage {
       'websitePlace': data.Place.websitePlace,
       'ownerPlace': data.Place.ownerPlace,
       'photoPlace': data.Place.photoPlace,
-      'distance': data.Place.resultDistance
-      // 'namePlace': data.Place.namePlace,
-      // 'detailPlace': data.Place.detailPlace,
-      // 'placeAddress': data.Place.placeAddress,
-      // 'typesPlace': data.Place.typesPlace,
-      // 'timePlace': data.Place.timePlace,
-      // 'telephonePlace': data.Place.telephonePlace,
-      // 'websitePlace': data.Place.websitePlace,
-      // 'owner': data.Place.owner,
-      // 'photoPlace': data.Place.photoPlace,
-      // 'distance': data.Place.resultDistance
+      'distance': data.Place.resultDistance,
+      'key': data.KeyID
     })
   }
 

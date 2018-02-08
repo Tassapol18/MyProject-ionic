@@ -94,7 +94,6 @@ export class ProfilePage {
       'lat': post.lat,
       'lng': post.lng,
       'photo': post.photo,
-      'key': post.key
     })
   }
 
