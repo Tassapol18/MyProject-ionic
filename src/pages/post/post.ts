@@ -14,12 +14,13 @@ export class PostPage {
 
   post: FirebaseListObservable<any[]>;
   postPhoto: any;
-  myPhoto: any;
-  myPhotoURL: any;
   lat: any;
   lng: any;
   data: any;
-  nameImg: any;
+  photoPath: any;  //Path ของรูป
+  photoPost: any;   //ชื่อรูป
+  sendPhotoPostURL: any; //ส่งรูปไปยัง Storage
+  photoPostURL: any;  //URL รูป
   showPhotoUpload: boolean;
 
   /*  CameraOptions
@@ -75,9 +76,10 @@ export class PostPage {
           reject('fail' + err)
         });
     })
-    // let watch = this.geolocation.watchPosition();
-    // watch.subscribe((data) => { });
-    // return this.lat, this.lng;
+  }
+
+  resetLatLng() {
+    return this.lat = null, this.lng = null;
   }
 
   //Camera
@@ -85,7 +87,7 @@ export class PostPage {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.options)
         .then((myPhoto) => {
-          this.myPhotoURL = 'data:image/jpeg;base64,' + myPhoto;
+          this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -98,31 +100,36 @@ export class PostPage {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.optionsSelect)
         .then((myPhoto) => {
-          this.myPhotoURL = 'data:image/jpeg;base64,' + myPhoto;
+          this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
           reject('fail : ' + err);
         });
     })
-
   }
 
   //Upload Image
   upLoadImage() {
-    alert('Func uploadImage')
-    this.postPhoto = firebase.storage().ref('/Posts');
+    alert('รออัพโหลดรูปสักครู่...')
+    this.postPhoto = firebase.storage().ref('/Posts/');
     const filename = Math.floor(Date.now() / 1000);
     return new Promise((resolve, reject) => {
-      this.nameImg = 'Post_' + filename;
-      const imageRef = this.postPhoto.child(this.nameImg);
-      imageRef.putString(this.myPhotoURL, firebase.storage.StringFormat.DATA_URL)
+      this.photoPost = 'Post_' + filename;
+      this.sendPhotoPostURL = this.postPhoto.child(this.photoPost);
+      this.sendPhotoPostURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
         .then(() => {
-          alert('Upload Success : ' + imageRef)
-          this.showPhotoUpload = true;
+          alert('อัพโหลดรูปสำเร็จ : ' + this.sendPhotoPostURL);
+          this.postPhoto.child(this.photoPost).getDownloadURL()
+            .then((url) => {
+              this.photoPostURL = url;
+              this.showPhotoUpload = true;
+            }).catch((err) => {
+              alert('fail : ' + err)
+            });
           resolve('Upload Image Success')
         }).catch((err) => {
-          alert('Upload Unsuccess : ' + err)
+          alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
           reject('fail : ' + err)
         });
     })
@@ -130,50 +137,55 @@ export class PostPage {
 
   //DeletePhoto
   deletePhotoUpload() {
-    alert('Delete Photo now : ' + this.nameImg)
-    firebase.storage().ref('/Posts/' + this.nameImg).delete();
-    this.myPhotoURL = null;
-    this.showPhotoUpload = false;
+    // alert('คุณกำลังจะลบรูป : ' + this.sendPhotoPostURL)
+    firebase.storage().ref('/Posts/' + this.photoPost).delete()
+      .then(() => {
+        this.photoPost = null;
+        this.photoPostURL = null;
+        this.showPhotoUpload = false;
+      }).catch(err => {
+        alert('fail : ' + err)
+      });
   }
 
   //Add data to database
   newPost(topic, detail, types) {
-    alert('This function newPost => '
-      + ' Topic : ' + topic
-      + ' Detail : ' + detail
-      + ' types : ' + types);
-
     let user = firebase.auth().currentUser;
     let timestamp = firebase.database.ServerValue.TIMESTAMP;
-    this.data = {
-      name: user.displayName,
-      email: user.email,
-      profilePicture: user.photoURL,
-      uid: user.uid,
-      topic: topic,
-      detail: detail,
-      types: types,
-      lat: (this.lat) ? this.lat : null,
-      lng: (this.lng) ? this.lng : null,
-      photo: (this.myPhotoURL) ? this.myPhotoURL : null,
-      imageURL: (this.nameImg) ? this.nameImg : null,
-      timestamp: timestamp,
+    // alert(this.photoPost + ' &TH& ' + this.photoPostURL)
+    if (topic && detail && types != null) {
+      this.data = {
+        name: user.displayName,
+        email: user.email,
+        profilePicture: user.photoURL,
+        uid: user.uid,
+        topic: topic,
+        detail: detail,
+        types: types,
+        lat: (this.lat) ? this.lat : null,
+        lng: (this.lng) ? this.lng : null,
+        photoPost: (this.photoPost) ? this.photoPost : null,
+        photoPostURL: (this.photoPostURL) ? this.photoPostURL : null,
+        timestamp: timestamp,
+      }
+      this.uploadPost();
+    } else {
+      alert('กรุณากรอกข้อมูล * ให้ครบถ้วน');
     }
-    alert('Use func uploadPost');
-    this.uploadPost();
   }
 
+  //Upload
   uploadPost() {
-    alert('Func uploadPost')
+    alert('กำลังสร้างกระดานข่าวสาร รอสักครู่...')
     this.post = this.db.list('/Posts');
     return new Promise((resolve, reject) => {
       this.post.push(this.data).then((res) => {
-        alert('บันทึกข้อมูลสำเร็จ : ' + res);
+        alert('สร้างกระดานข่าวสารสำเร็จ');
         this.navCtrl.pop();
         resolve('Success');
       }, err => {
-        alert('บันทึกข้อมูลไม่สำเร็จ : ' + err);
-        reject('Unsuccess');
+        alert('สร้างกระดานข่าวสารไม่สำเร็จ');
+        reject('fail');
       });
     })
   }

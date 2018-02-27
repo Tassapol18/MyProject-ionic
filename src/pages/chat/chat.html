@@ -1,37 +1,41 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>กล่องข้อความ</ion-title>
+    <ion-title>ข้อความ</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-list>
+  <ion-list no-line>
     <ion-list-header>
       ข้อความ
     </ion-list-header>
+    <ion-item-sliding *ngFor="let user of userChat.slice().reverse()">
+      <ion-item (click)="goToChat(user)">
+        <ion-thumbnail item-start>
+          <img src="{{user.profilePicture}}">
+        </ion-thumbnail>
+        <h2>{{user.name}}</h2>
+        <p>{{user.lastChat.message}}</p>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="danger" (click)="deleteCheckin(user)">
+          <ion-icon name="trash"></ion-icon>
+          ลบ
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
 
-    <ion-item (click)="goToChat()">
-      <ion-avatar item-start>
-        <img src="assets/imgs/logo.png">
-      </ion-avatar>
-      <h2>Finn</h2>
-      <h3>I'm a big deal</h3>
-      <p>Listen, I've had a pretty messed up day...</p>
-    </ion-item>
-    
-  </ion-list> -->
+  </ion-list>
 
-  <ion-list>
+  <ion-list no-line>
     <ion-list-header>
       ผู้ใช้งานในระบบ
     </ion-list-header>
-
-    <ion-item *ngFor="let user of (user | async)" (click)="goToChat(user)">
+    <ion-item *ngFor="let user of data" (click)="goToChat(user)">
       <ion-thumbnail item-start>
         <img src="{{user.profilePicture}}">
       </ion-thumbnail>
       <h2>{{user.name}}</h2>
-      <h3>{{user.email}}</h3>
     </ion-item>
 
   </ion-list>

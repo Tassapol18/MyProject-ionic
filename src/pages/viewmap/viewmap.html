@@ -8,14 +8,20 @@
 
 
 <ion-content padding>
+
+  <ion-card>
+    <ion-slides auto-play='true' does-continue='true' slide-intervel='30000'>
+      <ion-slide *ngFor="let photo of photoPlaceURL">
+        <img src="{{photo}}" />
+      </ion-slide>
+    </ion-slides>
+  </ion-card>
+
   <ion-card>
     <ion-card-header>
       <h2>รายละเอียด</h2>
     </ion-card-header>
     <ion-card-content>
-      <div>
-        <img src="{{photoPlace}}" width="300px">
-      </div>
       <p>ชื่อสถานที่ : {{namePlace}} </p>
       <p>รายละเอียด : {{detailPlace}} </p>
       <p>ที่อยู่ : {{placeAddress}} </p>
@@ -24,10 +30,30 @@
       <p>เบอร์โทรศัพท์ : {{telephonePlace}} </p>
       <p>เว็ปไซต์ : {{websitePlace}} </p>
       <p>สร้างโดย : {{ownerPlace}} </p>
-      <p>วันและเวลาที่สร้าง : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
       <p>ระยะห่าง {{distance}} กิโลเมตร </p>
       <p>KeyID : {{key}}</p>
-      <button ion-button (click)="checkIn()">Check-in</button>
+      <button ion-button (click)="checkIn()">เช็คอินสถานที่</button>
+      <button ion-button (click)="reviewPlace()">รีวิวสถานที่</button>
+      <div *ngIf="checkUser">
+        <button ion-button (click)="goToChat()">ส่งข้อความ</button>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <h2>เช็คอิน</h2>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let checkin of (placeCheckin | async)?.slice().reverse()">
+        <ion-thumbnail item-start>
+          <img src="{{checkin.photoUser}}">
+        </ion-thumbnail>
+        <h2>{{checkin.checkinDetail}}</h2>
+        <p>{{checkin.nameUser}}</p>
+        <p>{{checkin.timestamp | date : 'd MMMM yyyy H:mm' : '+0700' }}</p>
+      </ion-item>
     </ion-card-content>
   </ion-card>
 
@@ -36,26 +62,21 @@
       <h2>รีวิวสถานที่</h2>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
-        <ion-item>
-          <ion-textarea [(ngModel)]="detail" placeholder="คำอธิบาย"></ion-textarea>
-        </ion-item>
-      </ion-list>
-      <ion-list>
-        <ion-item>
-          <ion-label>ความพึงพอใจ</ion-label>
-          <ion-select [(ngModel)]="score">
-            <ion-option value="5">5</ion-option>
-            <ion-option value="4">4</ion-option>
-            <ion-option value="3">3</ion-option>
-            <ion-option value="2">2</ion-option>
-            <ion-option value="1">1</ion-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
-      <button ion-button (click)="sentReview(detail,score)">รีวิว</button>
+      <ion-item *ngFor="let review of (placeReview | async)?.slice().reverse()">
+        <h2>{{review.reviewDetail}}</h2>
+        <p>คะแนน : {{review.scoreReview}}</p>
+        <p>{{review.timestamp | date : 'd MMMM yyyy H:mm' : '+0700' }}</p>
+      </ion-item>
     </ion-card-content>
   </ion-card>
 
+  <ion-card>
+    <ion-card-header>
+      กราฟคะแนนรีวิว
+    </ion-card-header>
+    <ion-card-content>
+      <canvas #barCanvas></canvas>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>

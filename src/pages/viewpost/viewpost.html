@@ -8,6 +8,11 @@
 
 
 <ion-content padding>
+
+  <ion-card *ngIf="imgShow">
+    <img src="{{photoPostURL}}">
+  </ion-card>
+
   <ion-card>
     <ion-card-content>
       <p>เรื่อง : {{topic}} </p>
@@ -16,35 +21,20 @@
       <p>ประเภท : {{types}} </p>
       <p>วันและเวลา : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
       <p>รายละเอียด : {{detail}} </p>
-
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="imgShow">
-    <p>รูปภาพ
-      <img src="{{photo}}" width="300px">
-    </p>
-  </ion-card>
-
   <ion-card *ngIf="mapShow">
+    <ion-card-header>
+      <h2>แผนที่</h2>
+    </ion-card-header>
     <div #map id="map"></div>
   </ion-card>
 
-
-
-
-  <button ion-button color="danger" (click)="goToPost()">
+  <!-- <button ion-button color="danger" (click)="goToPost()">
     <ion-icon name="add-circle">
       รายงานโพสต์
     </ion-icon>
-  </button>
-  <!--<div padding>
-    <button ion-button color="danger" (click)="delete()">
-      <ion-icon name="trash"></ion-icon> ลบข้อมลู </button>
-    <button ion-button type="button" color="secondary" (click)="update(note.value)">แกไข</button>
-  </div>-->
-
-
-
+  </button> -->
 
 </ion-content>

@@ -1,9 +1,7 @@
 <ion-header>
-
   <ion-navbar>
-    <ion-title>editmap</ion-title>
+    <ion-title>แก้ไขข้อมูลสถานที่</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
@@ -54,10 +52,10 @@
 
     <ion-row>
       <ion-col>
-        <button ion-button type="button" color="primary"full round (click)="getPlace()">แสดงพิกัด</button>
+        <button ion-button type="button" color="primary" full round (click)="getPlace()">แสดงค่าพิกัด</button>
       </ion-col>
       <ion-col>
-        <button ion-button type="button" color="danger" full round (click)="resetLatLng()">ล้างพิกัด</button>
+        <button ion-button type="button" color="danger" full round (click)="resetLatLng()">ล้างค่าพิกัด</button>
       </ion-col>
     </ion-row>
 
@@ -84,13 +82,14 @@
         </ion-col>
       </ion-row>
 
-      <div *ngIf="showPhotoUpload">
-        <img [src]="photoPlace" width="300" />
-      </div>
-      <div *ngIf="showPhotoUpload">
-        <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
-      </div>
+      <ion-row center *ngIf="showPhotoUpload">
+        <ion-col text-center>
+            <img [src]="photoPlaceURL" width="300" />
+            <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
+        </ion-col>
+      </ion-row>
     </ion-item>
+
 
   </ion-list>
 

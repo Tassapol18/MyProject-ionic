@@ -9,60 +9,114 @@
   <ion-card>
     <div id="content">
       <div id="profile-info">
-        <!-- {{Users.profilePicture}} -->
         <img id="profile-image" src="{{photo}}">
-        <!-- {{Users.name}} -->
         <h3 id="profile-name">{{name}} </h3>
-        <!-- ({{Users.email}}) -->
         <h3 id="profile-email">{{email}}</h3>
-        <button ion-button class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
+        <button ion-button item-end class="center" color="danger" (click)="BtLoggout()">ออกจากระบบ</button>
       </div>
     </div>
   </ion-card>
 
-  <ion-card *ngIf="showCheckin">
-    <h1>สถานที่ที่ Check-in</h1>
+  <ion-card *ngIf="showCheckinOwn">
+    <ion-card-header>
+      <h2>สถานที่ที่ฉันเช็คอิน</h2>
+    </ion-card-header>
+
     <ion-item *ngFor="let checkin of (checkin | async)?.slice().reverse()">
       <ion-thumbnail item-start>
         <img src="{{checkin.photoPlace}}">
       </ion-thumbnail>
-      <h2>{{checkin.namePlace}}</h2>
-      <p>รายละเอียด : {{checkin.detailPlace}}</p>
+      <h2>{{checkin.checkinDetail}}</h2>
+      <p>{{checkin.namePlace}}</p>
       <p>ประเภท : {{checkin.typesPlace}}</p>
-      <button ion-button color="danger" (click)="deleteCheckin(checkin)">ลบ</button>
+      <p>{{checkin.timestamps | date : 'd MMMM yyyy H:mm' : '+0700'}}</p>
+      <!-- <button ion-button item-end color="danger" (click)="deleteCheckin(checkin)">ลบ</button> -->
     </ion-item>
   </ion-card>
 
 
   <ion-card *ngIf="showPostOwn">
-    <h1>โพสต์ของคุณ</h1>
-    <ion-item *ngFor="let post of (post | async)?.slice().reverse()">
-      <!-- <ion-thumbnail item-start>
+    <ion-card-header>
+      <h2>กระดานข่าวของฉัน</h2>
+    </ion-card-header>
+
+    <!-- <ion-item *ngFor="let post of (post | async)?.slice().reverse()"> -->
+    <!-- <ion-thumbnail item-start>
         <img src="{{post.profilePicture}}">
       </ion-thumbnail> -->
-      <h2>{{post.topic}}</h2>
-      <p>{{post.types}}</p>
-      <p>{{post.detail}}</p>
+    <!-- <h2>{{post.topic}}</h2>
+      <p>ประเภท : {{post.types}}</p>
+      <p>รายละเอียด : {{post.detail}}</p>
       <button ion-button color="primary" (click)="viewpost(post)">ดูเพิ่มเติม</button>
       <button ion-button color="secondary" (click)="editPost(post)">แก้ไข</button>
       <button ion-button color="danger" (click)="deletePost(post)">ลบ</button>
-    </ion-item>
+    </ion-item> -->
+
+    <ion-list *ngFor="let post of (post | async)?.slice().reverse()">
+      <ion-item-sliding>
+        <ion-item>
+          <!-- <ion-thumbnail item-start>
+              <img src="{{post.photoPostURL}}">
+            </ion-thumbnail> -->
+          <h2>{{post.topic}}</h2>
+          <p>ประเภท : {{post.types}}</p>
+          <p>รายละเอียด : {{post.detail}}</p>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="primary" (click)="viewpost(post)">
+            <ion-icon name="text"></ion-icon>
+            ดูเพิ่มเติม
+          </button>
+          <button ion-button color="secondary" (click)="editPost(post)">
+            <ion-icon name="settings"></ion-icon>
+            แก้ไข
+          </button>
+          <button ion-button color="danger" (click)="deletePost(post)">
+            <ion-icon name="trash"></ion-icon>
+            ลบ
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
   </ion-card>
 
 
   <ion-card *ngIf="showMapPlaceOwn">
-    <h1>สถานที่ของคุณ</h1>
-    <ion-item *ngFor="let map of (map | async)?.slice().reverse()">
-      <ion-thumbnail item-start>
-        <img src="{{map.photoPlace}}">
-      </ion-thumbnail>
-      <h2>{{map.namePlace}}</h2>
-      <p>รายละเอียด : {{map.detailPlace}}</p>
-      <p>ประเภท : {{map.typesPlace}}</p>
-      <button ion-button color="primary" (click)="viewMap(map)">ดูเพิ่มเติม</button>
+    <ion-card-header>
+      <h2>สถานที่ของฉัน</h2>
+    </ion-card-header>
+
+    <ion-list *ngFor="let map of (map | async)?.slice().reverse()">
+      <ion-item-sliding>
+        <ion-item>
+          <ion-thumbnail item-start>
+            <img src="{{map.photoPlaceURL}}">
+          </ion-thumbnail>
+          <h2>{{map.namePlace}}</h2>
+          <p>รายละเอียด : {{map.detailPlace}}</p>
+          <p>ประเภท : {{map.typesPlace}}</p>
+        </ion-item>
+        <!-- <button ion-button color="primary" (click)="viewMap(map)">ดูเพิ่มเติม</button>
       <button ion-button color="secondary" (click)="editMap(map)">แก้ไข</button>
-      <button ion-button color="danger" (click)="deleteMap(map)">ลบ</button>
-    </ion-item>
+      <button ion-button color="danger" (click)="deleteMap(map)">ลบ</button> -->
+        <ion-item-options side="right">
+          <button ion-button color="primary" (click)="viewMap(map)">
+            <ion-icon name="text"></ion-icon>
+            ดูเพิ่มเติม
+          </button>
+          <button ion-button color="secondary" (click)="editMap(map)">
+            <ion-icon name="settings"></ion-icon>
+            แก้ไข
+          </button>
+          <button ion-button color="danger" (click)="deleteMap(map)">
+            <ion-icon name="trash"></ion-icon>
+            ลบ
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
   </ion-card>
 
 

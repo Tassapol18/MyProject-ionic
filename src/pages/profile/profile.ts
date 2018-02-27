@@ -21,13 +21,17 @@ export class ProfilePage {
   post: FirebaseListObservable<any[]>;
   map: FirebaseListObservable<any[]>;
   checkin: FirebaseListObservable<any[]>;
+  checkinPlace: FirebaseListObservable<any[]>;
+
   name: any;
   email: any;
   photo: any;
   items: any;
-  showCheckin: boolean;
-  showPostOwn: boolean;
-  showMapPlaceOwn: boolean;
+  showCheckinOwn: boolean = false;
+  showPostOwn: boolean = false;
+  showMapPlaceOwn: boolean = false;
+  user: any;
+
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -37,50 +41,78 @@ export class ProfilePage {
     private alertCtrl: AlertController
   ) {
 
-    var user = firebase.auth().currentUser;
+    this.user = firebase.auth().currentUser;
 
 
-    this.name = user.displayName;
-    this.email = user.email;
-    this.photo = user.photoURL;
+    this.name = this.user.displayName;
+    this.email = this.user.email;
+    this.photo = this.user.photoURL;
 
 
     this.post = db.list('/Posts', {
       query: {
         orderByChild: 'uid',
-        equalTo: this.afAuth.auth.currentUser.uid
+        equalTo: this.user.uid
       }
     });
     this.map = db.list('/Maps', {
       query: {
         orderByChild: 'ownerUID',
-        equalTo: this.afAuth.auth.currentUser.uid
+        equalTo: this.user.uid
       }
     });
 
-    this.checkin = db.list('/Users/' + user.uid + '/checkIn');
+    this.checkin = this.db.list('/Users/' + this.user.uid + '/CheckIn', {
+      query: {
+        limitToLast: 5
+      }
+    });
+    
 
     if (this.checkin != null) {
-      this.showCheckin = true;
-    } else {
-      this.showCheckin = false;
+      this.showCheckinOwn = true;
     }
 
     if (this.map != null) {
       this.showMapPlaceOwn = true;
-    } else {
-      this.showMapPlaceOwn = false;
     }
 
     if (this.post != null) {
       this.showPostOwn = true;
-    } else {
-      this.showPostOwn = false;
     }
 
-
-
   }
+
+  //CheckIn
+  /*
+  deleteCheckin(checkin) {
+
+    this.checkinPlace = this.db.list('/Maps/' + checkin.keyPlace + '/CheckIn/');
+    let alert = this.alertCtrl.create({
+      title: 'คุณต้องการลบ Check-in ของคุณหรือไม่',
+      message: 'คุณแน่ใจแล้วใช่ไหมที่จะลบ ?',
+      buttons: [
+        {
+          text: 'ยกเลิก',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'ฉันต้องการลบ',
+          handler: () => {
+            this.checkin.remove(checkin.$key)
+            this.checkinPlace.remove();
+          }
+        }
+      ]
+    });
+    alert.present();
+    // this.checkin.remove(checkin)
+  }
+*/
+
+  /////////////////////////////////////////////////////////////////////////////////////////
 
   //Post
   viewpost(post) {
@@ -93,14 +125,14 @@ export class ProfilePage {
       'timestamp': post.timestamp,
       'lat': post.lat,
       'lng': post.lng,
-      'photo': post.photo,
+      'photoPostURL': post.photoPostURL,
     })
   }
 
   deletePost(post) {
+
     let alert = this.alertCtrl.create({
-      title: 'คุณต้องการลบโพสต์ของคุณหรือไม่',
-      message: 'คุณแน่ใจแล้วใช่ไหมที่จะลบ ?',
+      title: 'คุณต้องการลบกระดานข่าวของคุณหรือไม่',
       buttons: [
         {
           text: 'ยกเลิก',
@@ -113,41 +145,28 @@ export class ProfilePage {
           text: 'ฉันต้องการลบ',
           handler: () => {
             this.post.remove(post.$key);
-            firebase.storage().ref('/Posts/' + post.imageURL).delete();
+            firebase.storage().ref('/Posts/' + post.photoPost).delete();
           }
         }
       ]
     });
     alert.present();
-    //this.post.remove(post)
-    // this.post.remove(post.$key);
-    // firebase.storage().ref('/Posts/' + post.imageURL).delete();
-
   }
 
   editPost(post) {
-    alert('topic : ' + post.topic + ' ' +
-      'detail : ' + post.detail + ' ' +
-      'types : ' + post.types + ' ' +
-      'timestamp : ' + post.timestamp + ' ' +
-      'lat' + post.lat + ' ' +
-      'lng' + post.lng + ' ' +
-      'photoURL' + post.imageURL + ' ' +
-      'key : ' + post.$key)
     this.navCtrl.push(EditpostPage, {
       'key': post.$key,
-      'name': post.name,
-      'email': post.email,
       'topic': post.topic,
       'detail': post.detail,
       'types': post.types,
       'lat': post.lat,
       'lng': post.lng,
-      'photo': post.photo,
-      'photoURL': post.imageURL,
-
+      'photoPost': post.photoPost,
+      'photoPostURL': post.photoPostURL
     })
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////
 
   //Map
   viewMap(map) {
@@ -161,16 +180,14 @@ export class ProfilePage {
       'websitePlace': map.websitePlace,
       'lat': map.lat,
       'lng': map.lng,
-      'photoPlace': map.photoPlace,
       'photoPlaceURL': map.photoPlaceURL,
       'timestamp': map.timestamp
     })
   }
 
   deleteMap(map) {
-    let alert = this.alertCtrl.create({
-      title: 'คุณต้องการลบแผนที่ของคุณหรือไม่',
-      message: 'คุณแน่ใจแล้วใช่ไหมที่จะลบ ?',
+    let alt = this.alertCtrl.create({
+      title: 'คุณต้องการลบสถานที่ของคุณหรือไม่',
       buttons: [
         {
           text: 'ยกเลิก',
@@ -182,33 +199,17 @@ export class ProfilePage {
         {
           text: 'ฉันต้องการลบ',
           handler: () => {
+
             this.map.remove(map.$key);
-            firebase.storage().ref('/Maps/' + map.photoPlaceURL).delete();
+            firebase.storage().ref('/Maps/' + map.photoPlace).delete();
           }
         }
       ]
     });
-    alert.present();
-    // let ref = this.db.list('/Maps');
-    // //this.map.remove(map)
-    // let key = map.key;
-    // let storagePath = map.photoPlace;
-    // this.map.remove(key);
-    // firebase.storage().ref('/Maps/' + storagePath).delete();
+    alt.present();
   }
 
   editMap(map) {
-    alert('key : ' + map.$key +
-      'namePlace : ' + map.namePlace +
-      'typesPlace : ' + map.typesPlace +
-      'detailPlace : ' + map.detailPlace +
-      'placeAddress : ' + map.placeAddress +
-      'timePlace : ' + map.timePlace +
-      'telephonePlace : ' + map.telephonePlace +
-      'websitePlace : ' + map.websitePlace +
-      'lat : ' + map.lat +
-      'lng : ' + map.lng +
-      'photoPlaceURL' + map.photoPlaceURL)
     this.navCtrl.push(EditmapPage, {
       'key': map.$key,
       'namePlace': map.namePlace,
@@ -225,43 +226,30 @@ export class ProfilePage {
     })
   }
 
-  //CheckIn
-  deleteCheckin(checkin) {
-    let alert = this.alertCtrl.create({
-      title: 'คุณต้องการลบ Check-in ของคุณหรือไม่',
-      message: 'คุณแน่ใจแล้วใช่ไหมที่จะลบ ?',
+
+
+
+  BtLoggout() {
+    let alt = this.alertCtrl.create({
+      title: 'คุณต้องการออกจากระบบใช่หรือไม่',
       buttons: [
         {
-          text: 'ยกเลิก',
+          text: 'ไม่ต้องการ',
           role: 'cancel',
           handler: () => {
+            console.log('Cancel clicked');
           }
         },
         {
-          text: 'ฉันต้องการลบ',
+          text: 'ออกจากระบบ',
           handler: () => {
-            this.checkin.remove(checkin.$key)
+            this.afAuth.auth.signOut();
+            this.fb.logout();
           }
         }
       ]
     });
-    alert.present();
-    // this.checkin.remove(checkin)
+    alt.present();
   }
 
-
-  BtLoggout() {
-    alert("ออกจากระบบ");
-    this.afAuth.auth.signOut();
-    this.fb.logout();
-
-  }
-
-  /*
-    logout() {
-    alert('คุณกำลังจะออกจากระบบ')
-    this.fb.logout();
-
-  }
-  */
 }

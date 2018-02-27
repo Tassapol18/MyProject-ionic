@@ -4,6 +4,9 @@ import { NewMapPage } from '../new-map/new-map';
 import { NearbymapPage } from '../nearbymap/nearbymap';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
+import { ViewmapPage } from '../viewmap/viewmap';
+import { ViewMapDirectionsPage } from '../view-map-directions/view-map-directions';
+
 
 declare var google: any;
 
@@ -16,63 +19,36 @@ export class MapPage {
   @ViewChild('map') mapElement: ElementRef;
   mapData: FirebaseListObservable<any[]>;
   map: any;
-  marker: any;
+  markers = [];
+  count = 0;
+  checkMarker: boolean = false;
+  category = [];
+
+  nameSearch = [];
+  latlngSearch = [];
+
+  loadDataSearch = [];
+
+
+
+  start: any;
+  end: any;
+
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private geolocation: Geolocation,
-    public db: AngularFireDatabase) {
+    private db: AngularFireDatabase) {
 
   }
+
 
   ionViewWillEnter() {
-    this.getCurrentUser();
-    this.loadMap().then(data => {
-      this.initMap();
-    })
+    this.initLoadMap();
+    this.nameSearch = [];
+    this.latlngSearch = [];
+    this.loadDataSearch = [];
   }
-
-  initMap(){
-    return new Promise((resolve,reject) => {
-        this.mapData = this.db.list('/Maps');
-        resolve('load success');
-      }).then(() => {
-        
-        this.mapData.forEach(res => {
-          alert('this.mapdata : ' + res.toString())
-          for (let i = 0; i < res.length; i++) {
-            let temp = {
-              LatLng: {
-                lat: res[i].lat,
-                lng: res[i].lng
-              },
-              Place: {
-                namePlace: res[i].namePlace,
-                typesPlace: res[i].typesPlace,
-                detailPlace: res[i].detailPlace,
-                placeAddress: res[i].placeAddress,
-                timePlace: res[i].timePlace,
-                telephonePlace: res[i].telephonePlace,
-                websitePlace: res[i].websitePlace,
-                ownerPlace: res[i].ownerPlace,
-                photoPlaceURL: res[i].photoPlaceURL,
-                photoPlace: res[i].photoPlace
-              }
-            }
-            // this.data.push(temp);
-            this.getDetailMarker(temp);
-          }
-          //alert("before forEach (for loop) function loadmap : => " + this.data.length);
-          
-        });
-      }).catch((err) => {
-        alert('fail' + err);
-      })
-  }
-
-  // ionViewDidLoad() {
-  //   alert("Open Map");
-  // }
 
   goToNearbyMap() {
     this.navCtrl.push(NearbymapPage);
@@ -82,35 +58,46 @@ export class MapPage {
     this.navCtrl.push(NewMapPage);
   }
 
-  
-  loadMap() {
+  initLoadMap() {
+    this.getCurrentUser();
+    this.initMap().then(data => {
+      this.loadData();
+    })
+  }
+
+  initMap() {
+    // หาตำแหน่งปัจจุบันโดยใช้ getCurrentPosition 
+    // เรียกตำแหน่งครั้งแรกครั้งเดียวเมื่อเปิดมาหน้าแผนที่
     return new Promise((resolve, reject) => {
-      // หาตำแหน่งปัจจุบันโดยใช้ getCurrentPosition เรียกตำแหน่งครั้งแรกครั้งเดียวเมื่อเปิดมาหน้าแผนที่
       this.geolocation.getCurrentPosition()
         .then((res) => {
-          var pos = {
+          var position = {
             lat: res.coords.latitude,
             lng: res.coords.longitude
           };
           this.map = new google.maps.Map(this.mapElement.nativeElement, {
             zoom: 12,
-            center: pos,
+            center: position,
             mapTypeId: 'roadmap',
-            streetViewControl: false
+            streetViewControl: false,
+            zoomControl: false,
+            mapTypeControl: false,
+            scaleControl: false,
+            rotateControl: false,
+            fullscreenControl: false,
+            disableDefaultUI: true
           });
-
-          alert('set center Map : ' + pos.lat + ' ' + pos.lng);
           resolve('load ready');
         }).catch((err) => {
-          //alert(err);
-          reject('load fail');
+          reject('load fail : ' + err)
+          alert('load fail : ' + err);
         });
     });
   }
 
   getCurrentUser() {
-    //alert('get current user :' + this.data.length)
-    //อัพเดทตำแหน่งในแผนที่อัตโนมัติ โดยใช้งาน watchPosition ค่าตำแหน่งจะได้มาเมื่อมีการส่งค่าตำแหน่งที่ถูกต้องกลับมา
+    // อัพเดทตำแหน่งในแผนที่อัตโนมัติ โดยใช้งาน watchPosition 
+    // ค่าตำแหน่งจะได้มาเมื่อมีการส่งค่าตำแหน่งที่ถูกต้องกลับมา
     var marker = null;
     this.geolocation.watchPosition().subscribe((data) => {
       let posCur = {
@@ -121,222 +108,278 @@ export class MapPage {
         marker = new google.maps.Marker({
           position: posCur,
           map: this.map,
-          icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          // icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          icon: 'assets/imgs/iconMap/personCurrent.png'
         });
-        let info = "<b>นี่คือตำแหน่งปัจจุบันของคุณ</b><br>" +
-          "<b>ละติจูดที่ : </b>" + posCur.lat + "<b>ลอนติจูดที่ : </b>" + posCur.lng;
-        this.AddInfoWindow(marker, info);
+
+        this.start = posCur;
+
+        let info = "<center><b>นี่คือตำแหน่งปัจจุบันของคุณ</b></center><br>" +
+          "<b>ละติจูดที่ : </b>" + posCur.lat + "<b> , ลอนติจูดที่ : </b>" + posCur.lng;
+
+        this.AddInfoWindowUser(marker, info);
         marker.setMap(this.map);
       } else {
         marker.setPosition(posCur);
-        this.map.panTo(posCur);
+        // this.map.panTo(posCur);
       }
     })
-
   }
 
-  getDetailMarker(data) {
-    //alert("Count Marker... : " + data.length);
 
-    //alert("Loader Place => " + data.Place.namePlace);
-    let tmp =
-      "<center><img src=" + data.Place.photoPlace + " width=\"150 px\"></center> <br>" +
-      "<b>สถานที่ : </b>" + data.Place.namePlace + "<br>" +
-      "<b>รายละเอียด : </b>" + data.Place.detailPlace + "<br>" +
-      "<b>ที่อยู่ : </b>" + data.Place.placeAddress + "<br>" +
-      "<b>ประเภทของสถานที่ : </b>" + data.Place.typesPlace + "<br>" +
-      "<b>เวลาทำการ : </b>" + data.Place.timePlace + "<br>" +
-      "<b>เบอร์โทรศัพท์ : </b>" + data.Place.telephonePlace + "<br>" +
-      "<b>เว็ปไซต์ : </b>" + data.Place.websitePlace + "<br>" +
-      "<b>สร้างโดย : </b>" + data.Place.ownerPlace;
-    this.ShowMarker(data.LatLng, tmp);
 
+  loadData() {
+    var temp = null;
+    return new Promise((resolve, reject) => {
+      this.mapData = this.db.list('/Maps');
+      resolve('load success');
+    }).then(() => {
+      this.mapData.forEach(res => {
+        var clearMarker = this.count
+        this.count = res.length
+        if (this.count != clearMarker) {
+          for (var i in this.markers) {
+            this.markers[i].setMap(null)
+          }
+        }
+        for (let i = 0; i < res.length; i++) {
+          console.log('name : ' + res[i].namePlace);
+          temp = {
+            LatLng: {
+              lat: res[i].lat,
+              lng: res[i].lng
+            },
+            Place: {
+              namePlace: res[i].namePlace,
+              typesPlace: res[i].typesPlace,
+              detailPlace: res[i].detailPlace,
+              placeAddress: res[i].placeAddress,
+              timePlace: res[i].timePlace,
+              telephonePlace: res[i].telephonePlace,
+              websitePlace: res[i].websitePlace,
+              ownerPlace: res[i].ownerPlace,
+              ownerUID: res[i].ownerUID,
+              photoPlaceURL: res[i].photoPlaceURL,
+              photoPlace: res[i].photoPlace
+            },
+            KeyID: res[i].$key
+          }
+          this.getDetailMarker(temp);
+          this.category.push(temp)
+          // console.log("Types",this.category);
+          // Loop for
+        }
+        // forEach outner
+      });
+    }).catch((err) => {
+      alert('fail initMap : ' + err);
+    })
   }
 
-  ShowMarker(posInfo, info) {
-    //alert("Function ShowMarker : " + posInfo.lat + ' , ' + posInfo.lng);
-    let posMarker = {
-      lat: posInfo.lat,
-      lng: posInfo.lng
+  getDetailMarker(temp) {
+    let info =
+      "<center><img src=" + temp.Place.photoPlaceURL + " width=\"150 px\"></center> <br>" +
+      "<b>ชื่อสถานที่ : </b>" + temp.Place.namePlace + "<br>" +
+      "<b>ประเภทของสถานที่ : </b>" + temp.Place.typesPlace + "<br>" +
+      "<a id='clickDetail'> ดูรายละเอียดเพิ่มเติม </a> <br>" +
+      "<a id='clickDirections'> แสดงเส้นทาง </a>";
+    this.addMarker(temp.LatLng, info, temp);
+  }
+
+
+  addMarker(posInfo, info, temp) {
+    console.log(temp.Place.typesPlace);
+
+    var icon;
+    var iconHotel = {
+      url: 'assets/imgs/iconMap/culture.png',   //ม่วง
+      scaledSize: new google.maps.Size(50, 50), // scaled size
     }
-    //alert('Showmarker : ' + posMarker.lat + ' , ' + posMarker.lng)
-    //let position = new google.maps.LatLng(posInfo.lat, posInfo.lng);
-    this.marker = new google.maps.Marker({
+    var iconRest = {
+      url: 'assets/imgs/iconMap/culture.png',   //ส้ม
+      scaledSize: new google.maps.Size(50, 50), // scaled size
+    }
+    var iconTravel = {
+      url: 'assets/imgs/iconMap/natural.png',    //เขียว
+      scaledSize: new google.maps.Size(50, 50), // scaled size
+    }
+    var iconTemple = {
+      url: 'assets/imgs/iconMap/culture.png',   //เหลือง
+      scaledSize: new google.maps.Size(50, 50), // scaled size
+    }
+    var iconStore = {
+      url: 'assets/imgs/iconMap/travel.png', //แดง
+      scaledSize: new google.maps.Size(50, 50), // scaled size
+    }
+    var iconInformation = {
+      url: 'assets/imgs/iconMap/travel.png',   //ฟ้า
+      scaledSize: new google.maps.Size(50, 50), // scaled size
+    }
+    var iconOther = {
+      url: 'assets/imgs/iconMap/culture.png',   //เทา
+      scaledSize: new google.maps.Size(50, 50), // scaled size
+    }
+
+
+    if (temp.Place.typesPlace == 'ที่พักอาศัย') {
+      icon = iconHotel;
+    } else if (temp.Place.typesPlace == 'ร้านอาหาร') {
+      icon = iconRest;
+    } else if (temp.Place.typesPlace == 'แหล่งท่องเที่ยว') {
+      icon = iconTravel;
+    } else if (temp.Place.typesPlace == 'วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา') {
+      icon = iconTemple;
+    } else if (temp.Place.typesPlace == 'ร้านค้าของที่ระลึกและสินค้า OTOP') {
+      icon = iconStore;
+    } else if (temp.Place.typesPlace == 'ศูนย์บริการข้อมูลชุมชน') {
+      icon = iconInformation;
+    } else {
+      icon = iconOther;
+    }
+
+    var convertLat = parseFloat(posInfo.lat)
+    var convertLng = parseFloat(posInfo.lng)
+    let posMarker = {
+      lat: convertLat,
+      lng: convertLng
+    }
+    var marker = new google.maps.Marker({
       position: posMarker,
       map: this.map,
+      icon: icon,
+      category: temp.Place.typesPlace,
       animation: google.maps.Animation.DROP,
     });
-    this.AddInfoWindow(this.marker, info);
+    // console.log('MKK', marker);
+    this.nameSearch.push(temp.Place.namePlace);
+    this.latlngSearch[temp.Place.namePlace] = posMarker;
+
+    this.markers.push(marker)
+    // this.Getmarkers1.push(marker);
+
+    this.AddInfoWindow(marker, info, temp);
   }
 
-  AddInfoWindow(marker, content) {
+  AddInfoWindow(marker, content, temp) {
     let infoWindow = new google.maps.InfoWindow({
       content: content
     });
-    //add click show detail
+    google.maps.event.addListener(marker, 'click', () => {
+      infoWindow.open(this.map, marker);
+      this.checkMarker = true;
+      if (this.checkMarker) {
+        google.maps.event.addListener(infoWindow, 'domready', () => {
+          var clickDetail = document.getElementById('clickDetail');
+          clickDetail.addEventListener('click', () => {
+            this.goViewDetail(temp);
+          });
+        });
+
+        google.maps.event.addListener(infoWindow, 'domready', () => {
+          var clickDirections = document.getElementById('clickDirections');
+          clickDirections.addEventListener('click', () => {
+            this.end = temp.LatLng;
+            this.goViewMapDirections(temp);
+            infoWindow.close();
+          });
+        });
+      }
+    });
+  }
+
+  AddInfoWindowUser(marker, content) {
+    let infoWindow = new google.maps.InfoWindow({
+      content: content
+    });
     google.maps.event.addListener(marker, 'click', () => {
       infoWindow.open(this.map, marker);
     });
   }
+
+  filterMarkers(value) {
+    let a = 1;
+    var marker;
+    console.log('FTGT:', this.markers);
+    marker = this.markers;
+    for (let i = 0; i < this.category.length; i++) {
+      if (marker[i].category == value || value == '') {
+        console.log('a', a++, 'place', marker[i].category);
+        marker[i].setVisible(true)
+      } else {
+        marker[i].setVisible(false)
+      }
+    }
+  }
+
+  getLocation() {
+    this.geolocation.getCurrentPosition()
+      .then((res) => {
+        var posCur = {
+          lat: res.coords.latitude,
+          lng: res.coords.longitude
+        };
+        this.map.panTo(posCur);
+        this.map.setZoom(12)
+      })
+
+  }
+
+  searchMap(event) {
+    let val = event.srcElement.value;
+    this.loadDataSearch = [];
+    if (!val) {
+      return false;
+    }
+
+    if (val && val.trim() != '') {
+      for (let i of this.nameSearch) {
+        if (i.toLowerCase().indexOf(val.toLowerCase()) > -1) {
+          this.loadDataSearch.push(i);
+        }
+      }
+    }
+    // else if (val == '') {
+    //   for (let i of this.nameSearch) {
+    //     this.loadDataSearch.push(i);
+    //   }
+    // }
+  }
+
+  ionViewWillLeave() {
+    this.loadDataSearch = []
+  }
+
+  searchFind(value) {
+    console.log(value);
+    this.map.panTo(this.latlngSearch[value]);
+    this.map.setZoom(16);
+  }
+
+  ///////// Search ///////
+
+  goViewDetail(data) {
+    this.navCtrl.push(ViewmapPage, {
+      'key': data.KeyID,
+      'namePlace': data.Place.namePlace,
+      'typesPlace': data.Place.typesPlace,
+      'detailPlace': data.Place.detailPlace,
+      'placeAddress': data.Place.placeAddress,
+      'timePlace': data.Place.timePlace,
+      'telephonePlace': data.Place.telephonePlace,
+      'websitePlace': data.Place.websitePlace,
+      'ownerPlace': data.Place.ownerPlace,
+      'ownerUID': data.Place.ownerUID,
+      'photoPlaceURL': data.Place.photoPlaceURL,
+      'distance': data.Place.resultDistance,
+    })
+  }
+
+  goViewMapDirections(data) {
+    this.navCtrl.push(ViewMapDirectionsPage, {
+      'start': this.start,
+      'end': this.end,
+      'namePlace': data.Place.namePlace
+    })
+  }
+
 }
-
-/*  loadmap
-
-      // const subscription = this.geolocation.watchPosition()
-      //   .subscribe(position => {
-      //     alert(position.coords.longitude + ' ' + position.coords.latitude);
-      //   });
-
-      // this.geolocation.watchPosition().subscribe((data) => {
-      //   this.posCur = {
-      //     lat: data.coords.latitude,
-      //     lng: data.coords.longitude
-      //   }
-      //   // //alert('current is running : ' + this.posCur.lat + ' ' + this.posCur.lng)
-      //   // this.marker = new google.maps.Marker({
-      //   //   position: this.posCur,
-      //   //   icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-      //   //   map: this.map
-      //   // })
-      //   // this.map.panTo(this.posCur);
-      //   // resolve('current is running')
-
-      //   if (this.marker == null) {
-      //     this.marker = new google.maps.Marker({
-      //       position: this.posCur,
-      //       map: this.map,
-      //       icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-      //     });
-      //     //this.marker.setMap(this.map);
-      //   } else {
-      //     this.marker.setPosition(this.posCur);
-      //     this.map.panTo(this.posCur);
-      //   }
-
-      //   // To stop notifications
-      //   // watch.unsubscribe()
-      //   // reject('current is not running')
-      // })
-
-*/
-  // const map = new google.maps.Map(this.mapElement.nativeElement, {
-  //   zoom: 12,
-  //   mapTypeId: 'roadmap',
-  //   streetViewControl: false
-  // })
-  // this.geolocation.getCurrentPosition()
-  //   .then((res) => {
-  //     console.log(res.coords.latitude);
-  //     console.log(res.coords.longitude);
-  //     let centerMap = {
-  //       lat: res.coords.latitude,
-  //       lng: res.coords.longitude
-  //     }
-  //     map.setCenter(centerMap)
-  //   }).catch((error) => {
-  //     console.log('Error getting location', error);
-  //   });
-
-  // const watch = this.geolocation.watchPosition();
-  // watch.subscribe((data) => {
-  //   this.pos = {
-  //     lat: data.coords.latitude,
-  //     lng: data.coords.longitude
-  //   }
-  //   return this.pos
-  // });
-  // alert(this.pos)
-  // this.marker = new google.maps.Marker({
-  //   position: this.pos,
-  //   map: map,
-  // })
-
-  // }
-  // setTimeout(() => {
-  //   this.watchId = navigator.geolocation.watchPosition((position) => {
-  //     console.log("Current Locations", {
-  //       lat: position.coords.latitude,
-  //       lng: position.coords.longitude
-  //     })
-  //   }, (error) => {
-  //   }, this.options);
-  // }, 2000);
-
-  // this.geolocation.getCurrentPosition().then((res) => {
-  //   let pos = {
-  //     lat: res.coords.latitude,
-  //     lng: res.coords.longitude
-  //   }
-  //   console.log("Positions" + res.coords.latitude + " " + res.coords.longitude);
-  //   this.marker = new google.maps.Marker({
-  //     position: pos,
-  //     icon: userCur,
-  //     map: map,
-  //     title: 'ตำแหน่งปัจจุบันของคุณ'
-  //   });
-  //   this.addInfoWindow(this.marker, this.marker.title);
-  //   map.setCenter(pos);
-  //   this.map = map;
-
-  //   //   setTimeout(() => {
-  //   //   let watch = this.geolocation.watchPosition();
-  //   //   watch.subscribe((data) => {
-  //   //     console.log("Current Locations", {
-  //   //             lat: data.coords.latitude,
-  //   //             lng: data.coords.longitude
-  //   //           })
-  //   //   }, (err) => {
-  //   //     console.log(err);
-  //   //   },)
-  //   // },2000)
-
-
-
-  //   console.log("addInfo", this.data.length);
-
-  //   let iconCom = '../../assets/imgs/iconMap/community.png';
-  //   let iconNat = '../../assets/imgs/iconMap/natural.png';
-  //   let iconCul = '../../assets/imgs/iconMap/culture.png';
-  //   let iconTra = '../../assets/imgs/iconMap/travel.png';
-  //   let iconSum;
-
-  //   for (let i = 0; i < this.data.length; i++) {
-  //     console.log("Loader Place => ", this.data[i].Place.namePlace);
-
-  //     if (this.data[i].Place.typesPlace == "ที่พักอาศัย") {
-  //       iconSum = iconCom;
-  //     } else if (this.data[i].Place.typesPlace == "แหล่งท่องเที่ยว") {
-  //       iconSum = iconNat
-  //     } else if (this.data[i].Place.typesPlace == "วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา") {
-  //       iconSum = iconCul
-  //     } else if (this.data[i].Place.typesPlace == "ร้านค้าของที่ระลึก") {
-  //       iconSum = iconTra
-  //     } else if (this.data[i].Place.typesPlace == "ศูนย์บริการข้อมูล") {
-  //       iconSum = iconCom
-  //     } else if (this.data[i].Place.typesPlace == "อื่น ๆ") {
-  //       iconSum = iconTra
-  //     }
-
-  //     let tmp =
-  //       "<center><img src=" + this.data[i].Place.photoPlace + " width=\"150 px\"></center> <br>" +
-  //       "<b>สถานที่ : </b>" + this.data[i].Place.namePlace + "<br>" +
-  //       "<b>รายละเอียด : </b>" + this.data[i].Place.detailPlace + "<br>" +
-  //       "<b>ที่อยู่ : </b>" + this.data[i].Place.placeAddress + "<br>" +
-  //       "<b>ประเภทของสถานที่ : </b>" + this.data[i].Place.typesPlace + "<br>" +
-  //       "<b>เวลาทำการ : </b>" + this.data[i].Place.timePlace + "<br>" +
-  //       "<b>เบอร์โทรศัพท์ : </b>" + this.data[i].Place.telephonePlace + "<br>" +
-  //       "<b>เว็ปไซต์ : </b>" + this.data[i].Place.websitePlace + "<br>" +
-  //       "<b>สร้างโดย : </b>" + this.data[i].Place.owner + "<br>";
-
-  //     console.log("ShowMarker LatLng", this.data[i].LatLng);
-  //     console.log("ShowMarker tmp", tmp);
-  //     console.log("ShowMarker icon", iconSum);
-
-  //     this.ShowMarker(this.data[i].LatLng, tmp, iconSum);
-  //   }
-  // }).catch((error) => {
-  //   console.log('Error getting location', error);
-  // });
-  // }
-
-

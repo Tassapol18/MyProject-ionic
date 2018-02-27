@@ -2,23 +2,94 @@
   <ion-navbar>
     <ion-buttons left>
       <button ion-button color="primary" (click)="goToNearbyMap()">
-
         สถานที่ใกล้เคียง
-
       </button>
     </ion-buttons>
     <ion-title>แผนที่</ion-title>
     <ion-buttons end>
       <button ion-button color="secondary" (click)="goToNewMap()">
-        <ion-icon name="add-circle">
-          เพิ่ม
-        </ion-icon>
+        <ion-icon name="add-circle"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 
+
+
 <ion-content>
+
+  <div>
+    <div class="search">
+      <ion-searchbar (ionInput)="searchMap($event)"></ion-searchbar>
+      <ion-list>
+        <button ion-item *ngFor="let item of loadDataSearch" (click)="searchFind(item)">
+          <ion-icon name="pin"></ion-icon>
+          &nbsp; {{ item }}
+        </button>
+      </ion-list>
+    </div>
+  </div>
+
+
+
+
   <div #map id="map"></div>
+
+
+  <ion-fab right bottom>
+    <button ion-fab color="secondary" (click)="getLocation()">
+      <ion-icon name="locate"></ion-icon>
+    </button>
+  </ion-fab>
+
+
+  <ion-fab left bottom>
+    <button ion-fab>
+      <ion-icon name="funnel"></ion-icon>
+    </button>
+    <ion-fab-list left side="top">
+      <ion-list>
+        <button ion-button left (click)="filterMarkers('อื่น ๆ')">
+          <ion-icon name="logo-googleplus"></ion-icon>
+          &nbsp; อื่น ๆ
+        </button>
+        <button ion-button left (click)="filterMarkers('ศูนย์บริการข้อมูลชุมชน')">
+          ศูนย์บริการข้อมูลชุมชน
+        </button>
+        <button ion-button left (click)="filterMarkers('ร้านค้าของที่ระลึกและสินค้า OTOP')">
+          ร้านค้าของที่ระลึกและสินค้า OTOP
+        </button>
+        <button ion-button left (click)="filterMarkers('วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา')">
+          <!-- <ion-icon name="logo-googleplus"></ion-icon> -->
+          วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา
+        </button>
+        <button ion-button left (click)="filterMarkers('แหล่งท่องเที่ยว')">
+          แหล่งท่องเที่ยว
+        </button>
+        <button ion-button left (click)="filterMarkers('ร้านอาหาร')">
+          ร้านอาหาร
+          <!-- <ion-icon name="logo-twitter"></ion-icon> -->
+        </button>
+        <button ion-button left (click)="filterMarkers('ที่พักอาศัย')">
+          <img src="assets/imgs/iconMap/culture.png" width="20px" height="20px"> &nbsp; ที่พัก
+
+        </button>
+        <button ion-button left (click)="filterMarkers('')">
+          <ion-icon name="logo-facebook"></ion-icon>
+          &nbsp; ทั้งหมด
+
+        </button>
+      </ion-list>
+
+
+
+
+
+    </ion-fab-list>
+  </ion-fab>
+
+
+
+
 </ion-content>

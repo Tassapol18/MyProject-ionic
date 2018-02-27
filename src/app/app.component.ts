@@ -25,15 +25,13 @@ export class MyApp {
     this.afAuth.authState.subscribe(res => {
       if (res) {
         this.rootPage = TabsPage;
-        alert("Welcome to CountryTrip");
       } else {
         this.rootPage = WelcomePage;
       }
     });
-
     platform.ready().then(() => {
       statusBar.styleDefault();
       splashScreen.hide();
     });
-  }
+  } 
 }

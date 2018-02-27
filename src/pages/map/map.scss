@@ -2,5 +2,21 @@ page-map {
     #map {
         height: 100%;
         width: 100%;
+    } 
+    .search {
+        overflow: scroll;
+        position: absolute;
+        z-index: 1;
+        width: 100%;
     }
+    .scroll {
+        height: 100%
+    }
+    ion-list{
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+
+
+  
 }

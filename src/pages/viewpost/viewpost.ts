@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
+import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 
 declare var google;
 
@@ -15,6 +15,7 @@ export class ViewpostPage {
   map: any;
   marker: any;
 
+  key: any;
   name: any;
   email: any;
   topic: any;
@@ -23,16 +24,22 @@ export class ViewpostPage {
   timestamp: any;
   lat: any;
   lng: any;
-  photo: any;
+  photoPostURL: any;
 
   imgShow: boolean;
   mapShow: boolean;
 
+  viewSum: FirebaseListObservable<any[]>;
+  path: any;
+  data = [];
+  count = 0;
 
 
 
   constructor(public navCtrl: NavController,
-    public navParams: NavParams) {
+    public navParams: NavParams,
+    public db: AngularFireDatabase) {
+    this.key = navParams.get('key');
     this.name = navParams.get('name');
     this.email = navParams.get('email');
     this.topic = navParams.get('topic');
@@ -41,19 +48,39 @@ export class ViewpostPage {
     this.timestamp = navParams.get('timestamp');
     this.lat = navParams.get('lat');
     this.lng = navParams.get('lng');
-    this.photo = navParams.get('photo');
+    this.photoPostURL = navParams.get('photoPostURL');
 
-    if (this.photo != null) {
+
+    if (this.photoPostURL != null) {
       this.imgShow = true;
-    } else {
-      this.imgShow = false;
     }
 
     if (this.lat && this.lng != null) {
       this.mapShow = true;
-    } else {
-      this.mapShow = false;
     }
+
+  }
+
+  ionViewWillEnter() {
+    // this.count++
+    
+    // this.path = ('/Posts/' + this.key)
+    // this.viewSum = this.db.list('/Posts/')
+    // this.viewSum.forEach(res => {
+    //   for (let i = 0; i < res.length; i++) {
+    //     let temp = {
+    //       viewSum: res[i].viewSum
+    //     }
+    //     this.data.push(temp)
+    //   }
+    // })
+    // console.log(this.data);
+
+    // let sendCount = {
+    //   viewSum: this.data
+    // }
+    // this.db.object(this.path).update(sendCount)
+    //   .catch(error => console.log(error));
 
   }
 

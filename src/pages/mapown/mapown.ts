@@ -10,7 +10,6 @@ declare var google;
 })
 export class MapownPage {
   @ViewChild('map') mapElement: ElementRef;
-  marker: any;
 
   namePlace: any;
   typesPlace: any;
@@ -21,15 +20,15 @@ export class MapownPage {
   websitePlace: any;
   lat: any;
   lng: any;
-  photoPlace: any;
-  timestamp: any;
+  photoPlaceURL: any;
 
   imgShow: boolean;
   mapShow: boolean;
-
+  marker: any;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams) {
+
     this.namePlace = navParams.get('namePlace');
     this.typesPlace = navParams.get('typesPlace');
     this.detailPlace = navParams.get('detailPlace');
@@ -39,26 +38,21 @@ export class MapownPage {
     this.websitePlace = navParams.get('websitePlace');
     this.lat = navParams.get('lat');
     this.lng = navParams.get('lng');
-    this.photoPlace = navParams.get('photoPlace');
-    this.timestamp = navParams.get('timestamp');
+    this.photoPlaceURL = navParams.get('photoPlaceURL');
 
-    if (this.photoPlace != null) {
+    if (this.photoPlaceURL != null) {
       this.imgShow = true;
-    } else {
-      this.imgShow = false;
     }
 
     if (this.lat && this.lng != null) {
       this.mapShow = true;
-    } else {
-      this.mapShow = false;
     }
-
   }
 
   ionViewDidLoad() {
-    if (this.lat != null && this.lng != null)
+    if (this.lat != null && this.lng != null) {
       this.initMap();
+    }
   }
 
   initMap() {

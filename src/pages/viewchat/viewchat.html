@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>{{key}}</ion-title>
+    <ion-title>{{name}}</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -10,14 +10,13 @@
 
 <ion-content padding>
   <div id="chatMessages">
-    <div *ngFor="let message of messages" [class]="message.specialMessage ? 'message special' : 'message'">
-      <div [class]="message.name == name ? 'innerMessage messageRight' : 'innerMessage messageLeft'">
-        <div class="username">{{ message.name }}</div>
-        <div class="messageContent">{{ message.message }}</div>
+    <div *ngFor="let ms of messages" [class]="ms.specialMessage ? 'message special' : 'message'">
+      <div [class]="ms.key == userUID ? 'innerMessage messageRight' : 'innerMessage messageLeft'">
+        <div class="username">{{ ms.name }}</div>
+        <div class="messageContent">{{ ms.message }}</div>
       </div>
     </div>
   </div>
-
 </ion-content>
 
 <ion-footer>

@@ -67,15 +67,17 @@ export class SearchPage {
   viewpost(post){
     this.post = this.db.list('/Posts');
     this.navCtrl.push(ViewpostPage, {
+      'key': post.$key,
       'name': post.name,
       'email': post.email,
       'topic': post.topic,
       'detail': post.detail,
       'types': post.types,
-      'timestamp': post.timestamp,
       'lat': post.lat,
       'lng': post.lng,
-      'photo': post.photo
+      'photoPost': post.photoPost,
+      'photoPostURL': post.photoPostURL,
+      'timestamp': post.timestamp
     })
   }
 

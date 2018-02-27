@@ -8,6 +8,15 @@
 
 
 <ion-content padding>
+
+  <ion-card *ngIf="imgShow">
+    <ion-row center>
+      <ion-col text-center>
+        <img src="{{photoPlaceURL}}" width="300px">
+      </ion-col>
+    </ion-row>
+  </ion-card>
+
   <ion-card>
     <ion-card-content>
       <p>ชื่อสถานที่ : {{namePlace}} </p>
@@ -17,14 +26,7 @@
       <p>เวลาทำการ : {{timePlace}} </p>
       <p>เบอร์โทรศัพท์ : {{telephonePlace}} </p>
       <p>เว็ปไซต์ : {{websitePlace}} </p>
-      <p>วันและเวลาที่สร้าง : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
     </ion-card-content>
-  </ion-card>
-
-  <ion-card *ngIf="imgShow">
-    <p>รูปภาพ
-      <img src="{{photoPlace}}" width="300px">
-    </p>
   </ion-card>
 
   <ion-card *ngIf="mapShow">

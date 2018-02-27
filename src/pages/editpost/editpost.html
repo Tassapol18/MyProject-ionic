@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>แก้ไขโพสต์ {{key}}</ion-title>
+    <ion-title>แก้ไขกระดานข่าว</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -15,9 +15,9 @@
   <ion-item>
     <ion-label>*ประเภท</ion-label>
     <ion-select [(ngModel)]="types" name="types">
-      <ion-option value="แหล่งท่องในเที่ยวชุมชน">แหล่งท่องเที่ยวชุมชน</ion-option>
-      <ion-option value="แหล่งท่องเที่ยวเชิงธรรมชาติ">แหล่งธรรมท่องเที่ยวธรรมชาติ</ion-option>
-      <ion-option value="แหล่งท่องเที่ยวเชิงวัฒนธรรม">แหล่งท่องเที่ยววัฒนธรรม</ion-option>
+      <ion-option value="แหล่งท่องเที่ยวในชุมชน">แหล่งท่องเที่ยวในชุมชน</ion-option>
+      <ion-option value="แหล่งท่องเที่ยวเชิงธรรมชาติ">แหล่งท่องเที่ยวเชิงธรรมชาติ</ion-option>
+      <ion-option value="แหล่งท่องเที่ยวเชิงวัฒนธรรม">แหล่งท่องเที่ยวเชิงวัฒนธรรม</ion-option>
       <ion-option value="กิจกรรมท่องเที่ยว">กิจกรรมท่องเที่ยว</ion-option>
       <ion-option value="อื่น ๆ">อื่น ๆ</ion-option>
     </ion-select>
@@ -29,22 +29,22 @@
   </ion-item>
 
 
-    <ion-row>
-      <ion-col>
-        <button ion-button type="button" color="primary" full round (click)="addLatLng()">แสดงพิกัด</button>
-      </ion-col>
-      <ion-col>
-        <button ion-button type="button" color="danger" full round (click)="resetLatLng()">คืนค่าพิกัด</button>
-      </ion-col>
-    </ion-row>
+  <ion-row>
+    <ion-col>
+      <button ion-button type="button" color="primary" full round (click)="getPlace()">แสดงค่าพิกัด</button>
+    </ion-col>
+    <ion-col>
+      <button ion-button type="button" color="danger" full round (click)="resetPlace()">ล้างพค่าิกัด</button>
+    </ion-col>
+  </ion-row>
 
 
   <ion-item>
-    <ion-label>พิกัด(Lat) : </ion-label>
+    <ion-label>พิกัดละติจูด : </ion-label>
     <ion-input type="text" name="lat" [(ngModel)]="lat" placeholder="ระบุค่าละติจูด"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>พิกัด(Lng) : </ion-label>
+    <ion-label>พิกัดลองติจูด : </ion-label>
     <ion-input type="text" name="lng" [(ngModel)]="lng" placeholder="ระบุค่าลองติจูด"></ion-input>
   </ion-item>
 
@@ -62,12 +62,13 @@
       </ion-col>
     </ion-row>
 
-    <div *ngIf="showPhotoUpload">
-      <img [src]="photo" width="300" />
-    </div>
-    <div *ngIf="showPhotoUpload">
-      <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
-    </div>
+    <ion-row center *ngIf="showPhotoUpload">
+      <ion-col text-center>
+        <img [src]="photoPostURL" width="300" />
+        <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
+      </ion-col>
+    </ion-row>
+
   </ion-item>
 
   <ion-row center>

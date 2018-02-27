@@ -25,7 +25,9 @@ export class EditmapPage {
   websitePlace: any;
   lat: any;
   lng: any;
+  photoPath: any;
   photoPlace: any;
+  sendPhotoPlaceURL: any;
   photoPlaceURL: any;
   showPhotoUpload: boolean = false;
   data: any;
@@ -69,8 +71,6 @@ export class EditmapPage {
 
     if (this.photoPlace != null) {
       this.showPhotoUpload = true;
-    } else {
-      this.showPhotoUpload = false;
     }
   }
 
@@ -85,11 +85,8 @@ export class EditmapPage {
           reject('fail' + err)
         });
     })
-    // let watch = this.geolocation.watchPosition();
-    // watch.subscribe((data) => { });
-    // return this.lat, this.lng;
-
   }
+
   resetLatLng() {
     return this.lat = null, this.lng = null;
   }
@@ -99,7 +96,7 @@ export class EditmapPage {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.options)
         .then((myPhoto) => {
-          this.photoPlace = 'data:image/jpeg;base64,' + myPhoto;
+          this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
@@ -112,31 +109,36 @@ export class EditmapPage {
     return new Promise((resolve, reject) => {
       this.camera.getPicture(this.optionsSelect)
         .then((myPhoto) => {
-          this.photoPlace = 'data:image/jpeg;base64,' + myPhoto;
+          this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
           this.upLoadImage();
           resolve('send picture to upload');
         }, (err) => {
           reject('fail : ' + err);
         });
     })
-
   }
 
   //Upload Image
   upLoadImage() {
-    alert('Func uploadImage')
-    this.mapPhoto = firebase.storage().ref('/Maps');
+    alert('รออัพโหลดรูปสักครู่...')
+    this.mapPhoto = firebase.storage().ref('/Posts/');
     const filename = Math.floor(Date.now() / 1000);
     return new Promise((resolve, reject) => {
-      this.photoPlaceURL = 'Maps_' + filename;
-      const imageRef = this.mapPhoto.child(this.photoPlaceURL);
-      imageRef.putString(this.photoPlace, firebase.storage.StringFormat.DATA_URL)
+      this.photoPlace = 'Post_' + filename;
+      this.sendPhotoPlaceURL = this.mapPhoto.child(this.photoPlace);
+      this.sendPhotoPlaceURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
         .then(() => {
-          alert('Upload Success : ' + imageRef)
-          this.showPhotoUpload = true;
+          alert('อัพโหลดรูปสำเร็จ : ' + this.sendPhotoPlaceURL);
+          this.mapPhoto.child(this.photoPlace).getDownloadURL()
+            .then((url) => {
+              this.photoPlaceURL = url;
+              this.showPhotoUpload = true;
+            }).catch((err) => {
+              alert('fail : ' + err)
+            });
           resolve('Upload Image Success')
         }).catch((err) => {
-          alert('Upload Unsuccess : ' + err)
+          alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
           reject('fail : ' + err)
         });
     })
@@ -144,92 +146,54 @@ export class EditmapPage {
 
   //DeletePhoto
   deletePhotoUpload() {
-    alert('Delete Photo now : ' + this.photoPlaceURL)
-    firebase.storage().ref('/Maps/' + this.photoPlaceURL).delete();
-    this.photoPlace = null;
-    this.photoPlaceURL = null;
-    this.showPhotoUpload = false;
+    // alert('คุณกำลังจะลบรูป : ' + this.sendPhotoPostURL)
+    firebase.storage().ref('/Posts/' + this.photoPlace).delete()
+      .then(() => {
+        this.photoPlace = null;
+        this.photoPlaceURL = null;
+        this.showPhotoUpload = false;
+      }).catch(err => {
+        alert('fail : ' + err)
+      });
   }
 
   editMap(namePlace, typesPlace, detailPlace, placeAddress, timePlace, telephonePlace, websitePlace) {
     let user = firebase.auth().currentUser;
 
-    alert('This function editMap => '
-      + ' //ownerPlace : ' + user.displayName
-      + ' //ownerUID : ' + user.uid
-      + ' //namePlace : ' + namePlace
-      + ' //typesPlace : ' + typesPlace
-      + ' //detailPlace : ' + detailPlace
-      + ' //placeAddress : ' + placeAddress
-      + ' //timePlace : ' + timePlace
-      + ' //telephonePlace : ' + telephonePlace
-      + ' //websitePlace : ' + websitePlace
-      + ' //lat : ' + this.lat
-      + ' //lng : ' + this.lng
-      + ' //photoPlaceURL : ' + this.photoPlaceURL);
+    this.lat = parseFloat(this.lat);
+    this.lng = parseFloat(this.lng);
 
-      if(namePlace && typesPlace && detailPlace != null){
-        this.data = {
-          ownerPlace: user.displayName,
-          ownerUID: user.uid,
-          namePlace: namePlace,
-          typesPlace: typesPlace,
-          detailPlace: detailPlace,
-          placeAddress: (placeAddress) ? placeAddress : '-',
-          timePlace: (timePlace) ? timePlace : '-',
-          telephonePlace: (telephonePlace) ? telephonePlace : '-',
-          websitePlace: (websitePlace) ? websitePlace : '-',
-          lat: this.lat,
-          lng: this.lng,
-          photoPlace: (this.photoPlace) ? this.photoPlace : null,
-          photoPlaceURL: (this.photoPlaceURL) ? this.photoPlaceURL : null,
-        }
-        alert('Use func uploadMap');
-        // alert('This function editMap => '
-        // + ' //ownerPlace : ' + this.data.ownerPlace
-        // + ' //ownerUID : ' + this.data.ownerUID
-        // + ' //namePlace : ' + this.data.namePlace
-        // + ' //typesPlace : ' + this.data.typesPlace
-        // + ' //detailPlace : ' + this.data.detailPlace
-        // + ' //placeAddress : ' + this.data.placeAddress
-        // + ' //timePlace : ' + this.data.timePlace
-        // + ' //telephonePlace : ' + this.data.telephonePlace
-        // + ' //websitePlace : ' + this.data.websitePlace
-        // + ' //lat : ' + this.data.lat
-        // + ' //lng : ' + this.data.lng
-        // + ' //photoPlaceURL : ' + this.data.photoPlaceURL);
-        // alert('photoPlace : ' + this.data.photoPlace)
-        this.updateFromEdit();
-      }else{
-        alert('กรุณากรอกข้อมูล * ให้ครบถ้วน');
-
+    if (namePlace && typesPlace && detailPlace != null) {
+      this.data = {
+        ownerPlace: user.displayName,
+        ownerUID: user.uid,
+        namePlace: namePlace,
+        typesPlace: typesPlace,
+        detailPlace: detailPlace,
+        placeAddress: (placeAddress) ? placeAddress : '-',
+        timePlace: (timePlace) ? timePlace : '-',
+        telephonePlace: (telephonePlace) ? telephonePlace : '-',
+        websitePlace: (websitePlace) ? websitePlace : '-',
+        lat: this.lat,
+        lng: this.lng,
+        photoPlace: (this.photoPlace) ? this.photoPlace : '-',
+        photoPlaceURL: (this.photoPlaceURL) ? this.photoPlaceURL : 'https://firebasestorage.googleapis.com/v0/b/countrytrip-31ea9.appspot.com/o/noPicture.png?alt=media&token=555747fe-37fe-4f1f-a15a-295d837086d0',
       }
-    
+      this.updateFromEdit();
+    } else {
+      alert('กรุณากรอกข้อมูล * ให้ครบถ้วน');
+    }
   }
 
   updateFromEdit() {
-    alert('Func updateFromEdit');
     this.map = this.db.object('/Maps/' + this.key);
-    alert('this.data update => '
-    + ' //ownerPlace : ' + this.data.ownerPlace
-    + ' //ownerUID : ' + this.data.ownerUID
-    + ' //namePlace : ' + this.data.namePlace
-    + ' //typesPlace : ' + this.data.typesPlace
-    + ' //detailPlace : ' + this.data.detailPlace
-    + ' //placeAddress : ' + this.data.placeAddress
-    + ' //timePlace : ' + this.data.timePlace
-    + ' //telephonePlace : ' + this.data.telephonePlace
-    + ' //websitePlace : ' + this.data.websitePlace
-    + ' //lat : ' + this.data.lat
-    + ' //lng : ' + this.data.lng
-    + ' //photoPlaceURL : ' + this.data.photoPlaceURL);
     return new Promise((resolve, reject) => {
       this.map.update(this.data).then((res) => {
-        alert('แก้ไขข้อมูลสำเร็จ : ' + res);
+        alert('แก้ไขข้อมูลสำเร็จ');
         this.navCtrl.pop();
         resolve('Success');
       }, err => {
-        alert('แก้ไขข้อมูลไม่สำเร็จ : ' + err);
+        alert('แก้ไขข้อมูลไม่สำเร็จ');
         reject('Unsuccess');
       });
     })

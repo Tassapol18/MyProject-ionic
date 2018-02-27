@@ -8,6 +8,9 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Camera } from '@ionic-native/camera';
+import { Facebook } from '@ionic-native/facebook';
+import { GoogleMaps } from '@ionic-native/google-maps';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 //Page
 import { HomePage } from '../pages/home/home';
@@ -23,6 +26,11 @@ import { SearchPage } from '../pages/search/search';
 import { ViewmapPage } from '../pages/viewmap/viewmap';
 import { EditpostPage } from '../pages/editpost/editpost';
 import { NearbymapPage } from '../pages/nearbymap/nearbymap';
+import { EditmapPage } from '../pages/editmap/editmap';
+import { ViewchatPage } from '../pages/viewchat/viewchat';
+import { MapownPage } from '../pages/mapown/mapown';
+import { ViewMapDirectionsPage } from '../pages/view-map-directions/view-map-directions';
+
 
 //FirebaseModule
 import { AngularFireModule } from 'angularfire2';
@@ -32,12 +40,7 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
-import { Facebook } from '@ionic-native/facebook';
-import { GoogleMaps } from '@ionic-native/google-maps';
-import { EditmapPage } from '../pages/editmap/editmap';
-import { ViewchatPage } from '../pages/viewchat/viewchat';
-import { MapownPage } from '../pages/mapown/mapown';
-
+import { SearchmapPage } from '../pages/searchmap/searchmap';
 
 
 export const firebase = {
@@ -67,7 +70,9 @@ export const firebase = {
     NearbymapPage,
     EditmapPage,
     ViewchatPage,
-    MapownPage
+    MapownPage,
+    ViewMapDirectionsPage,
+    SearchmapPage
   ],
   imports: [
     BrowserModule,
@@ -98,7 +103,9 @@ export const firebase = {
     NearbymapPage,
     EditmapPage,
     ViewchatPage,
-    MapownPage
+    MapownPage,
+    ViewMapDirectionsPage,
+    SearchmapPage
   ],
   providers: [
     StatusBar,
@@ -108,6 +115,7 @@ export const firebase = {
     Geolocation,
     Facebook,
     GoogleMaps,
+    GooglePlus,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
   ]
 })

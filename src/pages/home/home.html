@@ -2,19 +2,15 @@
   <ion-navbar no-border-bottom>
     <ion-buttons left>
       <button ion-button (click)="goToSearch()">
-        <ion-icon name="ios-search">
-          ค้นหา
-        </ion-icon>
+        <ion-icon name="ios-search"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-title>ข่าวสาร</ion-title>
-    <ion-buttons end>
+    <ion-title>กระดานข่าวสาร</ion-title>
+    <!-- <ion-buttons end>
       <button ion-button color="secondary" (click)="goToPost()">
-        <ion-icon name="add-circle">
-          โพสต์
-        </ion-icon>
+        <ion-icon name="create"></ion-icon>
       </button>
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-navbar>
 
   <ion-toolbar no-border-top>
@@ -45,72 +41,145 @@
   <div [ngSwitch]="News">
 
     <ion-list *ngSwitchCase="'All'">
-      <ion-item *ngFor="let post of (post | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+      <ion-item *ngFor="let post of (post | async)?.slice().reverse()" (click)="viewpost(post)">
+        <!-- <ion-thumbnail item-start>
           <img src="{{post.profilePicture}}">
-        </ion-thumbnail>
-        <h3>เรื่อง : {{post.topic}}</h3>
-        <h2>ประเภท : {{post.types}}</h2>
-        <h2>รายละเอียด : {{post.detail}}</h2>
-        <button ion-button  item-end color="primary" (click)="viewpost(post)">ดูเพิ่มเติม</button>
+        </ion-thumbnail> -->
+        <h2>{{post.topic}}</h2>
+        <p>ประเภท : {{post.types}}</p>
+        <p>รายละเอียด : {{post.detail}}</p>
       </ion-item>
+
+      <ion-item *ngFor="let data of data">
+        <ion-thumbnail item-start>
+          <img src="{{data.profilePicture}}">
+        </ion-thumbnail>
+        <h2>{{data.name}}</h2>
+        <p>รายละเอียด : {{data.uid}}</p>
+      </ion-item>
+
+      <!-- <ion-item *ngIf="showPostAll">
+        <ion-row center>
+          <ion-col text-center>
+            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวในชุมชน</p>
+          </ion-col>
+        </ion-row>
+      </ion-item> -->
+
     </ion-list>
 
 
     <ion-list *ngSwitchCase="'community'">
-      <ion-item *ngFor="let community of (community | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+      <ion-item *ngFor="let community of (community | async)?.slice().reverse()" (click)="viewpostCommunity(community)">
+        <!-- <ion-thumbnail item-start>
           <img src="{{community.profilePicture}}">
-        </ion-thumbnail>
-        <h3>เรื่อง : {{community.topic}}</h3>
-        <h2>รายละเอียด : {{community.detail}}</h2>
-        <button ion-button  item-end (click)="viewpostCommunity(community)">ดูเพิ่มเติม</button>
+        </ion-thumbnail> -->
+        <h2>{{community.topic}}</h2>
+        <p>รายละเอียด : {{community.detail}}</p>
       </ion-item>
+
+      <ion-item *ngIf="showPostCommunity">
+        <ion-row center>
+          <ion-col text-center>
+            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวในชุมชน</p>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+
     </ion-list>
 
     <ion-list *ngSwitchCase="'natural'">
-      <ion-item *ngFor="let natural of (natural | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+      <ion-item *ngFor="let natural of (natural | async)?.slice().reverse()" (click)="viewpostNatural(natural)">
+        <!-- <ion-thumbnail item-start>
           <img src="{{natural.profilePicture}}">
-        </ion-thumbnail>
-        <h3>เรื่อง : {{natural.topic}}</h3>
-        <h2>รายละเอียด : {{natural.detail}}</h2>
-        <button ion-button  item-end (click)="viewpostNatural(natural)">ดูเพิ่มเติม</button>
+        </ion-thumbnail> -->
+        <h2>{{natural.topic}}</h2>
+        <p>รายละเอียด : {{natural.detail}}</p>
+      </ion-item>
+
+      <ion-item *ngIf="showPostNatural">
+        <ion-row center>
+          <ion-col text-center>
+            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวเชิงธรรมชาติ</p>
+          </ion-col>
+        </ion-row>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'culture'">
-      <ion-item *ngFor="let culture of (culture | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+      <ion-item *ngFor="let culture of (culture | async)?.slice().reverse()" (click)="viewpostCulture(culture)">
+        <!-- <ion-thumbnail item-start>
           <img src="{{culture.profilePicture}}">
-        </ion-thumbnail>
-        <h3>เรื่อง : {{culture.topic}}</h3>
-        <h2>รายละเอียด : {{culture.detail}}</h2>
-        <button ion-button  item-end (click)="viewpostCulture(culture)">ดูเพิ่มเติม</button>
+        </ion-thumbnail> -->
+        <h2>{{culture.topic}}</h2>
+        <p>รายละเอียด : {{culture.detail}}</p>
+      </ion-item>
+
+      <ion-item *ngIf="showPostCulture">
+        <ion-row center>
+          <ion-col text-center>
+            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวเชิงวัฒนธรรม</p>
+          </ion-col>
+        </ion-row>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'travel'">
-      <ion-item *ngFor="let travel of (travel | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+      <ion-item *ngFor="let travel of (travel | async)?.slice().reverse()" (click)="viewpostTravel(travel)">
+        <!-- <ion-thumbnail item-start>
           <img src="{{travel.profilePicture}}">
-        </ion-thumbnail>
-        <h3>เรื่อง : {{travel.topic}}</h3>
-        <h2>รายละเอียด : {{travel.detail}}</h2>
-        <button ion-button  item-end (click)="viewpostTravel(travel)">ดูเพิ่มเติม</button>
+        </ion-thumbnail> -->
+        <h2>{{travel.topic}}</h2>
+        <p>รายละเอียด : {{travel.detail}}</p>
+      </ion-item>
+
+      <ion-item *ngIf="showPostTravel">
+        <ion-row center>
+          <ion-col text-center>
+            <p>ไม่มีข้อมูลของกิจกรรมท่องเที่ยว</p>
+          </ion-col>
+        </ion-row>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'other'">
-      <ion-item *ngFor="let other of (other | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+      <ion-item *ngFor="let other of (other | async)?.slice().reverse()" (click)="viewpostOther(other)">
+        <!-- <ion-thumbnail item-start>
           <img src="{{other.profilePicture}}">
-        </ion-thumbnail>
-        <h3>เรื่อง : {{other.topic}}</h3>
-        <h2>รายละเอียด : {{other.detail}}</h2>
-        <button ion-button  item-end (click)="viewpostOther(other)">ดูเพิ่มเติม</button>
+        </ion-thumbnail> -->
+        <h2>{{other.topic}}</h2>
+        <p>รายละเอียด : {{other.detail}}</p>
+      </ion-item>
+
+      <ion-item *ngIf="showPostOther">
+        <ion-row center>
+          <ion-col text-center>
+            <p>ไม่มีข้อมูลของประเภทอื่น ๆ</p>
+          </ion-col>
+        </ion-row>
       </ion-item>
     </ion-list>
 
   </div>
+
+  <!-- <ion-fab right bottom>
+    <button ion-fab color="secondary">
+      <ion-icon name="reorder"></ion-icon>
+    </button>
+    <ion-fab-list side="top">
+
+      <button ion-fab (click)="goToSearch()">
+        <ion-icon name="search"></ion-icon>
+      </button>
+      <button ion-fab (click)="goToPost()">
+        <ion-icon name="create"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab> -->
+
+  <ion-fab right bottom>
+    <button ion-fab color="secondary" (click)="goToPost()">
+      <ion-icon name="create"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

@@ -4,6 +4,7 @@ import { PostPage } from '../post/post';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { SearchPage } from '../search/search';
 import { ViewpostPage } from '../viewpost/viewpost';
+import firebase from 'firebase';
 
 @Component({
   selector: 'page-home',
@@ -18,8 +19,16 @@ export class HomePage {
   travel: FirebaseListObservable<any[]>;
   other: FirebaseListObservable<any[]>;
 
+  showPostAll: boolean = false;
+  showPostCommunity: boolean = false;
+  showPostNatural: boolean = false;
+  showPostCulture: boolean = false;
+  showPostTravel: boolean = false;
+  showPostOther: boolean = false;
+
+
   News: string = "All";
-  isAndroid: boolean = false;
+
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public db: AngularFireDatabase) {
@@ -33,9 +42,10 @@ export class HomePage {
     this.community = db.list('/Posts', {
       query: {
         orderByChild: 'types',
-        equalTo: 'แหล่งท่องในเที่ยวชุมชน'
+        equalTo: 'แหล่งท่องเที่ยวในชุมชน'
       }
     });
+
 
     this.natural = db.list('/Posts', {
       query: {
@@ -44,6 +54,7 @@ export class HomePage {
       }
     });
 
+
     this.culture = db.list('/Posts', {
       query: {
         orderByChild: 'types',
@@ -51,12 +62,14 @@ export class HomePage {
       }
     });
 
+
     this.travel = db.list('/Posts', {
       query: {
         orderByChild: 'types',
         equalTo: 'กิจกรรมท่องเที่ยว'
       }
     });
+
 
     this.other = db.list('/Posts', {
       query: {
@@ -66,20 +79,39 @@ export class HomePage {
     });
 
 
+    if (this.post == null) {
+      this.showPostAll = true;
+    }
+    if (this.community == null) {
+      this.showPostCommunity = true;
+    }
+    if (this.natural == null) {
+      this.showPostNatural = true;
+    }
+    if (this.culture == null) {
+      this.showPostCulture = true;
+    }
+    if (this.travel == null) {
+      this.showPostTravel = true;
+    }
+    if (this.other == null) {
+      this.showPostOther = true;
+    }
   }
+
 
   goToSearch() {
     this.navCtrl.push(SearchPage);
+
   }
 
   goToPost() {
     this.navCtrl.push(PostPage);
   }
 
-
-
   viewpost(post) {
     this.navCtrl.push(ViewpostPage, {
+      'key': post.$key,
       'name': post.name,
       'email': post.email,
       'topic': post.topic,
@@ -88,12 +120,13 @@ export class HomePage {
       'timestamp': post.timestamp,
       'lat': post.lat,
       'lng': post.lng,
-      'photo': post.photo
+      'photoPostURL': post.photoPostURL,
     })
   }
 
   viewpostCommunity(community) {
     this.navCtrl.push(ViewpostPage, {
+      'key': community.$key,
       'name': community.name,
       'email': community.email,
       'topic': community.topic,
@@ -102,12 +135,13 @@ export class HomePage {
       'timestamp': community.timestamp,
       'lat': community.lat,
       'lng': community.lng,
-      'photo': community.photo
+      'photoPostURL': community.photoPostURL,
     })
   }
 
   viewpostNatural(natural) {
     this.navCtrl.push(ViewpostPage, {
+      'key': natural.$key,
       'name': natural.name,
       'email': natural.email,
       'topic': natural.topic,
@@ -116,12 +150,13 @@ export class HomePage {
       'timestamp': natural.timestamp,
       'lat': natural.lat,
       'lng': natural.lng,
-      'photo': natural.photo
+      'photoPostURL': natural.photoPostURL,
     })
   }
 
   viewpostCulture(culture) {
     this.navCtrl.push(ViewpostPage, {
+      'key': culture.$key,
       'name': culture.name,
       'email': culture.email,
       'topic': culture.topic,
@@ -130,12 +165,13 @@ export class HomePage {
       'timestamp': culture.timestamp,
       'lat': culture.lat,
       'lng': culture.lng,
-      'photo': culture.photo
+      'photoPostURL': culture.photoPostURL,
     })
   }
 
   viewpostTravel(travel) {
     this.navCtrl.push(ViewpostPage, {
+      'key': travel.$key,
       'name': travel.name,
       'email': travel.email,
       'topic': travel.topic,
@@ -144,12 +180,13 @@ export class HomePage {
       'timestamp': travel.timestamp,
       'lat': travel.lat,
       'lng': travel.lng,
-      'photo': travel.photo
+      'photoPostURL': travel.photoPostURL,
     })
   }
 
   viewpostOther(other) {
     this.navCtrl.push(ViewpostPage, {
+      'key': other.$key,
       'name': other.name,
       'email': other.email,
       'topic': other.topic,
@@ -158,7 +195,7 @@ export class HomePage {
       'timestamp': other.timestamp,
       'lat': other.lat,
       'lng': other.lng,
-      'photo': other.photo
+      'photoPostURL': other.photoPostURL,
     })
   }
 
