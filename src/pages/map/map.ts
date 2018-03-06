@@ -109,14 +109,15 @@ export class MapPage {
           position: posCur,
           map: this.map,
           // icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-          icon: 'assets/imgs/iconMap/personCurrent.png'
+          // icon: 'assets/imgs/iconMap/personCurrent.png'
+          icon: {
+            url: 'assets/imgs/iconMap/personCurrent.png',   
+            scaledSize: new google.maps.Size(60, 60), // scaled size
+          }
         });
-
         this.start = posCur;
-
         let info = "<center><b>นี่คือตำแหน่งปัจจุบันของคุณ</b></center><br>" +
           "<b>ละติจูดที่ : </b>" + posCur.lat + "<b> , ลอนติจูดที่ : </b>" + posCur.lng;
-
         this.AddInfoWindowUser(marker, info);
         marker.setMap(this.map);
       } else {
@@ -178,11 +179,10 @@ export class MapPage {
 
   getDetailMarker(temp) {
     let info =
-      "<center><img src=" + temp.Place.photoPlaceURL + " width=\"150 px\"></center> <br>" +
-      "<b>ชื่อสถานที่ : </b>" + temp.Place.namePlace + "<br>" +
-      "<b>ประเภทของสถานที่ : </b>" + temp.Place.typesPlace + "<br>" +
-      "<a id='clickDetail'> ดูรายละเอียดเพิ่มเติม </a> <br>" +
-      "<a id='clickDirections'> แสดงเส้นทาง </a>";
+      "<center><img src=" + temp.Place.photoPlaceURL + " width=\"150px\" height=\"150px\"></center> <br>" +
+      "<b>" + temp.Place.namePlace + "</b> <br>" +
+      "<b>ประเภท : </b>" + temp.Place.typesPlace + "<br>" +
+      "<a id='clickDetail'> ดูรายละเอียดเพิ่มเติม </a> &nbsp;&nbsp;&nbsp; <a id='clickDirections'> แสดงเส้นทาง </a>";
     this.addMarker(temp.LatLng, info, temp);
   }
 
@@ -192,31 +192,31 @@ export class MapPage {
 
     var icon;
     var iconHotel = {
-      url: 'assets/imgs/iconMap/culture.png',   //ม่วง
+      url: 'assets/imgs/iconMap/hotel.png',   
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
     var iconRest = {
-      url: 'assets/imgs/iconMap/culture.png',   //ส้ม
+      url: 'assets/imgs/iconMap/resturant.png',  
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
     var iconTravel = {
-      url: 'assets/imgs/iconMap/natural.png',    //เขียว
+      url: 'assets/imgs/iconMap/travel.png',    
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
     var iconTemple = {
-      url: 'assets/imgs/iconMap/culture.png',   //เหลือง
+      url: 'assets/imgs/iconMap/temple.png',  
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
     var iconStore = {
-      url: 'assets/imgs/iconMap/travel.png', //แดง
+      url: 'assets/imgs/iconMap/store.png', 
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
     var iconInformation = {
-      url: 'assets/imgs/iconMap/travel.png',   //ฟ้า
+      url: 'assets/imgs/iconMap/information.png',   
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
     var iconOther = {
-      url: 'assets/imgs/iconMap/culture.png',   //เทา
+      url: 'assets/imgs/iconMap/other.png',   
       scaledSize: new google.maps.Size(50, 50), // scaled size
     }
 
@@ -338,11 +338,6 @@ export class MapPage {
         }
       }
     }
-    // else if (val == '') {
-    //   for (let i of this.nameSearch) {
-    //     this.loadDataSearch.push(i);
-    //   }
-    // }
   }
 
   ionViewWillLeave() {
@@ -378,7 +373,7 @@ export class MapPage {
     this.navCtrl.push(ViewMapDirectionsPage, {
       'start': this.start,
       'end': this.end,
-      'namePlace': data.Place.namePlace
+      'namePlace': data.Place.namePlace,
     })
   }
 

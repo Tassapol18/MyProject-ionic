@@ -26,8 +26,8 @@ export class ViewpostPage {
   lng: any;
   photoPostURL: any;
 
-  imgShow: boolean;
-  mapShow: boolean;
+  mapShow: boolean = false;
+  imageShow: boolean = false;
 
   viewSum: FirebaseListObservable<any[]>;
   path: any;
@@ -50,9 +50,8 @@ export class ViewpostPage {
     this.lng = navParams.get('lng');
     this.photoPostURL = navParams.get('photoPostURL');
 
-
-    if (this.photoPostURL != null) {
-      this.imgShow = true;
+    if(this.photoPostURL != '-'){
+      this.imageShow = true;
     }
 
     if (this.lat && this.lng != null) {

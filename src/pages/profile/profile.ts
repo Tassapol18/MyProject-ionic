@@ -7,7 +7,7 @@ import { EditpostPage } from '../editpost/editpost';
 import { ViewpostPage } from '../viewpost/viewpost';
 import { Facebook } from '@ionic-native/facebook';
 import { EditmapPage } from '../editmap/editmap';
-import { MapownPage } from '../mapown/mapown';
+import { ViewmapPage } from '../viewmap/viewmap';
 
 
 @IonicPage()
@@ -144,8 +144,13 @@ export class ProfilePage {
         {
           text: 'ฉันต้องการลบ',
           handler: () => {
-            this.post.remove(post.$key);
-            firebase.storage().ref('/Posts/' + post.photoPost).delete();
+            if(post.photoPlace == '-' || post.photoPlace == null){
+              this.post.remove(post.$key);
+            }else{
+              this.post.remove(post.$key);
+              firebase.storage().ref('/Posts/' + post.photoPost).delete();
+            }
+           
           }
         }
       ]
@@ -170,7 +175,7 @@ export class ProfilePage {
 
   //Map
   viewMap(map) {
-    this.navCtrl.push(MapownPage, {
+    this.navCtrl.push(ViewmapPage, {
       'namePlace': map.namePlace,
       'typesPlace': map.typesPlace,
       'detailPlace': map.detailPlace,
@@ -181,7 +186,9 @@ export class ProfilePage {
       'lat': map.lat,
       'lng': map.lng,
       'photoPlaceURL': map.photoPlaceURL,
-      'timestamp': map.timestamp
+      'timestamp': map.timestamp,
+      'ownerPlace': this.user.displayName,
+      'ownerUID': this.user.uid
     })
   }
 
@@ -199,9 +206,14 @@ export class ProfilePage {
         {
           text: 'ฉันต้องการลบ',
           handler: () => {
-
-            this.map.remove(map.$key);
-            firebase.storage().ref('/Maps/' + map.photoPlace).delete();
+            if(map.photoPlace == '-' || map.photoPlace == null ){
+              this.map.remove(map.$key);
+              
+            }else{
+              this.map.remove(map.$key);
+              firebase.storage().ref('/Maps/' + map.photoPlace).delete();
+            }
+           
           }
         }
       ]

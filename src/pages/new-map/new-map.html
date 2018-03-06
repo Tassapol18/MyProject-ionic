@@ -1,9 +1,7 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title>สร้างสถานที่</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
@@ -89,20 +87,13 @@
         </ion-col>
       </ion-row>
 
-      <!-- <ion-row center *ngIf="showPhotoUpload">
-        <ion-col text-center *ngFor="let photo of photoPlaceURL">
-          <img [src]="photo" width="300" />
-          <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
-        </ion-col>
-      </ion-row> -->
-
       <ion-row center *ngIf="showPhotoUpload">
         <ion-col text-center *ngFor="let photo of photoPlaceURL; let id = index">
           <ion-card>
-            <button ion-button type="button" color="danger" full round outline (click)="deletePhotoUpload(id)">
+            <button ion-button type="button" color="danger" outline (click)="deletePhotoUpload(id)">
               <ion-icon name="trash"></ion-icon>
             </button>
-            <img [src]="photo" />
+            <img [src]="photo" width="100px" height="100px" />
           </ion-card>
         </ion-col>
       </ion-row>

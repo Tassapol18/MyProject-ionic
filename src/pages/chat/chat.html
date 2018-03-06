@@ -9,16 +9,17 @@
     <ion-list-header>
       ข้อความ
     </ion-list-header>
-    <ion-item-sliding *ngFor="let user of userChat.slice().reverse()">
+    <ion-item-sliding *ngFor="let user of userChat" >
       <ion-item (click)="goToChat(user)">
         <ion-thumbnail item-start>
           <img src="{{user.profilePicture}}">
         </ion-thumbnail>
         <h2>{{user.name}}</h2>
-        <p>{{user.lastChat.message}}</p>
+        <ion-badge *ngIf="user.notification>0" item-end>{{user.notification}}</ion-badge>
+
       </ion-item>
       <ion-item-options side="right">
-        <button ion-button color="danger" (click)="deleteCheckin(user)">
+        <button ion-button color="danger" (click)="deleteChat(user)">
           <ion-icon name="trash"></ion-icon>
           ลบ
         </button>
@@ -35,7 +36,7 @@
       <ion-thumbnail item-start>
         <img src="{{user.profilePicture}}">
       </ion-thumbnail>
-      <h2>{{user.name}}</h2>
+      <h2>{{user.name}} </h2>
     </ion-item>
 
   </ion-list>

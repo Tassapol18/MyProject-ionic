@@ -10,9 +10,9 @@
 <ion-content padding>
 
   <ion-card>
-    <ion-slides auto-play='true' does-continue='true' slide-intervel='30000'>
+    <ion-slides auto-play='true' does-continue='true' slide-intervel='3000'>
       <ion-slide *ngFor="let photo of photoPlaceURL">
-        <img src="{{photo}}" />
+        <img src="{{photo}}" height="250px" width="100%" align-items="center"/>
       </ion-slide>
     </ion-slides>
   </ion-card>
@@ -22,6 +22,7 @@
       <h2>รายละเอียด</h2>
     </ion-card-header>
     <ion-card-content>
+
       <p>ชื่อสถานที่ : {{namePlace}} </p>
       <p>รายละเอียด : {{detailPlace}} </p>
       <p>ที่อยู่ : {{placeAddress}} </p>
@@ -29,13 +30,13 @@
       <p>เวลาทำการ : {{timePlace}} </p>
       <p>เบอร์โทรศัพท์ : {{telephonePlace}} </p>
       <p>เว็ปไซต์ : {{websitePlace}} </p>
-      <p>สร้างโดย : {{ownerPlace}} </p>
-      <p>ระยะห่าง {{distance}} กิโลเมตร </p>
-      <p>KeyID : {{key}}</p>
-      <button ion-button (click)="checkIn()">เช็คอินสถานที่</button>
-      <button ion-button (click)="reviewPlace()">รีวิวสถานที่</button>
+
       <div *ngIf="checkUser">
-        <button ion-button (click)="goToChat()">ส่งข้อความ</button>
+        <p>สร้างโดย : {{ownerPlace}} </p>
+        <p>ระยะห่าง {{distance}} กิโลเมตร </p>
+        <button ion-button (click)="checkIn()"><ion-icon name="ios-checkbox-outline"></ion-icon> &nbsp; เช็คอินสถานที่</button>
+        <button ion-button (click)="reviewPlace()"><ion-icon name="ios-create-outline"></ion-icon> &nbsp; รีวิวสถานที่</button>
+        <button ion-button (click)="goToChat()"><ion-icon name="ios-mail-outline"></ion-icon> &nbsp; ส่งข้อความ</button>
       </div>
 
     </ion-card-content>

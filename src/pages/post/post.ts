@@ -21,7 +21,7 @@ export class PostPage {
   photoPost: any;   //ชื่อรูป
   sendPhotoPostURL: any; //ส่งรูปไปยัง Storage
   photoPostURL: any;  //URL รูป
-  showPhotoUpload: boolean;
+  showPhotoUpload: boolean = false;
 
   /*  CameraOptions
     quality: 100, -> คุณภาพ
@@ -61,8 +61,9 @@ export class PostPage {
     public db: AngularFireDatabase,
     private geolocation: Geolocation,
     private camera: Camera) {
-    this.showPhotoUpload = false;
 
+    this.photoPost = [];
+    this.photoPostURL = [];
   }
 
   getPlace() {
@@ -115,14 +116,16 @@ export class PostPage {
     this.postPhoto = firebase.storage().ref('/Posts/');
     const filename = Math.floor(Date.now() / 1000);
     return new Promise((resolve, reject) => {
-      this.photoPost = 'Post_' + filename;
-      this.sendPhotoPostURL = this.postPhoto.child(this.photoPost);
+      if (this.photoPostURL.length < 5) {
+      let name = 'Post_' + filename;
+      this.photoPost.push(name)
+      this.sendPhotoPostURL = this.postPhoto.child(name);
       this.sendPhotoPostURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
         .then(() => {
           alert('อัพโหลดรูปสำเร็จ : ' + this.sendPhotoPostURL);
-          this.postPhoto.child(this.photoPost).getDownloadURL()
+          this.postPhoto.child(name).getDownloadURL()
             .then((url) => {
-              this.photoPostURL = url;
+              this.photoPostURL.push(url);
               this.showPhotoUpload = true;
             }).catch((err) => {
               alert('fail : ' + err)
@@ -132,17 +135,18 @@ export class PostPage {
           alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
           reject('fail : ' + err)
         });
+      } else {
+        alert('ไม่สามารถอัพโหลดรูปเพิ่มได้')
+      }
     })
   }
 
   //DeletePhoto
-  deletePhotoUpload() {
-    // alert('คุณกำลังจะลบรูป : ' + this.sendPhotoPostURL)
-    firebase.storage().ref('/Posts/' + this.photoPost).delete()
+  deletePhotoUpload(index) {
+    firebase.storage().ref('/Posts/' + this.photoPost[index]).delete()
       .then(() => {
-        this.photoPost = null;
-        this.photoPostURL = null;
-        this.showPhotoUpload = false;
+        this.photoPost.splice(index, 1);
+        this.photoPostURL.splice(index, 1);
       }).catch(err => {
         alert('fail : ' + err)
       });
@@ -152,7 +156,15 @@ export class PostPage {
   newPost(topic, detail, types) {
     let user = firebase.auth().currentUser;
     let timestamp = firebase.database.ServerValue.TIMESTAMP;
-    // alert(this.photoPost + ' &TH& ' + this.photoPostURL)
+
+    if(this.photoPost && this.photoPostURL == null || this.photoPost && this.photoPostURL == ''){
+      this.photoPost = ['-'];
+      this.photoPostURL = ['-'];
+    }
+
+    this.lat = parseFloat(this.lat);
+    this.lng = parseFloat(this.lng);
+
     if (topic && detail && types != null) {
       this.data = {
         name: user.displayName,
@@ -164,8 +176,8 @@ export class PostPage {
         types: types,
         lat: (this.lat) ? this.lat : null,
         lng: (this.lng) ? this.lng : null,
-        photoPost: (this.photoPost) ? this.photoPost : null,
-        photoPostURL: (this.photoPostURL) ? this.photoPostURL : null,
+        photoPost: this.photoPost,
+        photoPostURL: this.photoPostURL,
         timestamp: timestamp,
       }
       this.uploadPost();
@@ -179,7 +191,7 @@ export class PostPage {
     alert('กำลังสร้างกระดานข่าวสาร รอสักครู่...')
     this.post = this.db.list('/Posts');
     return new Promise((resolve, reject) => {
-      this.post.push(this.data).then((res) => {
+      this.post.push(this.data).then(() => {
         alert('สร้างกระดานข่าวสารสำเร็จ');
         this.navCtrl.pop();
         resolve('Success');

@@ -63,38 +63,9 @@ export class WelcomePage {
     return this.authenticated ? this.authState.uid : '';
   }
 
-
-  //// Social Auth ////
-  GoogleWeb() {
-    const provider = new firebase.auth.GoogleAuthProvider()
-    return this.socialSignIn(provider);
-  }
-
-
-  socialSignIn(provider) {
-    return this.afAuth.auth.signInWithPopup(provider)
-      .then((credential) => {
-        this.authState = credential.user
-        this.updateUserData()
-      })
-      .catch(error => console.log(error));
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
   //FacebookLogin
   facebookLogin() {
-    if(this.platform.is('cordova')){
+    if (this.platform.is('cordova')) {
       return new Promise((resolve, reject) => {
         this.fb.login(['email'])
           .then((response) => {
@@ -118,40 +89,54 @@ export class WelcomePage {
             reject('fail');
           });
       });
-    }else{
+    } else {
       const provider = new firebase.auth.FacebookAuthProvider()
       return this.socialSignIn(provider);
     }
-    
+
   }
 
   //Google
   googleLogin() {
-    return new Promise((resolve, reject) => {
-      this.google.login({
-        // 499658526274-2u2oiltimbh71fo887q8f3nj8ssacn89.apps.googleusercontent.com
-        'webClientId': '499658526274-2u2oiltimbh71fo887q8f3nj8ssacn89.apps.googleusercontent.com',
-        'offline': true
+    if (this.platform.is('cordova')) {
+      return new Promise((resolve, reject) => {
+        this.google.login({
+          // 499658526274-2u2oiltimbh71fo887q8f3nj8ssacn89.apps.googleusercontent.com
+          'webClientId': '499658526274-2u2oiltimbh71fo887q8f3nj8ssacn89.apps.googleusercontent.com',
+          'offline': true
+        })
+          .then(res => {
+            const googleCredential = firebase.auth.GoogleAuthProvider
+              .credential(res.idToken);
+            firebase.auth().signInWithCredential(googleCredential)
+              .then(success => {
+                alert("Firebase success: " + JSON.stringify(success));
+                this.authState = success;
+                this.updateUserData();
+                resolve('sucess');
+              })
+              .catch((err) => {
+                alert("Firebase failure: " + JSON.stringify(err))
+                reject('fail');
+              });
+          }).catch((err) => {
+            alert("Error(fail): " + err);
+            reject('fail');
+          });
+      });
+    } else {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      return this.socialSignIn(provider);
+    }
+  }
+
+  socialSignIn(provider) {
+    return this.afAuth.auth.signInWithPopup(provider)
+      .then((credential) => {
+        this.authState = credential.user
+        this.updateUserData()
       })
-        .then(res => {
-          const googleCredential = firebase.auth.GoogleAuthProvider
-            .credential(res.idToken);
-          firebase.auth().signInWithCredential(googleCredential)
-            .then(success => {
-              alert("Firebase success: " + JSON.stringify(success));
-              this.authState = success;
-              this.updateUserData();
-              resolve('sucess');
-            })
-            .catch((err) => {
-              alert("Firebase failure: " + JSON.stringify(err))
-              reject('fail');
-            });
-        }).catch((err) => {
-          alert("Error(fail): " + err);
-          reject('fail');
-        });
-    });
+      .catch(error => console.log(error));
   }
 
   // UpdateUsertoDatabase

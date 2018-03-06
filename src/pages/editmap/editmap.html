@@ -8,89 +8,103 @@
 <ion-content padding>
   <ion-list no-line>
     <ion-item>
-      <ion-label>*ชื่อสถานที่</ion-label>
-      <ion-input type="text" [(ngModel)]="namePlace" required>{{namePlace}}</ion-input>
+      <ion-label floating>*ชื่อสถานที่</ion-label>
+      <ion-input type="text" [(ngModel)]="namePlace"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>*ประเภท</ion-label>
-      <ion-select name="typesPlace" [(ngModel)]="typesPlace" required>
+      <ion-label floating>*ประเภท</ion-label>
+      <ion-select name="typesPlace" [(ngModel)]="typesPlace">
         <ion-option value="ที่พักอาศัย">ที่พักอาศัย</ion-option>
         <ion-option value="ร้านอาหาร">ร้านอาหาร</ion-option>
         <ion-option value="แหล่งท่องเที่ยว">แหล่งท่องเที่ยว</ion-option>
         <ion-option value="วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา">วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา</ion-option>
-        <ion-option value="ร้านค้าของที่ระลึก">ร้านค้าของที่ระลึก</ion-option>
-        <ion-option value="ศูนย์บริการข้อมูล">ศูนย์บริการข้อมูล</ion-option>
+        <ion-option value="ร้านค้าของที่ระลึกและสินค้า OTOP">ร้านค้าของที่ระลึกและสินค้า OTOP</ion-option>
+        <ion-option value="ศูนย์บริการข้อมูลชุมชน">ศูนย์บริการข้อมูลชุมชน</ion-option>
         <ion-option value="อื่น ๆ">อื่น ๆ</ion-option>
       </ion-select>
     </ion-item>
 
     <ion-item>
-      <ion-label>*รายละเอียด</ion-label>
-      <ion-input type="text" [(ngModel)]="detailPlace" required>{{detailPlace}}</ion-input>
+      <ion-label floating>*รายละเอียด</ion-label>
+      <ion-textarea type="text" [(ngModel)]="detailPlace" rows="5"></ion-textarea>
     </ion-item>
 
     <ion-item>
-      <ion-label>ที่อยู่</ion-label>
-      <ion-input type="text" [(ngModel)]="placeAddress">{{placeAddress}}</ion-input>
+      <ion-label floating>ที่อยู่</ion-label>
+      <ion-input type="text" [(ngModel)]="placeAddress"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>เวลาทำการ</ion-label>
-      <ion-input type="text" [(ngModel)]="timePlace">{{timePlace}}</ion-input>
+      <ion-label floating>เวลาทำการ</ion-label>
+      <ion-input type="text" [(ngModel)]="timePlace"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>เบอร์โทรศัพท์</ion-label>
-      <ion-input type="text" [(ngModel)]="telephonePlace">{{telephonePlace}}</ion-input>
+      <ion-label floating>เบอร์โทรศัพท์</ion-label>
+      <ion-input type="text" [(ngModel)]="telephonePlace"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>Website</ion-label>
-      <ion-input type="text" [(ngModel)]="websitePlace">{{websitePlace}}</ion-input>
-    </ion-item>
-
-    <ion-row>
-      <ion-col>
-        <button ion-button type="button" color="primary" full round (click)="getPlace()">แสดงค่าพิกัด</button>
-      </ion-col>
-      <ion-col>
-        <button ion-button type="button" color="danger" full round (click)="resetLatLng()">ล้างค่าพิกัด</button>
-      </ion-col>
-    </ion-row>
-
-    <ion-item>
-      <ion-label>*พิกัดละติจูด : </ion-label>
-      <ion-input type="text" name="lat" [(ngModel)]="lat" placeholder="ระบุค่าละติจูด" required></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>*พิกัดลองติจูด : </ion-label>
-      <ion-input type="text" name="lng" [(ngModel)]="lng" placeholder="ระบุค่าลองติจูด" required></ion-input>
+      <ion-label floating>Website</ion-label>
+      <ion-input type="text" [(ngModel)]="websitePlace"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-row>
-        <ion-col>
-          <button ion-button color="danger" type="button" full round large (click)="takePhoto()">
+      <ion-row center>
+        <ion-col text-center>
+          <button ion-button type="button" style="width:100%;" color="primary" round outline (click)="getPlace()">แสดงค่าพิกัด</button>
+        </ion-col>
+        <ion-col text-center>
+          <button ion-button type="button" style="width:100%;" color="danger" round outline (click)="resetLatLng()">ล้างค่าพิกัด</button>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>*พิกัดละติจูด</ion-label>
+      <ion-input type="text" name="lat" [(ngModel)]="lat"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>*พิกัดลองติจูด</ion-label>
+      <ion-input type="text" name="lng" [(ngModel)]="lng"></ion-input>
+    </ion-item>
+
+    <ion-item>
+
+      <ion-row center>
+        <ion-col text-center>
+          <button ion-button color="danger" style="width:100%;" type="button" round outline (click)="takePhoto()">
             <ion-icon name="md-camera"></ion-icon>
           </button>
         </ion-col>
-        <ion-col>
-          <button ion-button color="secondary" type="button" full round large (click)="selectPhoto()">
+        <ion-col text-center>
+          <button ion-button color="secondary" style="width:100%;" type="button" round outline (click)="selectPhoto()">
             <ion-icon name="md-image"></ion-icon>
           </button>
         </ion-col>
       </ion-row>
 
       <ion-row center *ngIf="showPhotoUpload">
-        <ion-col text-center>
-            <img [src]="photoPlaceURL" width="300" />
-            <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
+        <ion-col text-center *ngFor="let photo of photoPlaceURL; let id = index">
+          <ion-card>
+            <button ion-button type="button" color="danger" outline (click)="deletePhotoUpload(id)">
+              <ion-icon name="trash"></ion-icon>
+            </button>
+            <img [src]="photo" width="100px" height="100px"/>
+          </ion-card>
         </ion-col>
       </ion-row>
+
+
+      <!-- <ion-row center *ngIf="showPhotoUpload">
+        <ion-col text-center>
+          <img [src]="photoPlaceURL" width="300" />
+          <button ion-button type="button" color="danger" full round (click)="deletePhotoUpload()">ลบรูปภาพนี้</button>
+        </ion-col>
+      </ion-row> -->
+
     </ion-item>
-
-
   </ion-list>
 
   <ion-row center>

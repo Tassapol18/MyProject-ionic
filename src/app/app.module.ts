@@ -28,7 +28,6 @@ import { EditpostPage } from '../pages/editpost/editpost';
 import { NearbymapPage } from '../pages/nearbymap/nearbymap';
 import { EditmapPage } from '../pages/editmap/editmap';
 import { ViewchatPage } from '../pages/viewchat/viewchat';
-import { MapownPage } from '../pages/mapown/mapown';
 import { ViewMapDirectionsPage } from '../pages/view-map-directions/view-map-directions';
 
 
@@ -70,7 +69,6 @@ export const firebase = {
     NearbymapPage,
     EditmapPage,
     ViewchatPage,
-    MapownPage,
     ViewMapDirectionsPage,
     SearchmapPage
   ],
@@ -103,7 +101,6 @@ export const firebase = {
     NearbymapPage,
     EditmapPage,
     ViewchatPage,
-    MapownPage,
     ViewMapDirectionsPage,
     SearchmapPage
   ],

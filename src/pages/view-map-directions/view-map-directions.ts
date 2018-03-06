@@ -49,7 +49,7 @@ export class ViewMapDirectionsPage {
     //   lat: this.StartConvertLat,
     //   lng: this.StartConvertLng
     // }
-    
+
     // this.EndPosition = {
     //   lat: this.EndConvertLat,
     //   lng: this.EndConvertLng
@@ -70,12 +70,15 @@ export class ViewMapDirectionsPage {
         lng: data.coords.longitude
       }
       // this.start = this.posCur;
-      
+
       if (marker == null) {
         marker = new google.maps.Marker({
           position: posCur,
           map: this.map,
-          icon: 'https://firebasestorage.googleapis.com/v0/b/countrytrip-31ea9.appspot.com/o/Icon%2FpersonCurrent.png?alt=media&token=c030f931-f11c-4465-880d-9b849ebb629a'
+          icon: {
+            url: 'assets/imgs/iconMap/personCurrent.png',
+            scaledSize: new google.maps.Size(60, 60), // scaled size
+          }
         });
 
       } else {

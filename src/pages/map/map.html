@@ -50,35 +50,29 @@
     </button>
     <ion-fab-list left side="top">
       <ion-list>
-        <button ion-button left (click)="filterMarkers('อื่น ๆ')">
-          <ion-icon name="logo-googleplus"></ion-icon>
-          &nbsp; อื่น ๆ
+        <button ion-button (click)="filterMarkers('ที่พักอาศัย')">
+          <img src="assets/imgs/iconMap/hotel.png" width="30px" height="30px"> &nbsp; ที่พักอาศัย
         </button>
-        <button ion-button left (click)="filterMarkers('ศูนย์บริการข้อมูลชุมชน')">
-          ศูนย์บริการข้อมูลชุมชน
+        <button ion-button (click)="filterMarkers('ร้านอาหาร')">
+          <img src="assets/imgs/iconMap/resturant.png" width="30px" height="30px"> &nbsp; ร้านอาหาร
         </button>
-        <button ion-button left (click)="filterMarkers('ร้านค้าของที่ระลึกและสินค้า OTOP')">
-          ร้านค้าของที่ระลึกและสินค้า OTOP
+        <button ion-button (click)="filterMarkers('แหล่งท่องเที่ยว')">
+          <img src="assets/imgs/iconMap/travel.png" width="30px" height="30px"> &nbsp; แหล่งท่องเที่ยว
         </button>
-        <button ion-button left (click)="filterMarkers('วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา')">
-          <!-- <ion-icon name="logo-googleplus"></ion-icon> -->
-          วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา
+        <button ion-button (click)="filterMarkers('วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา')">
+          <img src="assets/imgs/iconMap/temple.png" width="30px" height="30px"> &nbsp; วัด
         </button>
-        <button ion-button left (click)="filterMarkers('แหล่งท่องเที่ยว')">
-          แหล่งท่องเที่ยว
+        <button ion-button (click)="filterMarkers('ร้านค้าของที่ระลึกและสินค้า OTOP')">
+          <img src="assets/imgs/iconMap/store.png" width="30px" height="30px"> &nbsp; ร้านค้าของที่ระลึก และ OTOP
         </button>
-        <button ion-button left (click)="filterMarkers('ร้านอาหาร')">
-          ร้านอาหาร
-          <!-- <ion-icon name="logo-twitter"></ion-icon> -->
+        <button ion-button (click)="filterMarkers('ศูนย์บริการข้อมูลชุมชน')">
+          <img src="assets/imgs/iconMap/information.png" width="30px" height="30px"> &nbsp; ศูนย์บริการข้อมูลชุมชน
         </button>
-        <button ion-button left (click)="filterMarkers('ที่พักอาศัย')">
-          <img src="assets/imgs/iconMap/culture.png" width="20px" height="20px"> &nbsp; ที่พัก
-
+        <button ion-button (click)="filterMarkers('อื่น ๆ')">
+          <img src="assets/imgs/iconMap/other.png" width="30px" height="30px"> &nbsp; อื่น ๆ
         </button>
-        <button ion-button left (click)="filterMarkers('')">
-          <ion-icon name="logo-facebook"></ion-icon>
-          &nbsp; ทั้งหมด
-
+        <button ion-button (click)="filterMarkers('')">
+            <img src="assets/imgs/iconMap/all.png" width="25px" height="25px"> &nbsp; ทั้งหมด
         </button>
       </ion-list>
 

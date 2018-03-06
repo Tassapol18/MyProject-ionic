@@ -4,7 +4,6 @@ import { PostPage } from '../post/post';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { SearchPage } from '../search/search';
 import { ViewpostPage } from '../viewpost/viewpost';
-import firebase from 'firebase';
 
 @Component({
   selector: 'page-home',

@@ -8,7 +8,7 @@
 
 </ion-content>
 
-<ion-content padding>
+<ion-content padding #content>
   <div id="chatMessages">
     <div *ngFor="let ms of messages" [class]="ms.specialMessage ? 'message special' : 'message'">
       <div [class]="ms.key == userUID ? 'innerMessage messageRight' : 'innerMessage messageLeft'">
