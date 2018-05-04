@@ -2,8 +2,9 @@ import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import firebase from 'firebase';
-import { Chart } from 'chart.js';
+import { StatusBar } from '@ionic-native/status-bar';
 import { ViewchatPage } from '../viewchat/viewchat';
+import moment from 'moment';
 
 @IonicPage()
 @Component({
@@ -33,16 +34,21 @@ export class ViewmapPage {
   photoPlaceURL: any;
   distance: any;
   key: any;
+  star = [];
+  cnt_res: any;
+  pointReview: any;
 
   checkUser: boolean = false;
 
-  barChart: any;
-  dataSet = new Array;
+  dataSet: any;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public db: AngularFireDatabase,
+    public statusBar: StatusBar,
     private alertCtrl: AlertController) {
+
+    statusBar.backgroundColorByHexString('#750581');
 
     this.key = navParams.get('key');
     this.namePlace = navParams.get('namePlace');
@@ -64,80 +70,74 @@ export class ViewmapPage {
     this.placeReview = this.db.list('/Maps/' + this.key + '/Review');
     this.timestamps = firebase.database.ServerValue.TIMESTAMP;
 
-    if(this.user.uid != this.ownerUID){
+    if (this.user.uid != this.ownerUID) {
       this.checkUser = true;
     }
   }
 
+
+
   ionViewWillEnter() {
+    this.statusBar.backgroundColorByHexString('#750581');
     this.getScore();
   }
 
-  goToChat() {
-        this.navCtrl.push(ViewchatPage, {
-          'key': this.ownerUID,
-          'name': this.ownerPlace,
-        });
-        
-      }
-
   getScore() {
+    this.star.length = 0;
+    var vm = this
+    this.cnt_res = 0;
+    this.pointReview = 0;
+    let stt = 0;
     this.placeReview.forEach((res) => {
-      this.dataSet = [0, 0, 0, 0, 0];
+      this.dataSet = 0;
+
       for (let i = 0; i < res.length; i++) {
-        if (res[i].scoreReview == 1) {
-          this.dataSet[0]++;
-        } else if (res[i].scoreReview == 2) {
-          this.dataSet[1]++;
-        } else if (res[i].scoreReview == 3) {
-          this.dataSet[2]++;
-        } else if (res[i].scoreReview == 4) {
-          this.dataSet[3]++;
-        } else if (res[i].scoreReview == 5) {
-          this.dataSet[4]++;
-        }
+        this.dataSet += parseFloat(res[i].scoreReview);
+        this.cnt_res++
       }
+      return
     })
-    this.getChart();
-  }
 
-  getChart() {
-    this.barChart = new Chart(this.barCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: ["ควรปรับปรุง", "พอใช้", "ปานกลาง", "ดี", "ดีมาก"],
-        datasets: [{
-          label: 'ระดับคะแนนควมพึงพอใจ',
-          data: [this.dataSet[0], this.dataSet[1], this.dataSet[2], this.dataSet[3], this.dataSet[4]],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-          ],
-          borderColor: [
-            'rgba(255,99,132,1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
-          }]
-        }
+
+    stt = this.dataSet / this.cnt_res
+    console.log("da", stt);
+    for (let i = 0; i < 5; i++) {
+      if (stt - 1 >= 0) {
+        this.star[i] = 2
+      } else if (stt % 1 > 0) {
+        this.star[i] = 1
+      } else {
+        this.star[i] = 0
       }
-    });
+      stt--;
+    }
+    console.log("star", this.star);
+    stt = this.dataSet;
+    if (this.cnt_res > 0) {
+      this.pointReview = (this.dataSet / this.cnt_res).toFixed(2);
+    } else {
+      this.pointReview = 0;
+    }
+    console.log('point', this.dataSet);
   }
 
+  viewDate(date) {
+    moment.locale('th');
+    let time = moment(date).format('LLLL')
+    return time;
+  }
+
+  Textdetail(): string {
+    return this.detailPlace;
+  }
+
+  goToChat() {
+    this.navCtrl.push(ViewchatPage, {
+      'key': this.ownerUID,
+      'name': this.ownerPlace,
+    });
+
+  }
 
   checkIn() {
     let alr = this.alertCtrl.create({

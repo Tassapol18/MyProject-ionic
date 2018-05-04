@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
+import { StatusBar } from '@ionic-native/status-bar';
 import { AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
 import firebase from 'firebase';
+import { LoadingController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -54,9 +56,11 @@ export class EditmapPage {
     public navParams: NavParams,
     public db: AngularFireDatabase,
     private camera: Camera,
-    private geolocation: Geolocation) {
+    public statusBar: StatusBar,
+    private geolocation: Geolocation,
+    public loadingCtrl: LoadingController) {
 
-
+    statusBar.backgroundColorByHexString('#750581');
     this.photoPlace = [];
     this.photoPlaceURL = [];
     this.showPhotoUpload = true;
@@ -74,9 +78,6 @@ export class EditmapPage {
     this.photoPlace = navParams.get('photoPlace');
     this.photoPlaceURL = navParams.get('photoPlaceURL');
 
-    console.log(this.photoPlace);
-    console.log(this.photoPlaceURL);
-
     if (this.photoPlace == '-') {
       this.photoPlace = [];
       this.photoPlaceURL = [];
@@ -84,17 +85,18 @@ export class EditmapPage {
 
   }
 
+  ionViewWillEnter() {
+    this.statusBar.backgroundColorByHexString('#750581');
+  }
+
   getPlace() {
-    return new Promise((resolve, reject) => {
-      this.geolocation.getCurrentPosition()
-        .then((res) => {
-          this.lat = res.coords.latitude;
-          this.lng = res.coords.longitude;
-          resolve('success');
-        }).catch((err) => {
-          reject('fail' + err)
-        });
-    })
+    this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+      .then((res) => {
+        this.lat = res.coords.latitude;
+        this.lng = res.coords.longitude;
+      }).catch((err) => {
+        alert('พบปัญหาในการดึงตำแหน่ง : ' + err)
+      });
   }
 
   resetLatLng() {
@@ -107,11 +109,14 @@ export class EditmapPage {
       this.camera.getPicture(this.options)
         .then((myPhoto) => {
           this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
-          this.upLoadImage();
-          resolve('send picture to upload');
+          resolve('ไม่พบปัญหาเกี่ยวกับรูปภาพ');
         }, (err) => {
-          reject('fail : ' + err);
+          reject('พบปัญหารูปภาพ : ' + err);
         });
+    }).then(() => {
+      this.upLoadImage();
+    }).catch((err) => {
+      alert(err)
     })
   }
 
@@ -120,43 +125,48 @@ export class EditmapPage {
       this.camera.getPicture(this.optionsSelect)
         .then((myPhoto) => {
           this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
-          this.upLoadImage();
-          resolve('send picture to upload');
+          resolve('ไม่พบปัญหาเกี่ยวกับรูปภาพ');
         }, (err) => {
-          reject('fail : ' + err);
+          reject('พบปัญหารูปภาพ : ' + err);
         });
+    }).then(() => {
+      this.upLoadImage();
+    }).catch((err) => {
+      alert(err)
     })
   }
 
   //Upload Image
   upLoadImage() {
-    alert('รออัพโหลดรูปสักครู่...')
     this.mapPhoto = firebase.storage().ref('/Maps/');
     let filename = Math.floor(Date.now() / 1000);
-    return new Promise((resolve, reject) => {
-      if (this.photoPlaceURL.length < 5) {
-        let name = 'Maps_' + filename;
-        this.photoPlace.push(name)
-        this.sendPhotoPlaceURL = this.mapPhoto.child(name);
-        this.sendPhotoPlaceURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
-          .then(() => {
-            alert('อัพโหลดรูปสำเร็จ : ' + this.sendPhotoPlaceURL);
-            this.mapPhoto.child(name).getDownloadURL()
-              .then((url) => {
-                this.photoPlaceURL.push(url)
-                this.showPhotoUpload = true;
-              }).catch((err) => {
-                alert('fail : ' + err)
-              });
-            resolve('Upload Image Success')
-          }).catch((err) => {
-            alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
-            reject('fail : ' + err)
-          });
-      } else {
-        alert('ไม่สามารถอัพรูปเพิ่มได้')
-      }
-    })
+    if (this.photoPlaceURL.length < 5) {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: "กำลังอัพโหลดรูป..."
+      });
+      loading.present();
+      let name = 'Maps_' + filename;
+      this.photoPlace.push(name)
+      this.sendPhotoPlaceURL = this.mapPhoto.child(name);
+      this.sendPhotoPlaceURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
+        .then(() => {
+          this.mapPhoto.child(name).getDownloadURL()
+            .then((url) => {
+              this.photoPlaceURL.push(url)
+              this.showPhotoUpload = true;
+            }).catch((err) => {
+              alert('พบปัญหาการอัพโหลด : ' + err)
+              loading.dismissAll();
+            });
+          loading.dismissAll();
+        }).catch((err) => {
+          alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
+          loading.dismissAll();
+        });
+    } else {
+      alert('ไม่สามารถอัพรูปเพิ่มได้')
+    }
   }
 
   //DeletePhoto
@@ -166,14 +176,14 @@ export class EditmapPage {
         this.photoPlace.splice(index, 1);
         this.photoPlaceURL.splice(index, 1);
       }).catch(err => {
-        alert('fail : ' + err)
+        alert('พบปัญหา : ' + err)
       });
   }
 
-  editMap(namePlace, typesPlace, detailPlace, placeAddress, timePlace, telephonePlace, websitePlace) {
+  editMap() {
     let user = firebase.auth().currentUser;
 
-    if(this.photoPlace && this.photoPlaceURL == null || this.photoPlace && this.photoPlaceURL == ''){
+    if (this.photoPlace && this.photoPlaceURL == null || this.photoPlace && this.photoPlaceURL == '') {
       this.photoPlace = ['-'];
       this.photoPlaceURL = ['https://firebasestorage.googleapis.com/v0/b/countrytrip-31ea9.appspot.com/o/noPicture.png?alt=media&token=555747fe-37fe-4f1f-a15a-295d837086d0'];
     }
@@ -181,17 +191,17 @@ export class EditmapPage {
     this.lat = parseFloat(this.lat);
     this.lng = parseFloat(this.lng);
 
-    if (namePlace && typesPlace && detailPlace != null) {
+    if (this.namePlace && this.typesPlace && this.detailPlace != null) {
       this.data = {
         ownerPlace: user.displayName,
         ownerUID: user.uid,
-        namePlace: namePlace,
-        typesPlace: typesPlace,
-        detailPlace: detailPlace,
-        placeAddress: (placeAddress) ? placeAddress : '-',
-        timePlace: (timePlace) ? timePlace : '-',
-        telephonePlace: (telephonePlace) ? telephonePlace : '-',
-        websitePlace: (websitePlace) ? websitePlace : '-',
+        namePlace: this.namePlace,
+        typesPlace: this.typesPlace,
+        detailPlace: this.detailPlace,
+        placeAddress: (this.placeAddress) ? this.placeAddress : '-',
+        timePlace: (this.timePlace) ? this.timePlace : '-',
+        telephonePlace: (this.telephonePlace) ? this.telephonePlace : '-',
+        websitePlace: (this.websitePlace) ? this.websitePlace : '-',
         lat: this.lat,
         lng: this.lng,
         photoPlace: this.photoPlace,
@@ -203,17 +213,27 @@ export class EditmapPage {
     }
   }
 
+  //Ppdate
   updateFromEdit() {
-    this.map = this.db.object('/Maps/' + this.key);
     return new Promise((resolve, reject) => {
-      this.map.update(this.data).then((res) => {
-        alert('แก้ไขข้อมูลสำเร็จ');
-        this.navCtrl.pop();
-        resolve('Success');
-      }, err => {
-        alert('แก้ไขข้อมูลไม่สำเร็จ');
-        reject('Unsuccess');
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: "กำลังอัพโหลด รอสักครู่..."
       });
+      loading.present();
+      this.map = this.db.object('/Maps/' + this.key);
+      this.map.update(this.data)
+        .then(() => {
+          loading.dismissAll();
+          resolve('ไม่พบปัญหาการอัพโหลด')
+        }).catch((err) => {
+          loading.dismissAll();
+          reject('พบปัญาการอัพโหลด : ' + err)
+        });
+    }).then((res) => {
+      this.navCtrl.pop();
+    }).catch((err) => {
+      alert(err)
     })
   }
 

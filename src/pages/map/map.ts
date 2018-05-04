@@ -1,11 +1,13 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { NewMapPage } from '../new-map/new-map';
+import { StatusBar } from '@ionic-native/status-bar';
 import { NearbymapPage } from '../nearbymap/nearbymap';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
 import { ViewmapPage } from '../viewmap/viewmap';
 import { ViewMapDirectionsPage } from '../view-map-directions/view-map-directions';
+import { FabContainer } from 'ionic-angular/components/fab/fab-container';
 
 
 declare var google: any;
@@ -16,39 +18,47 @@ declare var google: any;
   templateUrl: 'map.html',
 })
 export class MapPage {
+
   @ViewChild('map') mapElement: ElementRef;
   mapData: FirebaseListObservable<any[]>;
   map: any;
   markers = [];
-  count = 0;
   checkMarker: boolean = false;
   category = [];
-
   nameSearch = [];
   latlngSearch = [];
-
   loadDataSearch = [];
-
-
-
   start: any;
   end: any;
+  count: any;
+  setCurrent: any;
+  searchInput: any;
 
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private geolocation: Geolocation,
+    public statusBar: StatusBar,
     private db: AngularFireDatabase) {
+    statusBar.backgroundColorByHexString('#750581');
+
+    this.getCurrentUser();
+    this.initMap();
 
   }
+
 
 
   ionViewWillEnter() {
-    this.initLoadMap();
-    this.nameSearch = [];
-    this.latlngSearch = [];
+    this.loadData();
+    this.count = 0;
+    this.statusBar.backgroundColorByHexString('#750581');
+  }
+
+  ionViewWillLeave() {
     this.loadDataSearch = [];
   }
+
 
   goToNearbyMap() {
     this.navCtrl.push(NearbymapPage);
@@ -58,128 +68,116 @@ export class MapPage {
     this.navCtrl.push(NewMapPage);
   }
 
-  initLoadMap() {
-    this.getCurrentUser();
-    this.initMap().then(data => {
-      this.loadData();
-    })
+  getCurrentUser() {
+    // อัพเดทตำแหน่งในแผนที่อัตโนมัติ โดยใช้งาน watchPosition 
+    // ค่าตำแหน่งจะได้มาเมื่อมีการส่งค่าตำแหน่งที่ถูกต้องกลับมา
+    var marker = null;
+    this.setCurrent = {}
+    this.geolocation.watchPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+      .subscribe((data) => {
+        let posCur = {
+          lat: data.coords.latitude,
+          lng: data.coords.longitude
+        }
+        this.setCurrent = posCur
+        console.log(this.setCurrent);
+
+        if (marker == null) {
+          marker = new google.maps.Marker({
+            position: posCur,
+            map: this.map,
+            icon: {
+              url: 'assets/imgs/iconMap/personCurrent.png',
+              scaledSize: new google.maps.Size(60, 60), // scaled size
+            }
+          });
+          this.start = posCur;
+          let info = "<center><b>นี่คือตำแหน่งปัจจุบันของคุณ</b></center><br>" +
+            "<b>ละติจูดที่ : </b>" + posCur.lat + "<b> , ลอนติจูดที่ : </b>" + posCur.lng;
+          this.AddInfoWindowUser(marker, info);
+          marker.setMap(this.map);
+        } else {
+          marker.setPosition(posCur);
+          // this.map.panTo(posCur);
+        }
+      })
   }
 
   initMap() {
     // หาตำแหน่งปัจจุบันโดยใช้ getCurrentPosition 
     // เรียกตำแหน่งครั้งแรกครั้งเดียวเมื่อเปิดมาหน้าแผนที่
-    return new Promise((resolve, reject) => {
-      this.geolocation.getCurrentPosition()
-        .then((res) => {
-          var position = {
-            lat: res.coords.latitude,
-            lng: res.coords.longitude
-          };
-          this.map = new google.maps.Map(this.mapElement.nativeElement, {
-            zoom: 12,
-            center: position,
-            mapTypeId: 'roadmap',
-            streetViewControl: false,
-            zoomControl: false,
-            mapTypeControl: false,
-            scaleControl: false,
-            rotateControl: false,
-            fullscreenControl: false,
-            disableDefaultUI: true
-          });
-          resolve('load ready');
-        }).catch((err) => {
-          reject('load fail : ' + err)
-          alert('load fail : ' + err);
+    this.map = null;
+    this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+      .then((pos) => {
+        let position = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        };
+        this.map = new google.maps.Map(this.mapElement.nativeElement, {
+          zoom: 12,
+          center: position,
+          mapTypeId: 'roadmap',
+          streetViewControl: false,
+          zoomControl: false,
+          mapTypeControl: false,
+          scaleControl: false,
+          rotateControl: false,
+          fullscreenControl: false,
+          disableDefaultUI: true
         });
-    });
+        this.loadData();
+      }).catch((err) => {
+        alert('init map error')
+      })
   }
-
-  getCurrentUser() {
-    // อัพเดทตำแหน่งในแผนที่อัตโนมัติ โดยใช้งาน watchPosition 
-    // ค่าตำแหน่งจะได้มาเมื่อมีการส่งค่าตำแหน่งที่ถูกต้องกลับมา
-    var marker = null;
-    this.geolocation.watchPosition().subscribe((data) => {
-      let posCur = {
-        lat: data.coords.latitude,
-        lng: data.coords.longitude
-      }
-      if (marker == null) {
-        marker = new google.maps.Marker({
-          position: posCur,
-          map: this.map,
-          // icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-          // icon: 'assets/imgs/iconMap/personCurrent.png'
-          icon: {
-            url: 'assets/imgs/iconMap/personCurrent.png',   
-            scaledSize: new google.maps.Size(60, 60), // scaled size
-          }
-        });
-        this.start = posCur;
-        let info = "<center><b>นี่คือตำแหน่งปัจจุบันของคุณ</b></center><br>" +
-          "<b>ละติจูดที่ : </b>" + posCur.lat + "<b> , ลอนติจูดที่ : </b>" + posCur.lng;
-        this.AddInfoWindowUser(marker, info);
-        marker.setMap(this.map);
-      } else {
-        marker.setPosition(posCur);
-        // this.map.panTo(posCur);
-      }
-    })
-  }
-
-
 
   loadData() {
     var temp = null;
-    return new Promise((resolve, reject) => {
-      this.mapData = this.db.list('/Maps');
-      resolve('load success');
-    }).then(() => {
-      this.mapData.forEach(res => {
-        var clearMarker = this.count
-        this.count = res.length
-        if (this.count != clearMarker) {
-          for (var i in this.markers) {
-            this.markers[i].setMap(null)
-          }
+    this.mapData = this.db.list('/Maps');
+    this.mapData.forEach((res) => {
+      this.count = 0;
+      this.nameSearch = [];
+      this.latlngSearch = [];
+      this.loadDataSearch = [];
+      temp = {}
+      var clearMarker = this.count
+      this.count = res.length
+      if (this.count != clearMarker) {
+        for (var i in this.markers) {
+          this.markers[i].setMap(null)
         }
-        for (let i = 0; i < res.length; i++) {
-          console.log('name : ' + res[i].namePlace);
-          temp = {
-            LatLng: {
-              lat: res[i].lat,
-              lng: res[i].lng
-            },
-            Place: {
-              namePlace: res[i].namePlace,
-              typesPlace: res[i].typesPlace,
-              detailPlace: res[i].detailPlace,
-              placeAddress: res[i].placeAddress,
-              timePlace: res[i].timePlace,
-              telephonePlace: res[i].telephonePlace,
-              websitePlace: res[i].websitePlace,
-              ownerPlace: res[i].ownerPlace,
-              ownerUID: res[i].ownerUID,
-              photoPlaceURL: res[i].photoPlaceURL,
-              photoPlace: res[i].photoPlace
-            },
-            KeyID: res[i].$key
-          }
-          this.getDetailMarker(temp);
-          this.category.push(temp)
-          // console.log("Types",this.category);
-          // Loop for
+      }
+      for (let i = 0; i < res.length; i++) {
+        temp = {
+          LatLng: {
+            lat: res[i].lat,
+            lng: res[i].lng
+          },
+          Place: {
+            namePlace: res[i].namePlace,
+            typesPlace: res[i].typesPlace,
+            detailPlace: res[i].detailPlace,
+            placeAddress: res[i].placeAddress,
+            timePlace: res[i].timePlace,
+            telephonePlace: res[i].telephonePlace,
+            websitePlace: res[i].websitePlace,
+            ownerPlace: res[i].ownerPlace,
+            ownerUID: res[i].ownerUID,
+            photoPlaceURL: res[i].photoPlaceURL,
+            photoPlace: res[i].photoPlace
+          },
+          KeyID: res[i].$key
         }
-        // forEach outner
-      });
-    }).catch((err) => {
-      alert('fail initMap : ' + err);
+        this.getDetailMarker(temp);
+        this.category.push(temp)
+      }
     })
   }
 
   getDetailMarker(temp) {
-    let info =
-      "<center><img src=" + temp.Place.photoPlaceURL + " width=\"150px\" height=\"150px\"></center> <br>" +
+    let info = null;
+    info =
+      "<center><img src=" + temp.Place.photoPlaceURL + " width=\"200px\" height=\"200px\"></center> <br>" +
       "<b>" + temp.Place.namePlace + "</b> <br>" +
       "<b>ประเภท : </b>" + temp.Place.typesPlace + "<br>" +
       "<a id='clickDetail'> ดูรายละเอียดเพิ่มเติม </a> &nbsp;&nbsp;&nbsp; <a id='clickDirections'> แสดงเส้นทาง </a>";
@@ -188,38 +186,36 @@ export class MapPage {
 
 
   addMarker(posInfo, info, temp) {
-    console.log(temp.Place.typesPlace);
-
+    var marker;
     var icon;
     var iconHotel = {
-      url: 'assets/imgs/iconMap/hotel.png',   
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/hotel.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
     var iconRest = {
-      url: 'assets/imgs/iconMap/resturant.png',  
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/resturant.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
     var iconTravel = {
-      url: 'assets/imgs/iconMap/travel.png',    
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/travel.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
     var iconTemple = {
-      url: 'assets/imgs/iconMap/temple.png',  
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/temple.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
     var iconStore = {
-      url: 'assets/imgs/iconMap/store.png', 
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/store.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
     var iconInformation = {
-      url: 'assets/imgs/iconMap/information.png',   
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/information.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
     var iconOther = {
-      url: 'assets/imgs/iconMap/other.png',   
-      scaledSize: new google.maps.Size(50, 50), // scaled size
+      url: 'assets/imgs/iconMap/other.png',
+      scaledSize: new google.maps.Size(50, 50),
     }
-
 
     if (temp.Place.typesPlace == 'ที่พักอาศัย') {
       icon = iconHotel;
@@ -243,20 +239,16 @@ export class MapPage {
       lat: convertLat,
       lng: convertLng
     }
-    var marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
       position: posMarker,
       map: this.map,
       icon: icon,
       category: temp.Place.typesPlace,
       animation: google.maps.Animation.DROP,
     });
-    // console.log('MKK', marker);
     this.nameSearch.push(temp.Place.namePlace);
     this.latlngSearch[temp.Place.namePlace] = posMarker;
-
     this.markers.push(marker)
-    // this.Getmarkers1.push(marker);
-
     this.AddInfoWindow(marker, info, temp);
   }
 
@@ -268,6 +260,7 @@ export class MapPage {
       infoWindow.open(this.map, marker);
       this.checkMarker = true;
       if (this.checkMarker) {
+
         google.maps.event.addListener(infoWindow, 'domready', () => {
           var clickDetail = document.getElementById('clickDetail');
           clickDetail.addEventListener('click', () => {
@@ -280,7 +273,7 @@ export class MapPage {
           clickDirections.addEventListener('click', () => {
             this.end = temp.LatLng;
             this.goViewMapDirections(temp);
-            infoWindow.close();
+            // infoWindow.close();
           });
         });
       }
@@ -296,41 +289,31 @@ export class MapPage {
     });
   }
 
-  filterMarkers(value) {
-    let a = 1;
+  filterMarkers(value,fab: FabContainer) {
     var marker;
-    console.log('FTGT:', this.markers);
     marker = this.markers;
     for (let i = 0; i < this.category.length; i++) {
       if (marker[i].category == value || value == '') {
-        console.log('a', a++, 'place', marker[i].category);
         marker[i].setVisible(true)
       } else {
         marker[i].setVisible(false)
       }
     }
+    fab.close();
   }
 
   getLocation() {
-    this.geolocation.getCurrentPosition()
-      .then((res) => {
-        var posCur = {
-          lat: res.coords.latitude,
-          lng: res.coords.longitude
-        };
-        this.map.panTo(posCur);
-        this.map.setZoom(12)
-      })
-
+    this.map.panTo(this.setCurrent)
+    this.map.setZoom(12)
   }
 
   searchMap(event) {
-    let val = event.srcElement.value;
+    // let val = event.srcElement.value;
+    let val = this.searchInput;
     this.loadDataSearch = [];
     if (!val) {
       return false;
     }
-
     if (val && val.trim() != '') {
       for (let i of this.nameSearch) {
         if (i.toLowerCase().indexOf(val.toLowerCase()) > -1) {
@@ -340,17 +323,12 @@ export class MapPage {
     }
   }
 
-  ionViewWillLeave() {
-    this.loadDataSearch = []
-  }
-
   searchFind(value) {
-    console.log(value);
     this.map.panTo(this.latlngSearch[value]);
     this.map.setZoom(16);
+    this.searchInput = null;
+    this.loadDataSearch = [];
   }
-
-  ///////// Search ///////
 
   goViewDetail(data) {
     this.navCtrl.push(ViewmapPage, {
@@ -365,7 +343,7 @@ export class MapPage {
       'ownerPlace': data.Place.ownerPlace,
       'ownerUID': data.Place.ownerUID,
       'photoPlaceURL': data.Place.photoPlaceURL,
-      'distance': data.Place.resultDistance,
+      'distance': '-',
     })
   }
 
@@ -374,6 +352,7 @@ export class MapPage {
       'start': this.start,
       'end': this.end,
       'namePlace': data.Place.namePlace,
+      'typesPlace': data.Place.typesPlace,
     })
   }
 

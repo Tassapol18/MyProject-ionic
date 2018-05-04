@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar no-border-bottom>
+  <ion-navbar no-border-bottom color="Home_Primary">
     <!-- <ion-buttons left>
       <button ion-button (click)="goToSearch()">
         <ion-icon name="ios-search"></ion-icon>
@@ -13,182 +13,271 @@
     </ion-buttons> -->
   </ion-navbar>
 
-  <ion-toolbar no-border-top>
-    <ion-segment [(ngModel)]="News">
-      <ion-segment-button value="All">
-        ทั้งหมด
-      </ion-segment-button>
-      <ion-segment-button value="community">
-        ชุมชน
-      </ion-segment-button>
-      <ion-segment-button value="natural">
-        ธรรมชาติ
-      </ion-segment-button>
-      <ion-segment-button value="culture">
-        วัฒนธรรม
-      </ion-segment-button>
-      <ion-segment-button value="travel">
-        ท่องเที่ยว
-      </ion-segment-button>
-      <ion-segment-button value="other">
-        อื่น ๆ
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
+
+  <ion-segment [(ngModel)]="News" color="Home_Primary" style="background-color:rgb(255, 255, 255)">
+    <ion-segment-button value="All">
+      ทั้งหมด
+    </ion-segment-button>
+    <ion-segment-button value="community">
+      ชุมชน
+    </ion-segment-button>
+    <ion-segment-button value="natural">
+      ธรรมชาติ
+    </ion-segment-button>
+    <ion-segment-button value="culture">
+      วัฒนธรรม
+    </ion-segment-button>
+    <ion-segment-button value="travel">
+      ท่องเที่ยว
+    </ion-segment-button>
+    <ion-segment-button value="other">
+      อื่น ๆ
+    </ion-segment-button>
+  </ion-segment>
+
 </ion-header>
 
-<ion-content>
+
+<ion-content style="background-color:rgb(228, 228, 228)">
   <div [ngSwitch]="News">
 
     <ion-list *ngSwitchCase="'All'">
-      <ion-item *ngFor="let post of (post | async)?.slice().reverse()" (click)="viewpost(post)">
-        <!-- <ion-thumbnail item-start>
-          <img src="{{post.profilePicture}}">
-        </ion-thumbnail> -->
-        <h2>{{post.topic}}</h2>
-        <p>ประเภท : {{post.types}}</p>
-        <p>รายละเอียด : {{post.detail}}</p>
-      </ion-item>
+      <div *ngIf="(All | async)?.length==0">
+        <ion-card>
+          <ion-card-header>
+            <h1 style="color:#e64505">ไม่มีข้อมูล</h1>
+          </ion-card-header>
+          <ion-card-content>
+            แย่จัง! ดูเหมือนจะไม่มีข้อมูลในหมวดนี้เลย มาร่วมกันสร้างกระดานข่าวเพื่อให้คนรู้จักกันเถอะ..
+          </ion-card-content>
+        </ion-card>
+      </div>
 
-      <ion-item *ngFor="let data of data">
-        <ion-thumbnail item-start>
-          <img src="{{data.profilePicture}}">
-        </ion-thumbnail>
-        <h2>{{data.name}}</h2>
-        <p>รายละเอียด : {{data.uid}}</p>
-      </ion-item>
-
-      <!-- <ion-item *ngIf="showPostAll">
-        <ion-row center>
-          <ion-col text-center>
-            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวในชุมชน</p>
-          </ion-col>
-        </ion-row>
-      </ion-item> -->
-
+      <ion-card *ngFor="let post of (post | async)?.slice().reverse()" (click)="viewpost(post)">
+        <ion-item color="topic">
+          <ion-avatar item-start>
+            <img [src]="post.profilePicture">
+          </ion-avatar>
+          <h2>
+            <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.name}}</span>
+            <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+              <ion-icon name="ios-eye-outline"></ion-icon> {{viewCount(post.view)}} ครั้ง</span>
+          </h2>
+          <p style="margin-top:10px;"> &nbsp;
+            <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{viewDate(post.timestamp)}}</span> &nbsp;
+            <br> &nbsp;
+            <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{post.types}}</span>
+          </p>
+        </ion-item>
+        <ion-card-content>
+          <p style="color:rgb(44, 42, 41);margin-top:10px;font-size:20px">{{post.topic}}</p>
+        </ion-card-content>
+        <img *ngIf="post.photoPostURL!='-'" [src]="post.photoPostURL">
+      </ion-card>
     </ion-list>
 
 
     <ion-list *ngSwitchCase="'community'">
-      <ion-item *ngFor="let community of (community | async)?.slice().reverse()" (click)="viewpostCommunity(community)">
-        <!-- <ion-thumbnail item-start>
-          <img src="{{community.profilePicture}}">
-        </ion-thumbnail> -->
-        <h2>{{community.topic}}</h2>
-        <p>รายละเอียด : {{community.detail}}</p>
-      </ion-item>
+      <div *ngIf="(community | async)?.length==0">
+        <ion-card>
+          <ion-card-header>
+            <h1 style="color:#e64505">ไม่มีข้อมูล</h1>
+          </ion-card-header>
+          <ion-card-content>
+            แย่จัง! ดูเหมือนจะไม่มีข้อมูลในหมวดนี้เลย มาร่วมกันสร้างกระดานข่าวเพื่อให้คนรู้จักกันเถอะ..
+          </ion-card-content>
+        </ion-card>
+      </div>
 
-      <ion-item *ngIf="showPostCommunity">
-        <ion-row center>
-          <ion-col text-center>
-            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวในชุมชน</p>
-          </ion-col>
-        </ion-row>
-      </ion-item>
-
+      <ion-card *ngFor="let post of (community | async)?.slice().reverse()" (click)="viewpost(post)">
+        <ion-item color="topic">
+          <ion-avatar item-start>
+            <img [src]="post.profilePicture">
+          </ion-avatar>
+          <h2>
+            <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.name}}</span>
+            <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+              <ion-icon name="ios-eye-outline"></ion-icon> {{viewCount(post.view)}} ครั้ง</span>
+          </h2>
+          <p style="margin-top:10px;"> &nbsp;
+            <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{viewDate(post.timestamp)}}</span> &nbsp;
+            <br> &nbsp;
+            <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{post.types}}</span>
+          </p>
+        </ion-item>
+        <ion-card-content>
+          <p style="color:rgb(44, 42, 41);margin-top:10px;font-size:20px">{{post.topic}}</p>
+        </ion-card-content>
+        <img *ngIf="post.photoPostURL!='-'" [src]="post.photoPostURL">
+      </ion-card>
     </ion-list>
 
     <ion-list *ngSwitchCase="'natural'">
-      <ion-item *ngFor="let natural of (natural | async)?.slice().reverse()" (click)="viewpostNatural(natural)">
-        <!-- <ion-thumbnail item-start>
-          <img src="{{natural.profilePicture}}">
-        </ion-thumbnail> -->
-        <h2>{{natural.topic}}</h2>
-        <p>รายละเอียด : {{natural.detail}}</p>
-      </ion-item>
+      <div *ngIf="(natural | async)?.length==0">
+        <ion-card>
+          <ion-card-header>
+            <h1 style="color:#e64505">ไม่มีข้อมูล</h1>
+          </ion-card-header>
+          <ion-card-content>
+            แย่จัง! ดูเหมือนจะไม่มีข้อมูลในหมวดนี้เลย มาร่วมกันสร้างกระดานข่าวเพื่อให้คนรู้จักกันเถอะ..
+          </ion-card-content>
+        </ion-card>
+      </div>
 
-      <ion-item *ngIf="showPostNatural">
-        <ion-row center>
-          <ion-col text-center>
-            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวเชิงธรรมชาติ</p>
-          </ion-col>
-        </ion-row>
-      </ion-item>
+      <ion-card *ngFor="let post of (natural | async)?.slice().reverse()" (click)="viewpost(post)">
+        <ion-item color="topic">
+          <ion-avatar item-start>
+            <img [src]="post.profilePicture">
+          </ion-avatar>
+          <h2>
+            <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.name}}</span>
+            <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+              <ion-icon name="ios-eye-outline"></ion-icon> {{viewCount(post.view)}} ครั้ง</span>
+          </h2>
+          <p style="margin-top:10px;"> &nbsp;
+            <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{viewDate(post.timestamp)}}</span> &nbsp;
+            <br> &nbsp;
+            <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{post.types}}</span>
+          </p>
+        </ion-item>
+        <ion-card-content>
+          <p style="color:rgb(44, 42, 41);margin-top:10px;font-size:20px">{{post.topic}}</p>
+        </ion-card-content>
+        <img *ngIf="post.photoPostURL!='-'" [src]="post.photoPostURL">
+      </ion-card>
     </ion-list>
 
     <ion-list *ngSwitchCase="'culture'">
-      <ion-item *ngFor="let culture of (culture | async)?.slice().reverse()" (click)="viewpostCulture(culture)">
-        <!-- <ion-thumbnail item-start>
-          <img src="{{culture.profilePicture}}">
-        </ion-thumbnail> -->
-        <h2>{{culture.topic}}</h2>
-        <p>รายละเอียด : {{culture.detail}}</p>
-      </ion-item>
+      <div *ngIf="(culture | async)?.length==0">
+        <ion-card>
+          <ion-card-header>
+            <h1 style="color:#e64505">ไม่มีข้อมูล</h1>
+          </ion-card-header>
+          <ion-card-content>
+            แย่จัง! ดูเหมือนจะไม่มีข้อมูลในหมวดนี้เลย มาร่วมกันสร้างกระดานข่าวเพื่อให้คนรู้จักกันเถอะ..
+          </ion-card-content>
+        </ion-card>
+      </div>
 
-      <ion-item *ngIf="showPostCulture">
-        <ion-row center>
-          <ion-col text-center>
-            <p>ไม่มีข้อมูลของแหล่งท่องเที่ยวเชิงวัฒนธรรม</p>
-          </ion-col>
-        </ion-row>
-      </ion-item>
+      <ion-card *ngFor="let post of (culture | async)?.slice().reverse()" (click)="viewpost(post)">
+        <ion-item color="topic">
+          <ion-avatar item-start>
+            <img [src]="post.profilePicture">
+          </ion-avatar>
+          <h2>
+            <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.name}}</span>
+            <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+              <ion-icon name="ios-eye-outline"></ion-icon> {{viewCount(post.view)}} ครั้ง</span>
+          </h2>
+          <p style="margin-top:10px;"> &nbsp;
+            <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{viewDate(post.timestamp)}}</span> &nbsp;
+            <br> &nbsp;
+            <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{post.types}}</span>
+          </p>
+        </ion-item>
+        <ion-card-content>
+          <p style="color:rgb(44, 42, 41);margin-top:10px;font-size:20px">{{post.topic}}</p>
+        </ion-card-content>
+        <img *ngIf="post.photoPostURL!='-'" [src]="post.photoPostURL">
+      </ion-card>
     </ion-list>
 
     <ion-list *ngSwitchCase="'travel'">
-      <ion-item *ngFor="let travel of (travel | async)?.slice().reverse()" (click)="viewpostTravel(travel)">
-        <!-- <ion-thumbnail item-start>
-          <img src="{{travel.profilePicture}}">
-        </ion-thumbnail> -->
-        <h2>{{travel.topic}}</h2>
-        <p>รายละเอียด : {{travel.detail}}</p>
-      </ion-item>
+      <div *ngIf="(travel | async)?.length==0">
+        <ion-card>
+          <ion-card-header>
+            <h1 style="color:#e64505">ไม่มีข้อมูล</h1>
+          </ion-card-header>
+          <ion-card-content>
+            แย่จัง! ดูเหมือนจะไม่มีข้อมูลในหมวดนี้เลย มาร่วมกันสร้างกระดานข่าวเพื่อให้คนรู้จักกันเถอะ..
+          </ion-card-content>
+        </ion-card>
+      </div>
 
-      <ion-item *ngIf="showPostTravel">
-        <ion-row center>
-          <ion-col text-center>
-            <p>ไม่มีข้อมูลของกิจกรรมท่องเที่ยว</p>
-          </ion-col>
-        </ion-row>
-      </ion-item>
+      <ion-card *ngFor="let post of (travel | async)?.slice().reverse()" (click)="viewpost(post)">
+        <ion-item color="topic">
+          <ion-avatar item-start>
+            <img [src]="post.profilePicture">
+          </ion-avatar>
+          <h2>
+            <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.name}}</span>
+            <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+              <ion-icon name="ios-eye-outline"></ion-icon> {{viewCount(post.view)}} ครั้ง</span>
+          </h2>
+          <p style="margin-top:10px;"> &nbsp;
+            <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{viewDate(post.timestamp)}}</span> &nbsp;
+            <br> &nbsp;
+            <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{post.types}}</span>
+          </p>
+        </ion-item>
+        <ion-card-content>
+          <p style="color:rgb(44, 42, 41);margin-top:10px;font-size:20px">{{post.topic}}</p>
+        </ion-card-content>
+        <img *ngIf="post.photoPostURL!='-'" [src]="post.photoPostURL">
+      </ion-card>
     </ion-list>
 
     <ion-list *ngSwitchCase="'other'">
-      <ion-item *ngFor="let other of (other | async)?.slice().reverse()" (click)="viewpostOther(other)">
-        <!-- <ion-thumbnail item-start>
-          <img src="{{other.profilePicture}}">
-        </ion-thumbnail> -->
-        <h2>{{other.topic}}</h2>
-        <p>รายละเอียด : {{other.detail}}</p>
-      </ion-item>
+      <div *ngIf="(other | async)?.length==0">
+        <ion-card>
+          <ion-card-header>
+            <h1 style="color:#e64505">ไม่มีข้อมูล</h1>
+          </ion-card-header>
+          <ion-card-content>
+            แย่จัง! ดูเหมือนจะไม่มีข้อมูลในหมวดนี้เลย มาร่วมกันสร้างกระดานข่าวเพื่อให้คนรู้จักกันเถอะ..
+          </ion-card-content>
+        </ion-card>
+      </div>
 
-      <ion-item *ngIf="showPostOther">
-        <ion-row center>
-          <ion-col text-center>
-            <p>ไม่มีข้อมูลของประเภทอื่น ๆ</p>
-          </ion-col>
-        </ion-row>
-      </ion-item>
+      <ion-card *ngFor="let post of (other | async)?.slice().reverse()" (click)="viewpost(post)">
+        <ion-item color="topic">
+          <ion-avatar item-start>
+            <img [src]="post.profilePicture">
+          </ion-avatar>
+          <h2>
+            <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.name}}</span>
+            <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+              <ion-icon name="ios-eye-outline"></ion-icon> {{viewCount(post.view)}} ครั้ง</span>
+          </h2>
+          <p style="margin-top:10px;"> &nbsp;
+            <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{viewDate(post.timestamp)}}</span> &nbsp;
+            <br> &nbsp;
+            <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+            <span style="color:#a59088">{{post.types}}</span>
+          </p>
+        </ion-item>
+        <ion-card-content>
+          <p style="color:rgb(44, 42, 41);margin-top:10px;font-size:20px">{{post.topic}}</p>
+        </ion-card-content>
+        <img *ngIf="post.photoPostURL!='-'" [src]="post.photoPostURL">
+      </ion-card>
     </ion-list>
 
   </div>
 
-  <!-- <ion-fab right bottom>
-    <button ion-fab color="secondary">
-      <ion-icon name="reorder"></ion-icon>
+  <ion-fab right bottom #fab>
+    <button ion-fab color="Home_Primary">
+      <ion-icon name="apps"></ion-icon>
     </button>
     <ion-fab-list side="top">
-
-      <button ion-fab (click)="goToSearch()">
-        <ion-icon name="search"></ion-icon>
-      </button>
-      <button ion-fab (click)="goToPost()">
+      <button ion-fab (click)="goToPost(fab)" color="Home_Primary">
         <ion-icon name="create"></ion-icon>
       </button>
-    </ion-fab-list>
-  </ion-fab> -->
-
-
-  <ion-fab right bottom>
-    <button ion-fab color="secondary">
-      <ion-icon name="create"></ion-icon>
-    </button>
-    <ion-fab-list side="top">
-      <button ion-fab (click)="goToPost()">
-        <ion-icon name="create"></ion-icon>
-      </button>
-      <button ion-fab (click)="goToSearch()">
+      <button ion-fab (click)="goToSearch(fab)" color="Home_Primary">
         <ion-icon name="ios-search"></ion-icon>
       </button>
     </ion-fab-list>
   </ion-fab>
+
 </ion-content>

@@ -1,20 +1,21 @@
-<ion-header>
-  <ion-navbar>
+<ion-header >
+  <ion-navbar color="Chat_Primary" >
     <ion-title>ข้อความ</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
+    <div *ngIf="userChat.length>0">
   <ion-list no-line>
-    <ion-list-header>
-      ข้อความ
+    <ion-list-header style="background-color:#efefef">
+     <span style="color:#000">ข้อความเข้า</span> 
     </ion-list-header>
     <ion-item-sliding *ngFor="let user of userChat" >
       <ion-item (click)="goToChat(user)">
-        <ion-thumbnail item-start>
-          <img src="{{user.profilePicture}}">
-        </ion-thumbnail>
-        <h2>{{user.name}}</h2>
+        <ion-avatar item-start>
+            <img src="{{user.profilePicture}}">
+          </ion-avatar>
+        <h2 color="Chat_Secondary">{{user.name}}</h2>
         <ion-badge *ngIf="user.notification>0" item-end>{{user.notification}}</ion-badge>
 
       </ion-item>
@@ -27,16 +28,19 @@
     </ion-item-sliding>
 
   </ion-list>
+  </div>
 
   <ion-list no-line>
-    <ion-list-header>
-      ผู้ใช้งานในระบบ
+    <ion-list-header style="background-color:#efefef">
+        <span style="color:#000">ผู้ใช้งานในระบบ</span> 
     </ion-list-header>
     <ion-item *ngFor="let user of data" (click)="goToChat(user)">
-      <ion-thumbnail item-start>
-        <img src="{{user.profilePicture}}">
-      </ion-thumbnail>
-      <h2>{{user.name}} </h2>
+        <ion-avatar item-start>
+            <img src="{{user.profilePicture}}">
+          </ion-avatar>
+          <h2 color="Chat_Secondary">{{user.name}}</h2>
+            
+      
     </ion-item>
 
   </ion-list>

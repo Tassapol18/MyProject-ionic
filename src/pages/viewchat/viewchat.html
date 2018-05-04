@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="Chat_Primary">
     <ion-title>{{name}}</ion-title>
   </ion-navbar>
 </ion-header>
@@ -8,10 +8,10 @@
 
 </ion-content>
 
-<ion-content padding #content>
-  <div id="chatMessages">
-    <div *ngFor="let ms of messages" [class]="ms.specialMessage ? 'message special' : 'message'">
-      <div [class]="ms.key == userUID ? 'innerMessage messageRight' : 'innerMessage messageLeft'">
+<ion-content padding #content >
+  <div id="chatMessages" >
+    <div *ngFor="let ms of messages" [class]="ms.specialMessage ? 'message special' : 'message'" >
+      <div [class]="ms.key == userUID ? 'innerMessage messageRight' : 'innerMessage messageLeft'" style=" color:black;background-color:#ecf8e7">
         <div class="username">{{ ms.name }}</div>
         <div class="messageContent">{{ ms.message }}</div>
       </div>
@@ -26,7 +26,7 @@
         <ion-input type="text" [(ngModel)]="message"></ion-input>
       </div>
       <div class="elem">
-        <button ion-button icon-only (click)="sendMessage()">
+        <button ion-button icon-only color="Chat_Primary" (click)="sendMessage()">
           <ion-icon name="send"></ion-icon>
         </button>
       </div>

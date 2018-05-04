@@ -2,12 +2,15 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { StatusBar } from '@ionic-native/status-bar';
 import firebase from 'firebase';
 import { EditpostPage } from '../editpost/editpost';
 import { ViewpostPage } from '../viewpost/viewpost';
 import { Facebook } from '@ionic-native/facebook';
 import { EditmapPage } from '../editmap/editmap';
 import { ViewmapPage } from '../viewmap/viewmap';
+import len from 'object-length';
+import moment from 'moment';
 
 
 @IonicPage()
@@ -36,11 +39,11 @@ export class ProfilePage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public afAuth: AngularFireAuth,
+    public statusBar: StatusBar,
     public db: AngularFireDatabase,
     private fb: Facebook,
-    private alertCtrl: AlertController
-  ) {
-
+    private alertCtrl: AlertController, ) {
+    statusBar.backgroundColorByHexString('#0026a3');
     this.user = firebase.auth().currentUser;
 
 
@@ -67,7 +70,7 @@ export class ProfilePage {
         limitToLast: 5
       }
     });
-    
+
 
     if (this.checkin != null) {
       this.showCheckinOwn = true;
@@ -81,6 +84,16 @@ export class ProfilePage {
       this.showPostOwn = true;
     }
 
+  }
+
+  ionViewWillEnter() {
+    this.statusBar.backgroundColorByHexString('#0026a3');
+  }
+
+  viewDate(date){
+    moment.locale('th');
+    let time = moment(date).format('LLL')
+    return time;
   }
 
   //CheckIn
@@ -115,8 +128,9 @@ export class ProfilePage {
   /////////////////////////////////////////////////////////////////////////////////////////
 
   //Post
-  viewpost(post) {
+  viewPost(post) {
     this.navCtrl.push(ViewpostPage, {
+      'key': post.$key,
       'name': post.name,
       'email': post.email,
       'topic': post.topic,
@@ -126,6 +140,7 @@ export class ProfilePage {
       'lat': post.lat,
       'lng': post.lng,
       'photoPostURL': post.photoPostURL,
+      'view': len(post.view)
     })
   }
 
@@ -144,13 +159,14 @@ export class ProfilePage {
         {
           text: 'ฉันต้องการลบ',
           handler: () => {
-            if(post.photoPlace == '-' || post.photoPlace == null){
+            if (post.photoPost == '-') {
               this.post.remove(post.$key);
-            }else{
-              this.post.remove(post.$key);
-              firebase.storage().ref('/Posts/' + post.photoPost).delete();
+            } else {
+              for (let i = 0; i < len(post.photoPost); i++) {
+                firebase.storage().ref('/Posts/' + post.photoPost[i]).delete();
+                this.post.remove(post.$key);
+              }
             }
-           
           }
         }
       ]
@@ -206,14 +222,16 @@ export class ProfilePage {
         {
           text: 'ฉันต้องการลบ',
           handler: () => {
-            if(map.photoPlace == '-' || map.photoPlace == null ){
-              this.map.remove(map.$key);
-              
-            }else{
-              this.map.remove(map.$key);
-              firebase.storage().ref('/Maps/' + map.photoPlace).delete();
+
+            if (map.photoPlace == '-') {            
+              this.map.remove(map.$key);              
+            } else {
+              for (let i = 0; i < len(map.photoPlace); i++) {
+                firebase.storage().ref('/Maps/' + map.photoPlace[i]).delete();
+                this.map.remove(map.$key);
+              }
             }
-           
+
           }
         }
       ]
@@ -256,7 +274,6 @@ export class ProfilePage {
           text: 'ออกจากระบบ',
           handler: () => {
             this.afAuth.auth.signOut();
-            this.fb.logout();
           }
         }
       ]

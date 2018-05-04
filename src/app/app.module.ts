@@ -11,6 +11,7 @@ import { Camera } from '@ionic-native/camera';
 import { Facebook } from '@ionic-native/facebook';
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { GooglePlus } from '@ionic-native/google-plus';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 //Page
 import { HomePage } from '../pages/home/home';
@@ -31,6 +32,7 @@ import { ViewchatPage } from '../pages/viewchat/viewchat';
 import { ViewMapDirectionsPage } from '../pages/view-map-directions/view-map-directions';
 
 
+
 //FirebaseModule
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -39,7 +41,7 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
-import { SearchmapPage } from '../pages/searchmap/searchmap';
+import { MapModalPage } from '../pages/map-modal/map-modal';
 
 
 export const firebase = {
@@ -70,7 +72,7 @@ export const firebase = {
     EditmapPage,
     ViewchatPage,
     ViewMapDirectionsPage,
-    SearchmapPage
+    MapModalPage
   ],
   imports: [
     BrowserModule,
@@ -81,7 +83,7 @@ export const firebase = {
     AngularFireStorageModule,
     AngularFireModule.initializeApp(firebase),
     AngularFireAuthModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -102,7 +104,7 @@ export const firebase = {
     EditmapPage,
     ViewchatPage,
     ViewMapDirectionsPage,
-    SearchmapPage
+    MapModalPage
   ],
   providers: [
     StatusBar,
@@ -113,6 +115,7 @@ export const firebase = {
     Facebook,
     GoogleMaps,
     GooglePlus,
+    LocalNotifications,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
   ]
 })

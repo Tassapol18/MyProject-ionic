@@ -1,15 +1,17 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>เพิ่มกระดานข่าวสาร</ion-title>
+  <ion-navbar color="Home_Primary">
+    <ion-title>สร้างกระดานข่าวสาร</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding style="background-color:rgb(228, 228, 228)">
+
   <ion-list no-line>
+
     <ion-item>
-      <ion-label floating>*เรื่อง</ion-label>
-      <ion-input [(ngModel)]="topic" type="text"></ion-input>
-    </ion-item>
+        <ion-label floating>*หัวเรื่อง</ion-label>
+        <ion-input [(ngModel)]="topic" type="text"></ion-input>
+      </ion-item>
 
     <ion-item>
       <ion-label floating>*ประเภท</ion-label>
@@ -31,19 +33,19 @@
     <ion-item>
       <ion-row center>
         <ion-col text-center>
-          <button ion-button type="button" style="width:100%;" color="primary" round outline (click)="getPlace()">แสดงค่าพิกัด</button>
+          <button ion-button type="button" style="width:100%;" color="primary"  outline (click)="getPlace()">แสดงค่าพิกัด</button>
         </ion-col>
         <ion-col text-center>
-          <button ion-button type="button" style="width:100%;" color="danger" round outline (click)="resetLatLng()">ล้างค่าพิกัด</button>
+          <button ion-button type="button" style="width:100%;" color="danger"  outline (click)="resetLatLng()">ล้างค่าพิกัด</button>
         </ion-col>
       </ion-row>
     </ion-item>
 
-    <ion-item>
+    <ion-item >
       <ion-label floating>ละติจูด</ion-label>
       <ion-input type="text" name="lat" [(ngModel)]="lat"></ion-input>
     </ion-item>
-    <ion-item>
+    <ion-item >
       <ion-label floating>ลองติจูด</ion-label>
       <ion-input type="text" name="lng" [(ngModel)]="lng"></ion-input>
     </ion-item>
@@ -51,36 +53,40 @@
     <ion-item>
       <ion-row center>
         <ion-col text-center>
-          <button ion-button color="danger" style="width:100%;" type="button" round outline (click)="takePhoto()">
-            <ion-icon name="md-camera"></ion-icon>
+          <button ion-button color="danger" style="width:100%;" type="button" outline (click)="takePhoto()">
+            ถ่ายรูป
+            <!-- <ion-icon name="md-camera"></ion-icon> -->
           </button>
         </ion-col>
         <ion-col text-center>
-          <button ion-button color="secondary" style="width:100%;" type="button" round outline (click)="selectPhoto()">
-            <ion-icon name="md-image"></ion-icon>
+          <button ion-button color="secondary" style="width:100%;" type="button" outline (click)="selectPhoto()">
+            เลือกรูปภาพ
+            <!-- <ion-icon name="md-image"></ion-icon> -->
           </button>
         </ion-col>
       </ion-row>
 
       <ion-row center *ngIf="showPhotoUpload">
-        <ion-col text-center *ngFor="let photo of photoPostURL; let id = index">
+        <ion-col col-6 text-center *ngFor="let photo of photoPostURL; let id = index">
           <ion-card>
-            <button ion-button type="button" color="danger" outline (click)="deletePhotoUpload(id)">
+            <button ion-button style="float:center" type="button" color="danger" outline (click)="deletePhotoUpload(id)">
               <ion-icon name="trash"></ion-icon>
             </button>
-            <img [src]="photo" width="100px" height="100px" />
+            <img [src]="photo" width="120px" height="120px" />
           </ion-card>
         </ion-col>
       </ion-row>
     </ion-item>
 
+    <ion-row center>
+        <ion-col text-center>
+          <button ion-button color="Home_Primary" type="submit" block large (click)="newPost()">เพิ่มข่าวสาร</button>
+          <ion-label color="danger">* ข้อมูลจำเป็น</ion-label>
+        </ion-col>
+      </ion-row>
+
   </ion-list>
 
-  <ion-row center>
-    <ion-col text-center>
-      <button ion-button type="submit" round (click)="newPost(topic, detail, types)">เพิ่มข่าวสาร</button>
-      <ion-label color="danger">* ข้อมูลจำเป็น</ion-label>
-    </ion-col>
-  </ion-row>
+  
 
 </ion-content>

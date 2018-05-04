@@ -4,6 +4,8 @@ import { Camera, CameraOptions } from '@ionic-native/camera';
 import { AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
 import firebase from 'firebase';
+import { StatusBar } from '@ionic-native/status-bar';
+import { LoadingController } from 'ionic-angular';
 
 
 @IonicPage()
@@ -14,7 +16,6 @@ import firebase from 'firebase';
 export class EditpostPage {
   post: any;
   postPhoto: any;
-
   topic: any;
   detail: any;
   types: any;
@@ -27,11 +28,6 @@ export class EditpostPage {
   photoPostURL: any;
   sendPhotoPostURL: any;
   showPhotoUpload: boolean = false;
-
-  /*
-photoURL = nameImg(Storage)
-photo = myPhotoURL(base to database)
-  */
 
 
   options: CameraOptions = {
@@ -54,9 +50,11 @@ photo = myPhotoURL(base to database)
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
+    public statusBar: StatusBar,
     public db: AngularFireDatabase,
     private camera: Camera,
-    private geolocation: Geolocation) {
+    private geolocation: Geolocation,
+    public loadingCtrl: LoadingController) {
 
 
     this.photoPost = [];
@@ -72,28 +70,25 @@ photo = myPhotoURL(base to database)
     this.photoPost = navParams.get('photoPost');
     this.photoPostURL = navParams.get('photoPostURL');
 
-    console.log(this.photoPost);
-    console.log(this.photoPostURL);
-
     if (this.photoPost && this.photoPostURL == '-') {
       this.photoPost = [];
       this.photoPostURL = [];
     }
 
+  }
 
+  ionViewWillEnter() {
+    this.statusBar.backgroundColorByHexString('#e64c05');
   }
 
   getPlace() {
-    return new Promise((resolve, reject) => {
-      this.geolocation.getCurrentPosition()
-        .then((res) => {
-          this.lat = res.coords.latitude;
-          this.lng = res.coords.longitude;
-          resolve('success');
-        }).catch((err) => {
-          reject('fail' + err)
-        });
-    })
+    this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+      .then((res) => {
+        this.lat = res.coords.latitude;
+        this.lng = res.coords.longitude;
+      }).catch((err) => {
+        alert('พบปัญหาในการดึงตำแหน่ง : ' + err)
+      })
   }
 
   resetLatLng() {
@@ -106,11 +101,14 @@ photo = myPhotoURL(base to database)
       this.camera.getPicture(this.options)
         .then((myPhoto) => {
           this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
-          this.upLoadImage();
-          resolve('send picture to upload');
-        }, (err) => {
-          reject('fail : ' + err);
-        });
+          resolve('ไม่พบปัญหาเกี่ยวกับรูปภาพ');
+        }).catch((err) => {
+          reject('พบปัญหารูปภาพ : ' + err);
+        })
+    }).then(() => {
+      this.upLoadImage();
+    }).catch((err) => {
+      alert(err)
     })
   }
 
@@ -119,44 +117,49 @@ photo = myPhotoURL(base to database)
       this.camera.getPicture(this.optionsSelect)
         .then((myPhoto) => {
           this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
-          this.upLoadImage();
-          resolve('send picture to upload');
-        }, (err) => {
-          reject('fail : ' + err);
-        });
+          resolve('ไม่พบปัญหาเกี่ยวกับรูปภาพ');
+        }).catch((err) => {
+          reject('พบปัญหาเกี่ยวกับรูปภาพ : ' + err);
+        })
+    }).then(() => {
+      this.upLoadImage();
+    }).catch((err) => {
+      alert(err)
     })
   }
 
 
   //Upload Image
   upLoadImage() {
-    alert('รออัพโหลดรูปสักครู่...')
     this.postPhoto = firebase.storage().ref('/Posts/');
     const filename = Math.floor(Date.now() / 1000);
-    return new Promise((resolve, reject) => {
-      if (this.photoPostURL.length < 5) {
-        let name = 'Post_' + filename;
-        this.photoPost.push(name)
-        this.sendPhotoPostURL = this.postPhoto.child(name);
-        this.sendPhotoPostURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
-          .then(() => {
-            alert('อัพโหลดรูปสำเร็จ : ' + this.sendPhotoPostURL);
-            this.postPhoto.child(name).getDownloadURL()
-              .then((url) => {
-                this.photoPostURL.push(url);
-                this.showPhotoUpload = true;
-              }).catch((err) => {
-                alert('fail : ' + err)
-              });
-            resolve('Upload Image Success')
-          }).catch((err) => {
-            alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
-            reject('fail : ' + err)
-          });
-      } else {
-        alert('ไม่สามารถอัพโหลดรูปเพิ่มได้')
-      }
-    })
+    if (this.photoPostURL.length < 5) {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: "กำลังอัพโหลดรูป รอสักครู่..."
+      });
+      loading.present();
+      let name = 'Post_' + filename;
+      this.photoPost.push(name)
+      this.sendPhotoPostURL = this.postPhoto.child(name);
+      this.sendPhotoPostURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
+        .then(() => {
+          this.postPhoto.child(name).getDownloadURL()
+            .then((url) => {
+              this.photoPostURL.push(url);
+              this.showPhotoUpload = true;
+            }).catch((err) => {
+              alert('พบปัญหาการอัพโหลด : ' + err)
+              loading.dismissAll();
+            });
+          loading.dismissAll();
+        }).catch((err) => {
+          alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
+          loading.dismissAll();
+        });
+    } else {
+      alert('ไม่สามารถอัพโหลดรูปเพิ่มได้')
+    }
   }
 
   //DeletePhoto
@@ -166,26 +169,26 @@ photo = myPhotoURL(base to database)
         this.photoPost.splice(index, 1);
         this.photoPostURL.splice(index, 1);
       }).catch(err => {
-        alert('fail : ' + err)
+        alert('พบปัญหา : ' + err)
       });
   }
 
   //Func Editpost
-  editPost(topic, detail, types) {
+  editPost() {
 
     if (this.photoPost && this.photoPostURL == null || this.photoPost && this.photoPostURL == '') {
       this.photoPost = ['-'];
       this.photoPostURL = ['-'];
     }
 
-    this.lat = parseFloat(this.lat);
-    this.lng = parseFloat(this.lng);
+    this.lat = parseFloat(this.lat)
+    this.lng = parseFloat(this.lng)
 
-    if (topic && detail && types != null) {
+    if (this.topic && this.detail && this.types != null) {
       this.data = {
-        topic: topic,
-        detail: detail,
-        types: types,
+        topic: this.topic,
+        detail: this.detail,
+        types: this.types,
         lat: (this.lat) ? this.lat : null,
         lng: (this.lng) ? this.lng : null,
         photoPost: (this.photoPost) ? this.photoPost : [null],
@@ -200,17 +203,25 @@ photo = myPhotoURL(base to database)
 
   //Update
   updateFromEdit() {
-    alert('กำลังอัพเดทกระดานข่าว รอสักครู่...');
     return new Promise((resolve, reject) => {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: "กำลังอัพโหลด รอสักครู่..."
+      });
+      loading.present();
       this.post = this.db.object('/Posts/' + this.key);
-      this.post.update(this.data).then(() => {
-        alert('แก้ไขข้อมูลสำเร็จ');
-        this.navCtrl.pop();
-        resolve('Success');
-      }).catch((err) => {
-        alert('แก้ไขข้อมูลไม่สำเร็จ : ' + err);
-        reject('Unsuccess');
-      })
+      this.post.update(this.data)
+        .then(() => {
+          loading.dismissAll();
+          resolve('ไม่พบปัญหาการอัพโหลด')
+        }).catch((err) => {
+          loading.dismissAll();
+          reject('พบปัญาการอัพโหลด : ' + err)
+        })
+    }).then((res) => {
+      this.navCtrl.pop();
+    }).catch((err) => {
+      alert(err)
     })
   }
 }

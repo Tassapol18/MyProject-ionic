@@ -1,83 +1,120 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="Map_Primary">
     <ion-title>{{namePlace}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content style="background-color:#2f0836">
 
-  <ion-card>
+  <!-- <ion-card>
     <ion-slides auto-play='true' does-continue='true' slide-intervel='3000'>
       <ion-slide *ngFor="let photo of photoPlaceURL">
         <img src="{{photo}}" height="250px" width="100%" align-items="center"/>
       </ion-slide>
     </ion-slides>
-  </ion-card>
+  </ion-card> -->
 
-  <ion-card>
-    <ion-card-header>
-      <h2>รายละเอียด</h2>
-    </ion-card-header>
-    <ion-card-content>
+  <ion-list>
 
-      <p>ชื่อสถานที่ : {{namePlace}} </p>
-      <p>รายละเอียด : {{detailPlace}} </p>
-      <p>ที่อยู่ : {{placeAddress}} </p>
-      <p>ประเภทของสถานที่ : {{typesPlace}} </p>
-      <p>เวลาทำการ : {{timePlace}} </p>
-      <p>เบอร์โทรศัพท์ : {{telephonePlace}} </p>
-      <p>เว็ปไซต์ : {{websitePlace}} </p>
+    <p padding style="color:#fff;background-color:#2f0836" class="detailText">
+      <span style="font-size:25px;color:#a837f3">รายละเอียด</span>
+      <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{Textdetail()}} </p>
+    <ion-item color="Map_Secondary">
+      <span *ngFor="let review of star">
+        <ion-icon style="font-size:30px;color:#a837f3;" *ngIf="review==2" name="ios-star"></ion-icon>
+        <ion-icon style="font-size:30px;color:#a837f3;" *ngIf="review==1" name="ios-star-half-outline"></ion-icon>
+        <ion-icon style="font-size:30px;color:#a837f3;" *ngIf="review==0" name="ios-star-outline"></ion-icon>
+      </span>
+      <span>{{pointReview}}</span>
+      <span>({{cnt_res}} รีวิว)</span>
+      <br>
+      <br>
 
-      <div *ngIf="checkUser">
-        <p>สร้างโดย : {{ownerPlace}} </p>
-        <p>ระยะห่าง {{distance}} กิโลเมตร </p>
-        <button ion-button (click)="checkIn()"><ion-icon name="ios-checkbox-outline"></ion-icon> &nbsp; เช็คอินสถานที่</button>
-        <button ion-button (click)="reviewPlace()"><ion-icon name="ios-create-outline"></ion-icon> &nbsp; รีวิวสถานที่</button>
-        <button ion-button (click)="goToChat()"><ion-icon name="ios-mail-outline"></ion-icon> &nbsp; ส่งข้อความ</button>
+      <span style="color:#ffffff">
+        <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-home-outline"></ion-icon> &nbsp;&nbsp;&nbsp;{{placeAddress}}</span>
+      <br>
+
+      <span style="color:#ffffff">
+        <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-pricetags-outline"></ion-icon> &nbsp;&nbsp;&nbsp;{{typesPlace}}</span>
+      <br>
+
+      <span style="color:#ffffff">
+        <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-time-outline"></ion-icon> &nbsp;&nbsp;&nbsp;{{timePlace}}</span>
+      <br>
+
+      <span style="color:#ffffff">
+        <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-call-outline"></ion-icon> &nbsp;&nbsp;&nbsp;{{telephonePlace}}</span>
+      <br>
+
+      <span style="color:#ffffff">
+        <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-globe-outline"></ion-icon> &nbsp;&nbsp;&nbsp;{{websitePlace}}</span>
+
+      <div *ngIf="distance != '-'">
+        <span style="color:#ffffff">
+          <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-navigate-outline"></ion-icon> &nbsp;&nbsp;&nbsp;&nbsp;{{distance}} กิโลเมตร</span>
+        <br>
       </div>
 
-    </ion-card-content>
-  </ion-card>
+      <div *ngIf="checkUser">
+        <span style="color:#ffffff">
+          <ion-icon style="font-size:25px;color:#a837f3;padding-top:7px;" name="ios-contact-outline"></ion-icon> &nbsp;&nbsp;&nbsp;&nbsp;{{ownerPlace}}</span>
+        <br>
+        <br>
+        <div text-center style="color:#fff;background-color:#2f0836">
+          <button ion-button col-3 color="light" large outline (click)="reviewPlace()">
+            <ion-icon name="ios-create-outline"></ion-icon> &nbsp;&nbsp;
+            <p>รีวิวสถานที่</p>
+          </button>
+          <button ion-button col-4 color="light" large outline (click)="checkIn()">
+              <ion-icon name="ios-checkbox-outline"></ion-icon> &nbsp;&nbsp;
+              <p>เช็คอินสถานที่</p>
+            </button>
+          <button ion-button col-3 color="light" large outline (click)="goToChat()">
+            <ion-icon name="ios-mail-outline"></ion-icon> &nbsp;&nbsp;
+            <p>ข้อความ</p>
+          </button>
+        </div>
+      </div>
+    </ion-item>
 
-  <ion-card>
-    <ion-card-header>
-      <h2>เช็คอิน</h2>
+  </ion-list>
+
+  <ion-card *ngIf="(placeCheckin | async)?.length > 0">
+    <ion-card-header style="color:#fff;background-color:#750581">
+      <h2 style="color:#fff;">เช็คอิน</h2>
     </ion-card-header>
-    <ion-card-content>
+    <ion-card-content color="light">
       <ion-item *ngFor="let checkin of (placeCheckin | async)?.slice().reverse()">
-        <ion-thumbnail item-start>
+        <ion-avatar item-start>
           <img src="{{checkin.photoUser}}">
-        </ion-thumbnail>
+        </ion-avatar>
         <h2>{{checkin.checkinDetail}}</h2>
         <p>{{checkin.nameUser}}</p>
-        <p>{{checkin.timestamp | date : 'd MMMM yyyy H:mm' : '+0700' }}</p>
+        <p>{{viewDate(checkin.timestamp)}}</p>
       </ion-item>
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
-    <ion-card-header>
-      <h2>รีวิวสถานที่</h2>
+  <ion-card *ngIf="(placeReview | async)?.length > 0">
+    <ion-card-header style="color:#fff;background-color:#750581">
+      <h2 style="color:#fff;">รีวิวสถานที่</h2>
     </ion-card-header>
     <ion-card-content>
       <ion-item *ngFor="let review of (placeReview | async)?.slice().reverse()">
         <h2>{{review.reviewDetail}}</h2>
         <p>คะแนน : {{review.scoreReview}}</p>
-        <p>{{review.timestamp | date : 'd MMMM yyyy H:mm' : '+0700' }}</p>
+        <p>{{viewDate(review.timestamp)}}</p>
       </ion-item>
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
-    <ion-card-header>
-      กราฟคะแนนรีวิว
-    </ion-card-header>
-    <ion-card-content>
-      <canvas #barCanvas></canvas>
-    </ion-card-content>
-  </ion-card>
+  <ion-list>
+    <ion-item *ngFor="let photo of photoPlaceURL" style="background-color:#2f0836">
+      <img src="{{photo}}" width="100%" align-items="center" />
+    </ion-item>
+  </ion-list>
 
 </ion-content>

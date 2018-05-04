@@ -1,22 +1,21 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="Map_Primary">
     <ion-title>สถานที่ใกล้เคียง</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-  <ion-list no-lines>
-    <ion-item *ngFor="let data of data" (click)="viewdetailMap(data)">
-      <ion-avatar item-left>
-        <ion-icon name="pin"></ion-icon>
-      </ion-avatar>
-      <h2>{{data.Place.namePlace}}</h2>
-      <h2>ประเภท {{data.Place.typesPlace}}</h2>
-      <p>ระยะห่าง {{data.Place.resultDistance}} กิโลเมตร (โดยประมาณ)</p>
-    </ion-item>
+<ion-content padding style="background-color:rgb(228, 228, 228)">
+  <ion-list>
+    <ion-card *ngFor="let data of data" (click)="viewdetailMap(data)" color="Map_Topic">
+        <ion-card-content>
+            <h2 ><span style="color:#750581">&nbsp;&nbsp;&nbsp;&nbsp;{{data.Place.namePlace}}</span></h2>
+            <p style="margin-top:10px;">&nbsp;<ion-icon name="ios-pricetags-outline"></ion-icon>&nbsp;<span style="color:#9a88a5">{{data.Place.typesPlace}}</span><br>
+              <ion-icon name="ios-navigate-outline"></ion-icon>&nbsp;<span style="color:#a188a5">{{data.Place.resultDistance}} กิโลเมตร (โดยประมาณ)</span></p>
+        </ion-card-content>
+      </ion-card>
   </ion-list>
 
 </ion-content>

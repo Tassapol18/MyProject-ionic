@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 import { ViewmapPage } from '../viewmap/viewmap';
+import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 
 @IonicPage()
@@ -21,22 +22,21 @@ export class NearbymapPage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public db: AngularFireDatabase,
+    public statusBar: StatusBar,
     private geolocation: Geolocation) {
-
+    statusBar.backgroundColorByHexString('#750581');
   }
 
   ionViewWillEnter() {
-    // this.data = [];     //THis is a bug is true 55555
-    this.initData().then(() => {
-      this.load();
-    })
+    this.statusBar.backgroundColorByHexString('#750581');
+    this.data = [];
+    this.initData();
   }
 
   initData() {
     return new Promise((resolve, reject) => {
-      this.mapData = this.db.list('/Maps');
-      var sum = 0;
-      this.mapData.forEach(res => {
+      this.mapData = this.db.list('/Maps')
+      this.mapData.forEach((res) => {
         this.data = [];
         for (let i = 0; i < res.length; i++) {
           let temp = {
@@ -59,59 +59,54 @@ export class NearbymapPage {
             KeyID: res[i].$key
           }
           this.data.push(temp)
-          sum++;
-          resolve('load data');
-          //end loop
         }
-        //end forEach
-      });
-      reject('fail initData')
+      })
+      resolve('พบข้อมูล')
+    }).then(() => {
+      this.loadPosition()
     })
+
   }
 
-  load() {
-    //alert("Load...");
-    return new Promise((resolve, reject) => {
-      this.geolocation.watchPosition().subscribe((res) => {
+  loadPosition() {
+    this.geolocation.watchPosition({ maximumAge: 3000, enableHighAccuracy: true })
+      .subscribe((data) => {
         let posCur = {
-          lat: res.coords.latitude,
-          lng: res.coords.longitude
+          lat: data.coords.latitude,
+          lng: data.coords.longitude
         }
         this.distance(posCur.lat, posCur.lng);
-        resolve('load')
       })
-      reject('fail loadPosition')
-    })
   }
 
   distance(latCurrent, lngCurrent) {
-    return new Promise((resolve, reject) => {
-      //alert("Lat : Lng User : " + latCurrent + ' , ' + lngCurrent);
-      for (let i = 0; i < this.data.length; i++) {
-        let latPlace = this.data[i].LatLng.lat;
-        let lngPlace = this.data[i].LatLng.lng;
-        let R = 6378137; // Earth’s mean radius in meter
-        let dLat = (latPlace - latCurrent) * Math.PI / 180;
-        let dLng = (lngPlace - lngCurrent) * Math.PI / 180;
-        let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos((latCurrent) * Math.PI / 180) *
-          Math.cos((latPlace) * Math.PI / 180) *
-          Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        let d = R * c;
-        this.resultDistance[i] = (d / 1000).toFixed(2);
-        this.data[i].Place.resultDistance = this.resultDistance[i];
+    for (let i = 0; i < this.data.length; i++) {
+      let latPlace = parseFloat(this.data[i].LatLng.lat);
+      let lngPlace = parseFloat(this.data[i].LatLng.lng);
+      let R = 6378137; // Earth’s mean radius in meter
+      let dLat = (latPlace - latCurrent) * Math.PI / 180;
+      let dLng = (lngPlace - lngCurrent) * Math.PI / 180;
+      let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((latCurrent) * Math.PI / 180) *
+        Math.cos((latPlace) * Math.PI / 180) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      let d = R * c;
+      this.resultDistance[i] = (d / 1000).toFixed(2);
+      this.data[i].Place.resultDistance = parseFloat(this.resultDistance[i]);
+    }
+
+    this.data.sort((a, b) => {
+      if (a.Place.resultDistance > b.Place.resultDistance) {
+        return 1;
       }
-      this.data.sort((a: any, b: any) => {
-        if (a.Place.resultDistance > b.Place.resultDistance) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-      resolve('load')
+      if (a.Place.resultDistance < b.Place.resultDistance) {
+        return -1;
+      }
+      return 0;
     })
   }
+
 
   viewdetailMap(data) {
     this.navCtrl.push(ViewmapPage, {

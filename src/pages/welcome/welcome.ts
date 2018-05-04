@@ -10,6 +10,10 @@ import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 
 
+//Page
+import { TabsPage } from '../tabs/tabs';
+
+
 
 @IonicPage()
 @Component({
@@ -19,6 +23,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
 export class WelcomePage {
 
   authState: any = null;
+  rootPage: any;
 
 
   constructor(public navCtrl: NavController,
@@ -27,7 +32,7 @@ export class WelcomePage {
     public db: AngularFireDatabase,
     public fb: Facebook,
     public google: GooglePlus,
-    public platform: Platform
+    public platform: Platform,
   ) {
     // this.afAuth.authState.subscribe((auth) => {
     //   this.authState = auth
@@ -41,7 +46,6 @@ export class WelcomePage {
     //   this.authState = auth
     // });
   }
-
 
   // Returns true if user is logged in
   get authenticated(): boolean {
@@ -73,7 +77,7 @@ export class WelcomePage {
               .credential(response.authResponse.accessToken);
             firebase.auth().signInWithCredential(facebookCredential)
               .then((success) => {
-                alert("Firebase auth success : " + JSON.stringify(success));
+                // alert("Firebase auth success : " + JSON.stringify(success));
                 this.authState = success;
                 this.updateUserData();
                 resolve('sucess');
@@ -110,7 +114,7 @@ export class WelcomePage {
               .credential(res.idToken);
             firebase.auth().signInWithCredential(googleCredential)
               .then(success => {
-                alert("Firebase success: " + JSON.stringify(success));
+                // alert("Firebase success: " + JSON.stringify(success));
                 this.authState = success;
                 this.updateUserData();
                 resolve('sucess');
@@ -134,7 +138,7 @@ export class WelcomePage {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((credential) => {
         this.authState = credential.user
-        this.updateUserData()
+        this.updateUserData();
       })
       .catch(error => console.log(error));
   }
@@ -155,6 +159,5 @@ export class WelcomePage {
       .catch(error => console.log(error));
 
   }
-
 
 }

@@ -1,6 +1,9 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
+import { StatusBar } from '@ionic-native/status-bar';
+import firebase from 'firebase';
+import { AngularFireDatabase } from 'angularfire2/database-deprecated';
+import moment from 'moment';
 
 declare var google;
 
@@ -12,7 +15,6 @@ declare var google;
 export class ViewpostPage {
 
   @ViewChild('map') mapElement: ElementRef;
-  map: any;
   marker: any;
 
   key: any;
@@ -25,19 +27,15 @@ export class ViewpostPage {
   lat: any;
   lng: any;
   photoPostURL: any;
+  view: any;
 
   mapShow: boolean = false;
   imageShow: boolean = false;
 
-  viewSum: FirebaseListObservable<any[]>;
-  path: any;
-  data = [];
-  count = 0;
-
-
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
+    public statusBar: StatusBar,
     public db: AngularFireDatabase) {
     this.key = navParams.get('key');
     this.name = navParams.get('name');
@@ -49,8 +47,11 @@ export class ViewpostPage {
     this.lat = navParams.get('lat');
     this.lng = navParams.get('lng');
     this.photoPostURL = navParams.get('photoPostURL');
+    this.view = navParams.get('view');
 
-    if(this.photoPostURL != '-'){
+
+
+    if (this.photoPostURL != '-') {
       this.imageShow = true;
     }
 
@@ -61,31 +62,33 @@ export class ViewpostPage {
   }
 
   ionViewWillEnter() {
-    // this.count++
-    
-    // this.path = ('/Posts/' + this.key)
-    // this.viewSum = this.db.list('/Posts/')
-    // this.viewSum.forEach(res => {
-    //   for (let i = 0; i < res.length; i++) {
-    //     let temp = {
-    //       viewSum: res[i].viewSum
-    //     }
-    //     this.data.push(temp)
-    //   }
-    // })
-    // console.log(this.data);
+    this.statusBar.backgroundColorByHexString('#e64c05');
+    this.countView()
+    if (this.lat != null && this.lng != null){
+      this.initMap();
+    }
+  }
 
-    // let sendCount = {
-    //   viewSum: this.data
-    // }
-    // this.db.object(this.path).update(sendCount)
-    //   .catch(error => console.log(error));
+  Textdetail(): string {
+    return this.detail;
+  }
+
+  countView() {
+    let user = firebase.auth().currentUser;
+    let timestamp = firebase.database.ServerValue.TIMESTAMP;
+    let path = '/Posts/' + this.key + '/view/' + user.uid;
+    let countViewSum = {
+      time: timestamp
+    }
+
+    this.db.object(path).update(countViewSum);
 
   }
 
-  ionViewDidLoad() {
-    if (this.lat != null && this.lng != null)
-      this.initMap();
+  viewDate(date) {
+    moment.locale('th');
+    let time = moment(date).format('LLLL')
+    return time;
   }
 
   initMap() {

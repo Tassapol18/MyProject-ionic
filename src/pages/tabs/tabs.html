@@ -1,6 +1,6 @@
-<ion-tabs>
-  <ion-tab [root]="tab1Root" tabTitle="Home" tabIcon="ios-home-outline" tabsHideOnSubPages="true"></ion-tab>
-  <ion-tab [root]="tab2Root" tabTitle="Map" tabIcon="ios-map-outline" tabsHideOnSubPages="true"></ion-tab>
-  <ion-tab [root]="tab3Root"  tabTitle="Message" tabIcon="ios-chatbubbles-outline" [tabBadge]="n" tabsHideOnSubPages="true"></ion-tab>
-  <ion-tab [root]="tab4Root" tabTitle="Profile" tabIcon="ios-contact-outline" tabsHideOnSubPages="true"></ion-tab>
+<ion-tabs [color]="elColor">
+  <ion-tab [root]="tab1Root" tabTitle="หน้าแรก" tabIcon="ios-home-outline" tabsHideOnSubPages="true" (ionSelect)="changeColor('Home')"></ion-tab>
+  <ion-tab [root]="tab2Root" tabTitle="แผนที่" tabIcon="ios-map-outline" tabsHideOnSubPages="true" (ionSelect)="changeColor('Map')"></ion-tab>
+  <ion-tab [root]="tab3Root"  tabTitle="ข้อความ" tabIcon="ios-chatbubbles-outline" tabBadgeStyle="light" [tabBadge]="n" tabsHideOnSubPages="true" (ionSelect)="changeColor('Message')"></ion-tab>
+  <ion-tab [root]="tab4Root" tabTitle="โปรไฟล์" tabIcon="ios-contact-outline" tabsHideOnSubPages="true" (ionSelect)="changeColor('Profile')"></ion-tab>
 </ion-tabs>

@@ -1,32 +1,38 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="Home_Primary">
     <ion-title> {{topic}} </ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-  <ion-card *ngIf="imageShow">
-      <ion-slides auto-play='true' does-continue='true' slide-intervel='3000'>
-        <ion-slide *ngFor="let photo of photoPostURL">
-          <img src="{{photo}}" height="250px" width="100%" align-items="center"/>
-        </ion-slide>
-      </ion-slides>
-    </ion-card>
+<ion-content style="background-color:rgb(255, 255, 255)">
 
-  <ion-card>
-    <ion-card-content>
-      <p>เรื่อง : {{topic}} </p>
-      <p>ผู้เขียน : {{name}} </p>
-      <p>อีเมล์ : {{email}} </p>
-      <p>ประเภท : {{types}} </p>
-      <p>วันและเวลา : {{timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </p>
-      <p>รายละเอียด : {{detail}} </p>
-    </ion-card-content>
-  </ion-card>
 
+  <ion-list>
+    <ion-item color="topic">
+      <h2>
+        <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{name}}</span>
+        <span style="color:#a59088;float:right;font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;
+          <ion-icon name="ios-eye-outline"></ion-icon> &nbsp; {{view}} ครั้ง</span>
+      </h2>
+      <p style="margin-top:10px;"> &nbsp;
+        <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+        <span style="color:#a59088">{{viewDate(timestamp)}} </span> &nbsp;
+        <br> &nbsp;
+        <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+        <span style="color:#a59088">{{types}}</span> &nbsp;
+      </p>
+    </ion-item>
+
+    <p padding class="detailText" style="background-color:rgb(255, 255, 255)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{Textdetail()}} </p>
+  </ion-list>
+  <ion-list fluid *ngIf="imageShow" style="background-color:rgb(228, 228, 228)">
+    <ion-item *ngFor="let photo of photoPostURL">
+      <img src="{{photo}}" width="100%" align-items="center" />
+    </ion-item>
+  </ion-list>
   <ion-card *ngIf="mapShow">
     <ion-card-header>
       <h2>แผนที่</h2>

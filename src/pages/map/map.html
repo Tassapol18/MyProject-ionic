@@ -1,16 +1,17 @@
 <ion-header>
-  <ion-navbar>
-    <ion-buttons left>
-      <button ion-button color="primary" (click)="goToNearbyMap()">
-        สถานที่ใกล้เคียง
-      </button>
-    </ion-buttons>
+  <ion-navbar color="Map_Primary">
     <ion-title>แผนที่</ion-title>
     <ion-buttons end>
-      <button ion-button color="secondary" (click)="goToNewMap()">
-        <ion-icon name="add-circle"></ion-icon>
+      <button ion-button color="light" (click)="goToNearbyMap()">
+        <ion-icon name="ios-compass-outline"></ion-icon>&nbsp;ใกล้เคียง
+      </button>
+      <button ion-button color="light" (click)="goToNewMap()">
+        <ion-icon name="add-circle"></ion-icon>&nbsp;เพิ่มสถานที่
       </button>
     </ion-buttons>
+  </ion-navbar>
+  <ion-navbar color="Map_Primary">
+    <ion-searchbar color="Map_Primary" (ionInput)="searchMap($event)" [(ngModel)]="searchInput" placeholder="ค้นหาสถานที่"></ion-searchbar>
   </ion-navbar>
 </ion-header>
 
@@ -21,7 +22,6 @@
 
   <div>
     <div class="search">
-      <ion-searchbar (ionInput)="searchMap($event)"></ion-searchbar>
       <ion-list>
         <button ion-item *ngFor="let item of loadDataSearch" (click)="searchFind(item)">
           <ion-icon name="pin"></ion-icon>
@@ -38,48 +38,43 @@
 
 
   <ion-fab right bottom>
-    <button ion-fab color="secondary" (click)="getLocation()">
+    <button ion-fab color="Map_Primary" (click)="getLocation()">
       <ion-icon name="locate"></ion-icon>
     </button>
   </ion-fab>
 
 
-  <ion-fab left bottom>
-    <button ion-fab>
+  <ion-fab left bottom #fab>
+    <button ion-fab color="Map_Secondary">
       <ion-icon name="funnel"></ion-icon>
     </button>
     <ion-fab-list left side="top">
       <ion-list>
-        <button ion-button (click)="filterMarkers('ที่พักอาศัย')">
+        <button ion-button (click)="filterMarkers('ที่พักอาศัย',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/hotel.png" width="30px" height="30px"> &nbsp; ที่พักอาศัย
         </button>
-        <button ion-button (click)="filterMarkers('ร้านอาหาร')">
+        <button ion-button (click)="filterMarkers('ร้านอาหาร',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/resturant.png" width="30px" height="30px"> &nbsp; ร้านอาหาร
         </button>
-        <button ion-button (click)="filterMarkers('แหล่งท่องเที่ยว')">
+        <button ion-button (click)="filterMarkers('แหล่งท่องเที่ยว',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/travel.png" width="30px" height="30px"> &nbsp; แหล่งท่องเที่ยว
         </button>
-        <button ion-button (click)="filterMarkers('วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา')">
+        <button ion-button (click)="filterMarkers('วัด สถานปฏิบัติธรรม กิจกรรมทางศาสนา',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/temple.png" width="30px" height="30px"> &nbsp; วัด
         </button>
-        <button ion-button (click)="filterMarkers('ร้านค้าของที่ระลึกและสินค้า OTOP')">
+        <button ion-button (click)="filterMarkers('ร้านค้าของที่ระลึกและสินค้า OTOP',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/store.png" width="30px" height="30px"> &nbsp; ร้านค้าของที่ระลึก และ OTOP
         </button>
-        <button ion-button (click)="filterMarkers('ศูนย์บริการข้อมูลชุมชน')">
+        <button ion-button (click)="filterMarkers('ศูนย์บริการข้อมูลชุมชน',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/information.png" width="30px" height="30px"> &nbsp; ศูนย์บริการข้อมูลชุมชน
         </button>
-        <button ion-button (click)="filterMarkers('อื่น ๆ')">
+        <button ion-button (click)="filterMarkers('อื่น ๆ',fab)" color="Map_Secondary">
           <img src="assets/imgs/iconMap/other.png" width="30px" height="30px"> &nbsp; อื่น ๆ
         </button>
-        <button ion-button (click)="filterMarkers('')">
-            <img src="assets/imgs/iconMap/all.png" width="25px" height="25px"> &nbsp; ทั้งหมด
+        <button ion-button (click)="filterMarkers('',fab)" color="Map_Secondary">
+          <img src="assets/imgs/iconMap/all.png" width="25px" height="25px"> &nbsp; ทั้งหมด
         </button>
       </ion-list>
-
-
-
-
-
     </ion-fab-list>
   </ion-fab>
 

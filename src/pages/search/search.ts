@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import firebase from 'firebase';
+import { StatusBar } from '@ionic-native/status-bar';
 import { ViewpostPage } from '../viewpost/viewpost';
+import len from 'object-length';
 import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database-deprecated';
 
 @IonicPage()
@@ -17,27 +19,44 @@ export class SearchPage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
+    public statusBar: StatusBar,
     public db: AngularFireDatabase) {
-    this.postDB = firebase.database().ref('/Posts');
-    this.postDB.on('value', PostList => {
+    statusBar.backgroundColorByHexString('#e64c05');
+    // this.postDB = firebase.database().ref('/Posts');
+    // this.postDB.on('value', PostList => {
+    //   let posted = [];
+    //   PostList.forEach(post => {
+    //     posted.push(post.val());
+    //     return false;
+    //   });
+    //   this.PostList = posted;
+    //   this.loadePost = posted;
+    // });
+
+    this.post = db.list('/Posts');
+    this.post.forEach((res) => {
       let posted = [];
-      PostList.forEach(post => {
-        posted.push(post.val());
-        return false;
-      });
+      for(let i = 0; i < len(res); i++){
+        console.log(res[i]);
+        posted.push(res[i]);
+      }
       this.PostList = posted;
       this.loadePost = posted;
-    });
+    })
 
   }
 
-  initializeItems(): void {
+  ionViewWillEnter() {
+    this.statusBar.backgroundColorByHexString('#e64c05');
+  }
+
+  initializeItem(): void {
     this.PostList = this.loadePost;
   }
 
   getItems(searchbar) {
     // Reset items back to all of the items
-    this.initializeItems();
+    this.initializeItem();
 
     // set q to the value of the searchbar
     var query = searchbar.srcElement.value;
@@ -64,8 +83,7 @@ export class SearchPage {
 
   }
 
-  viewpost(post){
-    this.post = this.db.list('/Posts');
+  viewpost(post) {
     this.navCtrl.push(ViewpostPage, {
       'key': post.$key,
       'name': post.name,
@@ -73,16 +91,12 @@ export class SearchPage {
       'topic': post.topic,
       'detail': post.detail,
       'types': post.types,
+      'timestamp': post.timestamp,
       'lat': post.lat,
       'lng': post.lng,
-      'photoPost': post.photoPost,
       'photoPostURL': post.photoPostURL,
-      'timestamp': post.timestamp
+      'view': len(post.view)
     })
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SearchPage');
   }
 
 }

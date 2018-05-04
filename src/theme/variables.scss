@@ -34,12 +34,38 @@ $app-direction: ltr;
 // The "primary" color is the only required color in the map.
 
 $colors: (
+  google: #0057E7,
+  facebook : #3a5998,
   primary:    #488aff,
   secondary:  #32db64,
   danger:     #f53d3d,
   light:      #f4f4f4,
-  dark:       #222
+  dark:       #222,
+  topic: #f8f2ee,
+  statusBar: #2e2e2e,
+
+  // primary:    #e64c05,
+  // secondary:  #f5b465,
+  // primary:    #488aff,
+  // secondary:  #32db64,
+  // danger:     #f53d3d,
+  // light:      #f4f4f4,
+  // dark:       #222
+
+  Home_Primary: #e64c05,
+  Home_Secondary: #f5b465,
+  Home_Topic: #f53d3d,
+  Map_Primary:  #750581,
+  Map_Secondary:  #2f0836,
+  Map_Topic: #f7eef8,
+  Chat_Primary:  #33af0d,
+  Chat_Secondary:  #99f37a,
+  Chat_Topic: #f0f8ee,
+  Profile_Primary:  #0026a3,
+  Profile_Secondary:  #3d50fd,
+  Profile_Topic: #eeeef8,
 );
+
 
 
 // App iOS Variables
@@ -96,4 +122,3 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
-

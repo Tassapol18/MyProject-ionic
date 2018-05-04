@@ -1,20 +1,47 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="Home_Primary">
     <ion-title>ค้นหา</ion-title>
+  </ion-navbar>
+  <ion-navbar color="Home_Primary">
+    <ion-searchbar style="box-shadow: 0px 0px;" (ionInput)="getItems($event)" placeholder="ค้นหากระดานข่าว"></ion-searchbar>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-  
+<ion-content padding style="background-color:rgb(228, 228, 228)">
+
+
+
+
   <ion-list>
-    <ion-item *ngFor="let post of PostList" (click)="viewpost(post)">
-      <h3>ชื่อ : {{ post.topic }} </h3>
-      <h3>ประเภท : {{ post.types }} </h3>
-      <h3>รายละเอียด : {{ post.detail }} </h3>
-    </ion-item>
+    <div *ngIf="PostList.length==0">
+      <ion-card>
+        <ion-card-header>
+          <h1 style="color:#e64505">ไม่พบข้อมูลที่คุณต้องการ</h1>
+        </ion-card-header>
+        <ion-card-content>
+          แย่จัง! ดูเหมือนจะไม่มีข้อมูลที่คุณต้องการค้นหาเลย...
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <ion-card *ngFor="let post of PostList" (click)="viewpost(post)" color="topic">
+      
+      <ion-card-content>
+        <h2>
+          <span style="color:#e64c05">&nbsp;&nbsp;&nbsp;&nbsp;{{post.topic}}</span>
+        </h2>
+        <p style="margin-top:10px;"> &nbsp;
+          <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
+          <span style="color:#a59088">{{post.types}}</span>
+          <br>
+          <ion-icon name="ios-time-outline"></ion-icon> &nbsp;
+          <span style="color:#a59088">{{post.timestamp | date : 'd MMMM yyyy เวลา H:mm' : '+0700' }} </span>
+        </p>
+        <p>{{post.detail}}</p>
+      </ion-card-content>
+    </ion-card>
   </ion-list>
 </ion-content>

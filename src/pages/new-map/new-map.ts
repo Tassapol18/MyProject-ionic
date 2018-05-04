@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
+import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
 import firebase from 'firebase';
+import { LoadingController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -13,6 +15,13 @@ import firebase from 'firebase';
 export class NewMapPage {
 
   maps: FirebaseListObservable<any[]>;
+  namePlace: any;
+  typesPlace: any;
+  detailPlace: any;
+  placeAddress: any;
+  timePlace: any;
+  telephonePlace: any;
+  websitePlace: any;
   data: any;
   lat: any;
   lng: any;
@@ -46,27 +55,28 @@ export class NewMapPage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public db: AngularFireDatabase,
+    public statusBar: StatusBar,
     private geolocation: Geolocation,
-    private camera: Camera) {
+    private camera: Camera,
+    public loadingCtrl: LoadingController) {
+    statusBar.backgroundColorByHexString('#750581');
 
     this.photoPlace = [];
     this.photoPlaceURL = [];
+  }
 
-
-
+  ionViewWillEnter() {
+    this.statusBar.backgroundColorByHexString('#750581');
   }
 
   getPlace() {
-    return new Promise((resolve, reject) => {
-      this.geolocation.getCurrentPosition()
-        .then((res) => {
-          this.lat = res.coords.latitude;
-          this.lng = res.coords.longitude;
-          resolve('success');
-        }).catch((err) => {
-          reject('fail' + err)
-        });
-    })
+    this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+      .then((res) => {
+        this.lat = res.coords.latitude;
+        this.lng = res.coords.longitude;
+      }).catch((err) => {
+        alert('พบปัญหาในการดึงตำแหน่ง : ' + err)
+      });
   }
 
   resetLatLng() {
@@ -79,11 +89,14 @@ export class NewMapPage {
       this.camera.getPicture(this.options)
         .then((myPhoto) => {
           this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
-          this.upLoadImage();
-          resolve('send picture to upload');
+          resolve('ไม่พบปัญหาเกี่ยวกับรูปภาพ');
         }, (err) => {
-          reject('fail : ' + err);
+          reject('พบปัญหาเกี่ยวกับรูปภาพ : ' + err);
         });
+    }).then(() => {
+      this.upLoadImage();
+    }).catch((err) => {
+      alert(err)
     })
   }
 
@@ -92,44 +105,48 @@ export class NewMapPage {
       this.camera.getPicture(this.optionsSelect)
         .then((myPhoto) => {
           this.photoPath = 'data:image/jpeg;base64,' + myPhoto;
-          this.upLoadImage();
-          resolve('send picture to upload');
+          resolve('ไม่พบปัญหาเกี่ยวกับรูปภาพ');
         }, (err) => {
-          reject('fail : ' + err);
+          reject('พบปัญหาเกี่ยวกับรูปภาพ : ' + err);
         });
+    }).then(() => {
+      this.upLoadImage();
+    }).catch((err) => {
+      alert(err)
     })
   }
 
   //Upload Image
   upLoadImage() {
-    alert('รออัพโหลดรูปสักครู่...')
-    console.log('sda', this.photoPlaceURL);
     this.mapPhoto = firebase.storage().ref('/Maps/');
     let filename = Math.floor(Date.now() / 1000);
-    return new Promise((resolve, reject) => {
-      if (this.photoPlaceURL.length < 5) {
-        let name = 'Maps_' + filename;
-        this.photoPlace.push(name)
-        this.sendPhotoPlaceURL = this.mapPhoto.child(name);
-        this.sendPhotoPlaceURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
-          .then(() => {
-            alert('อัพโหลดรูปสำเร็จ : ' + this.sendPhotoPlaceURL);
-            this.mapPhoto.child(name).getDownloadURL()
-              .then((url) => {
-                this.photoPlaceURL.push(url)
-                this.showPhotoUpload = true;
-              }).catch((err) => {
-                alert('fail : ' + err)
-              });
-            resolve('Upload Image Success')
-          }).catch((err) => {
-            alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
-            reject('fail : ' + err)
-          });
-      } else {
-        alert('ไม่สามารถอัพโหลดรูปเพิ่มได้')
-      }
-    })
+    if (this.photoPlaceURL.length < 5) {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: "กำลังอัพโหลดรูป..."
+      });
+      loading.present();
+      let name = 'Maps_' + filename;
+      this.photoPlace.push(name)
+      this.sendPhotoPlaceURL = this.mapPhoto.child(name);
+      this.sendPhotoPlaceURL.putString(this.photoPath, firebase.storage.StringFormat.DATA_URL)
+        .then(() => {
+          this.mapPhoto.child(name).getDownloadURL()
+            .then((url) => {
+              this.photoPlaceURL.push(url)
+              this.showPhotoUpload = true;
+            }).catch((err) => {
+              alert('พบปัญหาการอัพโหลด : ' + err)
+              loading.dismissAll();
+            });
+          loading.dismissAll();
+        }).catch((err) => {
+          alert('อัพโหลดรูปไม่สำเร็จ : ' + err)
+          loading.dismissAll();
+        });
+    } else {
+      alert('ไม่สามารถอัพโหลดรูปเพิ่มได้')
+    }
   }
 
   //DeletePhoto
@@ -139,41 +156,38 @@ export class NewMapPage {
         this.photoPlace.splice(index, 1);
         this.photoPlaceURL.splice(index, 1);
       }).catch(err => {
-        alert('fail : ' + err)
+        alert('พบปัญหา : ' + err)
       });
   }
 
-  newMaps(namePlace, typesPlace, detailPlace, placeAddress, timePlace, telephonePlace, websitePlace) {
+  newMaps() {
     let user = firebase.auth().currentUser;
     let timestamp = firebase.database.ServerValue.TIMESTAMP;
 
-    if(this.photoPlace && this.photoPlaceURL == null || this.photoPlace && this.photoPlaceURL == ''){
-      this.photoPlace = ['-'];
-      this.photoPlaceURL = ['https://firebasestorage.googleapis.com/v0/b/countrytrip-31ea9.appspot.com/o/noPicture.png?alt=media&token=555747fe-37fe-4f1f-a15a-295d837086d0'];
-    }
-    
-    this.lat = parseFloat(this.lat);
-    this.lng = parseFloat(this.lng);
+    if (this.namePlace && this.typesPlace && this.detailPlace && this.lat && this.lng != null) {
+      if (this.photoPlace && this.photoPlaceURL == null || this.photoPlace && this.photoPlaceURL == '') {
+        this.photoPlace = ['-'];
+        this.photoPlaceURL = ['https://firebasestorage.googleapis.com/v0/b/countrytrip-31ea9.appspot.com/o/noPicture.png?alt=media&token=555747fe-37fe-4f1f-a15a-295d837086d0'];
+      }
+      let _lat = parseFloat(this.lat);
+      let _lng = parseFloat(this.lng);
 
-    if (namePlace && typesPlace && detailPlace && this.lat && this.lng != null) {
       this.data = {
         ownerPlace: user.displayName,
         ownerUID: user.uid,
-        namePlace: namePlace,
-        typesPlace: typesPlace,
-        detailPlace: detailPlace,
-        placeAddress: (placeAddress) ? placeAddress : '-',
-        timePlace: (timePlace) ? timePlace : '-',
-        telephonePlace: (telephonePlace) ? telephonePlace : '-',
-        websitePlace: (websitePlace) ? websitePlace : '-',
-        lat: this.lat,
-        lng: this.lng,
+        namePlace: this.namePlace,
+        typesPlace: this.typesPlace,
+        detailPlace: this.detailPlace,
+        placeAddress: (this.placeAddress) ? this.placeAddress : '-',
+        timePlace: (this.timePlace) ? this.timePlace : '-',
+        telephonePlace: (this.telephonePlace) ? this.telephonePlace : '-',
+        websitePlace: (this.websitePlace) ? this.websitePlace : '-',
+        lat: _lat,
+        lng: _lng,
         photoPlace: this.photoPlace,
         photoPlaceURL: this.photoPlaceURL,
         timestamp: timestamp,
       }
-      console.log(this.data);
-
       this.CreateMap();
     } else {
       alert('กรุณากรอกข้อมูล * ให้ครบถ้วน');
@@ -182,15 +196,24 @@ export class NewMapPage {
 
   CreateMap() {
     return new Promise((resolve, reject) => {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: "กำลังอัพโหลด รอสักครู่..."
+      });
+      loading.present();
       this.maps = this.db.list('/Maps');
-      this.maps.push(this.data).then(() => {
-        alert('เพิ่มสถานที่สำเร็จ')
-        this.navCtrl.pop();
-        resolve('success');
-      }), err => {
-        alert('ไม่สามารถเพิ่มสถานที่ได้ ' + err)
-        reject('fail');
-      }
+      this.maps.push(this.data)
+        .then(() => {
+          loading.dismissAll();
+          resolve('ไม่พบปัญหาการอัพโหลด')
+        }), err => {
+          loading.dismissAll();
+          reject('พบปัญาการอัพโหลด : ' + err)
+        }
+    }).then((res) => {
+      this.navCtrl.pop();
+    }).catch((err) => {
+      alert(err)
     })
   }
 }
