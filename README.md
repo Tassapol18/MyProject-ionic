@@ -2,9 +2,9 @@
 
 To run this app:
 Clone this repo
-    #Run npm install
-    #Run ionic cordova platform add android or ionic cordova platform add ios
-    #Run ionic cordova run android or ionic cordova run ios
+    1. #Run npm install
+    2. #Run ionic cordova platform add android or ionic cordova platform add ios
+    3. #Run ionic cordova run android or ionic cordova run ios
 
 error
 npm unlink typescript
