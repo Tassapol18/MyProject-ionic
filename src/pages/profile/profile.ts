@@ -24,17 +24,11 @@ export class ProfilePage {
   post: FirebaseListObservable<any[]>;
   map: FirebaseListObservable<any[]>;
   checkin: FirebaseListObservable<any[]>;
-  checkinPlace: FirebaseListObservable<any[]>;
 
   name: any;
   email: any;
   photo: any;
-  items: any;
-  showCheckinOwn: boolean = false;
-  showPostOwn: boolean = false;
-  showMapPlaceOwn: boolean = false;
   user: any;
-
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -65,24 +59,11 @@ export class ProfilePage {
       }
     });
 
-    this.checkin = this.db.list('/Users/' + this.user.uid + '/CheckIn', {
+    this.checkin = db.list('/Users/' + this.user.uid + '/CheckIn', {
       query: {
         limitToLast: 5
       }
     });
-
-
-    if (this.checkin != null) {
-      this.showCheckinOwn = true;
-    }
-
-    if (this.map != null) {
-      this.showMapPlaceOwn = true;
-    }
-
-    if (this.post != null) {
-      this.showPostOwn = true;
-    }
 
   }
 
@@ -231,7 +212,6 @@ export class ProfilePage {
                 this.map.remove(map.$key);
               }
             }
-
           }
         }
       ]
@@ -259,7 +239,7 @@ export class ProfilePage {
 
 
 
-  BtLoggout() {
+  BtLogout() {
     let alt = this.alertCtrl.create({
       title: 'คุณต้องการออกจากระบบใช่หรือไม่',
       buttons: [

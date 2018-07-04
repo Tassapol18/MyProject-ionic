@@ -107,7 +107,7 @@ export class MapPage {
     // หาตำแหน่งปัจจุบันโดยใช้ getCurrentPosition 
     // เรียกตำแหน่งครั้งแรกครั้งเดียวเมื่อเปิดมาหน้าแผนที่
     this.map = null;
-    this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+    this.geolocation.getCurrentPosition({ maximumAge: 5000, timeout: 10000, enableHighAccuracy: true })
       .then((pos) => {
         let position = {
           lat: pos.coords.latitude,
@@ -127,7 +127,7 @@ export class MapPage {
         });
         this.loadData();
       }).catch((err) => {
-        alert('init map error')
+        alert('เกิดข้อผิดพลาดเกี่ยวกับแผนที่ : ' + err)
       })
   }
 

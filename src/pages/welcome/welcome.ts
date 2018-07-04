@@ -23,7 +23,7 @@ import { TabsPage } from '../tabs/tabs';
 export class WelcomePage {
 
   authState: any = null;
-  rootPage: any;
+
 
 
   constructor(public navCtrl: NavController,
@@ -88,7 +88,7 @@ export class WelcomePage {
                 reject('fail');
               });
           }).catch((err) => {
-            alert("Facebook error : " + err)
+            alert("Facebook login error : " + err)
             this.fb.logout();
             reject('fail');
           });
@@ -114,7 +114,7 @@ export class WelcomePage {
               .credential(res.idToken);
             firebase.auth().signInWithCredential(googleCredential)
               .then(success => {
-                // alert("Firebase success: " + JSON.stringify(success));
+                //alert("Firebase success: " + JSON.stringify(success));
                 this.authState = success;
                 this.updateUserData();
                 resolve('sucess');
@@ -124,7 +124,8 @@ export class WelcomePage {
                 reject('fail');
               });
           }).catch((err) => {
-            alert("Error(fail): " + err);
+            alert("Google login error : " + err);
+            this.google.logout();
             reject('fail');
           });
       });
@@ -138,9 +139,10 @@ export class WelcomePage {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((credential) => {
         this.authState = credential.user
+        // alert("Firebase success: " + JSON.stringify(credential));
         this.updateUserData();
       })
-      .catch(error => console.log(error));
+      .catch(error => alert("พบข้อผิดพลาด : " + error));
   }
 
   // UpdateUsertoDatabase
@@ -155,8 +157,7 @@ export class WelcomePage {
       timestamp: timestamp
     }
 
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
+    this.db.object(path).update(data).catch(error => alert("พบข้อผิดพลาด : " + error));
 
   }
 

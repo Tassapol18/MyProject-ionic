@@ -12,9 +12,8 @@ import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/databa
   templateUrl: 'search.html',
 })
 export class SearchPage {
-  public PostList: Array<any>;
-  public loadePost: Array<any>;
-  public postDB: firebase.database.Reference;
+  PostList: Array<any>;
+  loadPost: Array<any>;
   post: FirebaseListObservable<any[]>;
 
   constructor(public navCtrl: NavController,
@@ -41,7 +40,7 @@ export class SearchPage {
         posted.push(res[i]);
       }
       this.PostList = posted;
-      this.loadePost = posted;
+      this.loadPost = posted;
     })
 
   }
@@ -51,7 +50,7 @@ export class SearchPage {
   }
 
   initializeItem(): void {
-    this.PostList = this.loadePost;
+    this.PostList = this.loadPost;
   }
 
   getItems(searchbar) {

@@ -5,7 +5,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import firebase from 'firebase';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
 import { Geolocation } from '@ionic-native/geolocation';
-import { MapModalPage } from '../map-modal/map-modal';
 
 @IonicPage()
 @Component({

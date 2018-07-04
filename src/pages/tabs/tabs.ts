@@ -18,12 +18,9 @@ export class TabsPage {
   tab3Root = ChatPage;
   tab4Root = ProfilePage;
 
-  user: FirebaseListObservable<any[]>;
   chat: FirebaseListObservable<any[]>;
   checkReadDB: FirebaseListObservable<any[]>;
   userCur: any;
-  data = [];
-  keyChat = [];
   n: any;
   n_cnt: any;
   elColor: any;

@@ -13,6 +13,8 @@ npm install typescript@2.3.4
 authen
 https://gist.github.com/codediodeio/5e02b605f2ab015f2fb1e60497bd46bf#gistcomment-2125844
 
+Calculate distance between two latitude-longitude points? (Haversine formula)
+https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 
 
 Error com.google.android.gms

@@ -16,7 +16,6 @@ export class ViewMapDirectionsPage {
 
   map: any;
   marker: any;
-  posCur: any;
   namePlace: any;
   typesPlace: any;
   start: any;

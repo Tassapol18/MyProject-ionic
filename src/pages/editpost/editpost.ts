@@ -15,7 +15,6 @@ import { LoadingController } from 'ionic-angular';
 })
 export class EditpostPage {
   post: any;
-  postPhoto: any;
   topic: any;
   detail: any;
   types: any;
@@ -25,6 +24,7 @@ export class EditpostPage {
   data: any;
   photoPath: any;
   photoPost: any;
+  postPhoto: any;
   photoPostURL: any;
   sendPhotoPostURL: any;
   showPhotoUpload: boolean = false;

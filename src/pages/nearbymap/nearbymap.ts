@@ -79,11 +79,13 @@ export class NearbymapPage {
       })
   }
 
+
   distance(latCurrent, lngCurrent) {
+    //Math.PI / 180 = 0.017453292519943295
     for (let i = 0; i < this.data.length; i++) {
       let latPlace = parseFloat(this.data[i].LatLng.lat);
       let lngPlace = parseFloat(this.data[i].LatLng.lng);
-      let R = 6378137; // Earth’s mean radius in meter
+      let R = 6371; // Earth’s mean radius in kilometer
       let dLat = (latPlace - latCurrent) * Math.PI / 180;
       let dLng = (lngPlace - lngCurrent) * Math.PI / 180;
       let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -92,7 +94,7 @@ export class NearbymapPage {
         Math.sin(dLng / 2) * Math.sin(dLng / 2);
       let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       let d = R * c;
-      this.resultDistance[i] = (d / 1000).toFixed(2);
+      this.resultDistance[i] = d.toFixed(2);
       this.data[i].Place.resultDistance = parseFloat(this.resultDistance[i]);
     }
 

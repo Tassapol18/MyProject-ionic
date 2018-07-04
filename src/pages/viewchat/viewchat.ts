@@ -13,7 +13,6 @@ export class ViewchatPage {
   @ViewChild('content') content: any;
   chatDB: FirebaseListObservable<any[]>;
   chatCheck: FirebaseListObservable<any[]>;
-  checkReadDB: FirebaseListObservable<any[]>;
   name: any;
   key: any;
   nameUser: any;
@@ -26,9 +25,7 @@ export class ViewchatPage {
   checkChat: boolean = false;
   keyChat: any;
   userUID: any;
-  task: any;
   innerstate: any;
-  loading: any;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -77,14 +74,8 @@ export class ViewchatPage {
   ionViewWillEnter() {  //เข้ามา
     this.innerstate = true;
     console.log("USER ONLINE", this.innerstate);
-    
     this.updateChatRead()
     
-    
-
-
-
-
     // return new Promise((resolve, reject) => {
     //   if (!this.checkChat) {
     //     this.chatDB.push({
@@ -130,16 +121,12 @@ export class ViewchatPage {
   }
 
   updateChatData(key, user) {
-
-
     let path = `Chat/${key}/${user}`;
     let data = {
       read: true
     }
-
     this.db.object(path).update(data)
       .catch(error => console.log(error));
-
   }
 
   sendMessage() {  //ส่งข้อความ
@@ -176,11 +163,6 @@ export class ViewchatPage {
       }
     })
   }
-
-
-
-
-  
 
   ionViewWillLeave() {  //ออกไป
     this.innerstate = false;

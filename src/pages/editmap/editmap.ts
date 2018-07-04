@@ -15,8 +15,7 @@ import { LoadingController } from 'ionic-angular';
 export class EditmapPage {
 
   map: any;
-  mapPhoto: any;
-
+  data: any;
   key: any;
   namePlace: any;
   typesPlace: any;
@@ -27,12 +26,13 @@ export class EditmapPage {
   websitePlace: any;
   lat: any;
   lng: any;
+  mapPhoto: any;
   photoPath: any;
   photoPlace: any;
   sendPhotoPlaceURL: any;
   photoPlaceURL: any;
   showPhotoUpload: boolean = false;
-  data: any;
+  
 
   options: CameraOptions = {
     quality: 80,

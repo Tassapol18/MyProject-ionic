@@ -17,7 +17,7 @@
       <p style="margin-top:10px;"> &nbsp; &nbsp;
         <span style="color:#a59088">{{email}}</span>
       </p>
-      <button ion-button outline color="light" (click)="BtLoggout()">ออกจากระบบ</button>
+      <button ion-button outline color="light" (click)="BtLogout()">ออกจากระบบ</button>
     </ion-item>
   </ion-list>
 
@@ -28,9 +28,12 @@
     </ion-list-header>
     <ion-list style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;" *ngFor="let checkin of (checkin | async)?.slice().reverse()">
       <ion-item style="background-color:#eeeef8">
-        <ion-avatar item-start *ngIf="post.photoPostURL!='-'">
+        <!-- <ion-avatar item-start>
           <img src="{{checkin.photoPlace}}">
-        </ion-avatar>
+        </ion-avatar> -->
+        <ion-thumbnail item-start>
+          <img src="{{checkin.photoPlace}}">
+        </ion-thumbnail>
         <h2>{{checkin.checkinDetail}}</h2>
         <p style="font-size: 16px">{{checkin.namePlace}}</p>
         <ion-icon name="ios-pricetags-outline"></ion-icon> &nbsp;
@@ -55,9 +58,12 @@
     <ion-list *ngFor="let post of (post | async)?.slice().reverse()">
       <ion-item-sliding>
         <ion-item style="background-color:#eeeef8">
-          <ion-avatar item-start *ngIf="post.photoPostURL!='-'">
+          <!-- <ion-avatar item-start *ngIf="post.photoPostURL!='-'">
             <img [src]="post.photoPostURL">
-          </ion-avatar>
+          </ion-avatar> -->
+          <ion-thumbnail item-start *ngIf="post.photoPostURL!='-'">
+            <img [src]="post.photoPostURL">
+          </ion-thumbnail>
           <h2>{{post.topic}}</h2>
           <ion-icon item-end name="ios-arrow-dropleft"></ion-icon>
           <span item-end>เลื่อนซ้าย</span>
@@ -99,9 +105,12 @@
     <ion-list *ngFor="let map of (map | async)?.slice().reverse()">
       <ion-item-sliding>
         <ion-item style="background-color:#eeeef8">
-          <ion-avatar item-start>
+          <!-- <ion-avatar item-start>
             <img [src]="map.photoPlaceURL">
-          </ion-avatar>
+          </ion-avatar> -->
+          <ion-thumbnail item-start>
+            <img [src]="map.photoPlaceURL">
+          </ion-thumbnail>
           <h2>{{map.namePlace}}</h2>
           <ion-icon item-end name="ios-arrow-dropleft"></ion-icon>
           <span item-end>เลื่อนซ้าย</span>

@@ -16,20 +16,18 @@ export class ChatPage {
   user: FirebaseListObservable<any[]>;
   chatDel: FirebaseListObservable<any[]>;
   chatDB: FirebaseListObservable<any[]>;
-  // chatCheck: FirebaseListObservable<any[]>;
   checkReadDB: FirebaseListObservable<any[]>;
-  // chatSubscription: any;
-  chatlistSubscription: any;
   userCur: any;
+  n: any;
   data = [];
   userChat = [];
+  delKey = [];
+  // chatCheck: FirebaseListObservable<any[]>;
+  // chatSubscription: any;
+  // chatlistSubscription: any;
   // tmpcnt: any;
   // read: any;
   // loading: any;
-  n: any;
-  delKey = [];
-
-
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public alertCtrl: AlertController,
@@ -67,83 +65,75 @@ export class ChatPage {
   initChat() {
     this.userChat = []
     this.chatDB = this.db.list('/Chat');
-
-    // const ChatRef: firebase.database.Reference = firebase.database().ref(`/Chat/`);
-    // ChatRef.on('value', chatSnapshot => {
-    //   _userChat = chatSnapshot.val()
-    // });
-
     var cnt_userChat = 0;
-
 
     this.chatDB.forEach((resp) => {
       resp.forEach((resi) => {
-        
 
-      cnt_userChat++
-      let spl = resi.$key.split('_')
-      var tmparr = [];
-  
-      if (this.userCur.uid == spl[0] || this.userCur.uid == spl[1]) {
-        let To = (this.userCur.uid == spl[0]) ? spl[1] : spl[0];
-        this.delKey.push(resi.$key)
-        this.n = 0;
-        this.checkReadDB = this.db.list('/Chat/' + resi.$key, {
-          query: {
-            orderByChild: 'key',
-            equalTo: To
-          }
-        });
-        this.userChat = [];
+        cnt_userChat++
+        let spl = resi.$key.split('_')
+        var tmparr = [];
 
-        this.checkReadDB.forEach(res => {
-          let cnt = 0;
+        if (this.userCur.uid == spl[0] || this.userCur.uid == spl[1]) {
+          let To = (this.userCur.uid == spl[0]) ? spl[1] : spl[0];
+          this.delKey.push(resi.$key)
+          this.n = 0;
+          this.checkReadDB = this.db.list('/Chat/' + resi.$key, {
+            query: {
+              orderByChild: 'key',
+              equalTo: To
+            }
+          });
+          this.userChat = [];
 
-          res.forEach(resq => {
-            cnt++;
+          this.checkReadDB.forEach(res => {
+            let cnt = 0;
 
-            if (resq.key != this.userCur) {
-              if (resq.read == false) {
-                this.n++;
+            res.forEach(resq => {
+              cnt++;
+
+              if (resq.key != this.userCur) {
+                if (resq.read == false) {
+                  this.n++;
+                }
               }
-            }
 
-            if (cnt == res.length) {
-              var userR = this.db.list(`/Users/` + To);
-              userR.forEach((UserSnapshot) => {
-                var arr = {}
+              if (cnt == res.length) {
+                var userR = this.db.list(`/Users/` + To);
+                userR.forEach((UserSnapshot) => {
+                  var arr = {}
 
-                for (var o = 0; o < len(UserSnapshot); o++) {
-                  arr[UserSnapshot[o].$key] = UserSnapshot[o].$value
-                }
-                arr['notification'] = this.n
+                  for (var o = 0; o < len(UserSnapshot); o++) {
+                    arr[UserSnapshot[o].$key] = UserSnapshot[o].$value
+                  }
+                  arr['notification'] = this.n
 
-                if (this.checkExit(To)) {
-                  for (var gg in this.userChat) {
-                    if (this.userChat[gg].uid == To) {
-                      this.userChat[gg].notification = this.n
-                      this.n = 0
-                      break;
+                  if (this.checkExit(To)) {
+                    for (var gg in this.userChat) {
+                      if (this.userChat[gg].uid == To) {
+                        this.userChat[gg].notification = this.n
+                        this.n = 0
+                        break;
+                      }
                     }
+                  } else {
+                    let tmpLkey = this.userCur.uid + '_' + To;
+                    let tmpRkey = To + '_' + this.userCur.uid;
+                    if (this.checkKey(tmpLkey)) {
+                      arr['key'] = tmpLkey
+                    }
+                    if (this.checkKey(tmpRkey)) {
+                      arr['key'] = tmpRkey
+                    }
+                    this.userChat.push(arr)
+                    this.n = 0
                   }
-                } else {
-                  let tmpLkey = this.userCur.uid + '_' + To;
-                  let tmpRkey = To + '_' + this.userCur.uid;
-                  if (this.checkKey(tmpLkey)) {
-                    arr['key'] = tmpLkey
-                  }
-                  if (this.checkKey(tmpRkey)) {
-                    arr['key'] = tmpRkey
-                  }
-                  this.userChat.push(arr)
-                  this.n = 0
-                }
-              });
-            }
+                });
+              }
+            })
           })
-        })
-      }
-    })
+        }
+      })
     })
   }
 
@@ -164,6 +154,34 @@ export class ChatPage {
       }
     }
     return false
+  }
+
+  deleteChat(value) {
+    this.chatDel = this.db.list('/Chat/' + value.key);
+    let alert = this.alertCtrl.create({
+      title: 'คุณต้องการลบข้อความนี้หรือไม่',
+      buttons: [
+        {
+          text: 'ยกเลิก',
+          role: 'cancel',
+        },
+        {
+          text: 'ฉันต้องการลบ',
+          handler: () => {
+            this.chatDel.remove();
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+
+  goToChat(user) {
+    this.navCtrl.push(ViewchatPage, {
+      'key': user.uid,
+      'name': user.name
+    });
   }
 
 
@@ -222,113 +240,82 @@ export class ChatPage {
   //   console.log("datato send",this.userChat);
   // }
 
-  getnotification() {
-    console.log("notifi");
-    // this.loading = true
-    // console.log("loading true",this.loading);
-    this.chatlistSubscription = this.db.list('/Chat')
-      .subscribe((res) => {
+  // getnotification() {
+  //   console.log("notifi");
+  //   // this.loading = true
+  //   // console.log("loading true",this.loading);
+  //   this.chatlistSubscription = this.db.list('/Chat')
+  //     .subscribe((res) => {
 
-        //console.log("chatlist",this.userChat);
+  //       //console.log("chatlist",this.userChat);
 
-        for (let a = 0; a < res.length; a++) {
-          this.userChat.length = 0
-          this.userChat = [];
+  //       for (let a = 0; a < res.length; a++) {
+  //         this.userChat.length = 0
+  //         this.userChat = [];
 
-          var spl = res[a].$key.split('_')
-          if (spl[0] == this.userCur.uid || spl[1] == this.userCur.uid) {
-            //console.log("key",spl);
-            //var From  = (spl[0]== this.userCur.uid)? spl[0] : spl[1];
-            var To = (spl[0] == this.userCur.uid) ? spl[1] : spl[0];
-            //console.log("this key from ",From," send to ",To);
-            var unRead = null
-            unRead = this.db.list('/Chat/' + res[a].$key, {
-              query: {
-                orderByChild: 'key',
-                equalTo: To
-              }
-            });
+  //         var spl = res[a].$key.split('_')
+  //         if (spl[0] == this.userCur.uid || spl[1] == this.userCur.uid) {
+  //           //console.log("key",spl);
+  //           //var From  = (spl[0]== this.userCur.uid)? spl[0] : spl[1];
+  //           var To = (spl[0] == this.userCur.uid) ? spl[1] : spl[0];
+  //           //console.log("this key from ",From," send to ",To);
+  //           var unRead = null
+  //           unRead = this.db.list('/Chat/' + res[a].$key, {
+  //             query: {
+  //               orderByChild: 'key',
+  //               equalTo: To
+  //             }
+  //           });
 
-            for (let i = 0; i < unRead.length; i++) {
-              //console.log("read",this.userChat);
-              //console.log("from",resp.$key,"get",readras);
-              let tmpuserData = { uid: null, name: null, profilePicture: null, notification: null }
-              //console.log("tmp",tmpuserData);
+  //           for (let i = 0; i < unRead.length; i++) {
+  //             //console.log("read",this.userChat);
+  //             //console.log("from",resp.$key,"get",readras);
+  //             let tmpuserData = { uid: null, name: null, profilePicture: null, notification: null }
+  //             //console.log("tmp",tmpuserData);
 
-              /////////////////////////// get To user data
-              var tmpuser = this.db.list('/Users', {
-                query: {
-                  orderByChild: 'uid',
-                  equalTo: To
-                }
-              });
+  //             /////////////////////////// get To user data
+  //             var tmpuser = this.db.list('/Users', {
+  //               query: {
+  //                 orderByChild: 'uid',
+  //                 equalTo: To
+  //               }
+  //             });
 
-              tmpuser.forEach((tmpuserres) => {
-                tmpuserres.forEach((tmpdata) => {
-                  tmpuserData.name = tmpdata.name
-                  tmpuserData.profilePicture = tmpdata.profilePicture
-                  tmpuserData.uid = tmpdata.uid
-                  //console.log("user getting data",tmpuserData);
-                })
-              })
-              /////////////////////////// END get To user data
+  //             tmpuser.forEach((tmpuserres) => {
+  //               tmpuserres.forEach((tmpdata) => {
+  //                 tmpuserData.name = tmpdata.name
+  //                 tmpuserData.profilePicture = tmpdata.profilePicture
+  //                 tmpuserData.uid = tmpdata.uid
+  //                 //console.log("user getting data",tmpuserData);
+  //               })
+  //             })
+  //             /////////////////////////// END get To user data
 
-              /////////////////////////// get To unread count data
-              let cnt = 0;
-              let unread_cnt = 0;
-              for (let j = 0; j < unRead[i].length; j++) {
+  //             /////////////////////////// get To unread count data
+  //             let cnt = 0;
+  //             let unread_cnt = 0;
+  //             for (let j = 0; j < unRead[i].length; j++) {
 
-                cnt++
-                if (unRead[i][j].read == false) {
-                  unread_cnt++;
-                }
+  //               cnt++
+  //               if (unRead[i][j].read == false) {
+  //                 unread_cnt++;
+  //               }
 
-                if (cnt == unRead[i][j].length) {
-                  //console.log("final read ",cnt,"epoch = " ,unread_cnt);
-                  tmpuserData.notification = unread_cnt
-                  //console.log("noti getting data",tmpuserData);
-                  //if(this.userChat.length == 0){
-                  this.userChat.push(tmpuserData)
-                  //}
-                }
-              }
-              /////////////////////////// END get To unread count data
-              // this.loading = false
-              // console.log("loading false",this.loading);
-            }
-          }
-        }
-      })
-  }
-
-
-  deleteChat(value) {
-    this.chatDel = this.db.list('/Chat/' + value.key);
-    let alert = this.alertCtrl.create({
-      title: 'คุณต้องการลบช้อความนี้หรือไม่หรือไม่',
-      buttons: [
-        {
-          text: 'ยกเลิก',
-          role: 'cancel',
-        },
-        {
-          text: 'ฉันต้องการลบ',
-          handler: () => {
-            this.chatDel.remove();
-          }
-        }
-      ]
-    });
-    alert.present();
-  }
-
-
-  goToChat(user) {
-    this.navCtrl.push(ViewchatPage, {
-      'key': user.uid,
-      'name': user.name
-    });
-  }
-
-
+  //               if (cnt == unRead[i][j].length) {
+  //                 //console.log("final read ",cnt,"epoch = " ,unread_cnt);
+  //                 tmpuserData.notification = unread_cnt
+  //                 //console.log("noti getting data",tmpuserData);
+  //                 //if(this.userChat.length == 0){
+  //                 this.userChat.push(tmpuserData)
+  //                 //}
+  //               }
+  //             }
+  //             /////////////////////////// END get To unread count data
+  //             // this.loading = false
+  //             // console.log("loading false",this.loading);
+  //           }
+  //         }
+  //       }
+  //     })
+  // }
 }

@@ -20,12 +20,11 @@ export class ViewmapPage {
   userCheckin: FirebaseListObservable<any[]>;
   user: any;
   timestamps: any;
-  data: any;
-
+  
   namePlace: any;
+  typesPlace: any;
   detailPlace: any;
   placeAddress: any;
-  typesPlace: any;
   timePlace: any;
   telephonePlace: any;
   websitePlace: any;
@@ -186,7 +185,6 @@ export class ViewmapPage {
             timestamp: this.timestamps,
             keyPlace: this.key,
           })
-          alert('บันทึกเช็คอินสำเร็จ');
           console.log(resolve);
         })
         , (err) => {
@@ -279,13 +277,9 @@ export class ViewmapPage {
               scoreReview: data,
               timestamp: this.timestamps,
             }).then(() => {
-              console.log('Pass');
               this.dataSet = [];
-              // this.ionViewWillEnter();
               this.getScore();
-              alert('บันทึกรีวิวสำเร็จ');
             }), err => {
-              console.log('Fail : ' + err);
               alert('ไม่สามารถบันทึกรีวิวได้ : ' + err);
             }
           }

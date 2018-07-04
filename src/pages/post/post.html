@@ -33,10 +33,10 @@
     <ion-item>
       <ion-row center>
         <ion-col text-center>
-          <button ion-button type="button" style="width:100%;" color="primary"  outline (click)="getPlace()">แสดงค่าพิกัด</button>
+          <button ion-button type="button" style="width:100%;font-size:18px;" color="primary"  outline (click)="getPlace()">แสดงตำแหน่ง</button>
         </ion-col>
         <ion-col text-center>
-          <button ion-button type="button" style="width:100%;" color="danger"  outline (click)="resetLatLng()">ล้างค่าพิกัด</button>
+          <button ion-button type="button" style="width:100%;font-size:18px;" color="danger"  outline (click)="resetLatLng()">ล้างตำแหน่ง</button>
         </ion-col>
       </ion-row>
     </ion-item>
@@ -46,7 +46,7 @@
       <ion-input type="text" name="lat" [(ngModel)]="lat"></ion-input>
     </ion-item>
     <ion-item >
-      <ion-label floating>ลองติจูด</ion-label>
+      <ion-label floating>ลองจิจูด</ion-label>
       <ion-input type="text" name="lng" [(ngModel)]="lng"></ion-input>
     </ion-item>
 
@@ -54,14 +54,12 @@
       <ion-row center>
         <ion-col text-center>
           <button ion-button color="danger" style="width:100%;" type="button" outline (click)="takePhoto()">
-            ถ่ายรูป
-            <!-- <ion-icon name="md-camera"></ion-icon> -->
+            <ion-icon style="font-size:18px;" name="md-camera"> &nbsp;&nbsp; ถ่ายรูป </ion-icon>
           </button>
         </ion-col>
         <ion-col text-center>
           <button ion-button color="secondary" style="width:100%;" type="button" outline (click)="selectPhoto()">
-            เลือกรูปภาพ
-            <!-- <ion-icon name="md-image"></ion-icon> -->
+            <ion-icon style="font-size:18px;" name="md-image"> &nbsp;&nbsp; เลือกรูปภาพ </ion-icon>
           </button>
         </ion-col>
       </ion-row>

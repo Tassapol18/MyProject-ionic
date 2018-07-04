@@ -41,7 +41,6 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 
 //Providers
 import { FirebaseProvider } from '../providers/firebase/firebase';
-import { MapModalPage } from '../pages/map-modal/map-modal';
 
 
 export const firebase = {
@@ -72,7 +71,6 @@ export const firebase = {
     EditmapPage,
     ViewchatPage,
     ViewMapDirectionsPage,
-    MapModalPage
   ],
   imports: [
     BrowserModule,
@@ -104,7 +102,6 @@ export const firebase = {
     EditmapPage,
     ViewchatPage,
     ViewMapDirectionsPage,
-    MapModalPage
   ],
   providers: [
     StatusBar,
